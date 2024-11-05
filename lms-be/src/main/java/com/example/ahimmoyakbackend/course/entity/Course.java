@@ -5,6 +5,7 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
+import com.example.ahimmoyakbackend.institution.entity.Institution;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -57,6 +58,17 @@ public class Course extends Timestamped {
     @Builder.Default
     @OneToMany(mappedBy = "course")
     private List<Enrollment> enrollments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course")
+    private List<CourseProvide> courseProvides = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
 
     public Course patch(CourseCreateRequestDto requestDto) {
         this.title = requestDto.title();
