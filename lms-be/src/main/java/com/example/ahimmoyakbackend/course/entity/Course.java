@@ -33,48 +33,31 @@ public class Course extends Timestamped {
     private String introduction;
 
     @Column(nullable = false)
-    private LocalDate beginDate;
-
-    @Column(nullable = false)
-    private LocalDate endDate;
-
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private CourseState state;
-
-    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private CourseCategory category;
+
+    @Column
+    private String instructor;
+
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private CourseState state;
 
     @OneToMany(mappedBy = "course")
     private List<Curriculum> curriculumList;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "tutor_id")
-    private User tutor;
-
-    @Setter
-    @Builder.Default
-    @OneToMany(mappedBy = "course")
-    private List<Enrollment> enrollments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "course")
-    private List<CourseProvide> courseProvides = new ArrayList<>();
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
 
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     public Course patch(CourseCreateRequestDto requestDto) {
         this.title = requestDto.title();
         this.introduction = requestDto.introduction();
-        this.beginDate = requestDto.beginDate();
-        this.endDate = requestDto.endDate();
         this.category = requestDto.category();
         return this;
     }

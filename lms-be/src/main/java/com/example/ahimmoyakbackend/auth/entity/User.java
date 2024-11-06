@@ -45,9 +45,6 @@ public class User extends Timestamped {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column
-    private boolean tutorState;
-
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -74,8 +71,4 @@ public class User extends Timestamped {
         }
     }
 
-    public User setTutorState(boolean tutorState) {
-        this.tutorState = tutorState;
-        return this;
-    }
 }

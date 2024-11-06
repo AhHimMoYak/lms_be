@@ -73,10 +73,11 @@ public class ChatService {
         List<ChatAttend> chatAttends = chatAttendRepository.findAllByLiveId(liveId);
         LiveStreaming live = liveStreamingRepository.findById(liveId).orElse(null);
         if(live == null) {return;}
-        Course course = live.getCourse();
+        // Todo 라이브 참여기록 저장시 인롤먼트 불러올때 코스가 아닌 코스프로바이드로 찾아오도록 수정
+//        Course course = live.getCourse();
         attendHistoryRepository.saveAll(chatAttends.stream()
                 .map(attend -> AttendHistory.builder()
-                        .enrollment(enrollmentRepository.findByUser_UsernameAndCourse(attend.getUsername(), course))
+//                        .enrollment(enrollmentRepository.findByUser_UsernameAndCourse(attend.getUsername(), course))
                         .liveStreaming(live)
                         .attendance(true)
                         .build()).toList());

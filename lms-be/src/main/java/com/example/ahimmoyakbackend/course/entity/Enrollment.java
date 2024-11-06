@@ -35,10 +35,6 @@ public class Enrollment extends Timestamped {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
-
-    @ManyToOne
     @JoinColumn(name = "course_provide_id", nullable = false)
     private CourseProvide courseProvide;
 

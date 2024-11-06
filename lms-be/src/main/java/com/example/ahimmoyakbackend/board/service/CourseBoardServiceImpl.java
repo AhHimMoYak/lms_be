@@ -40,9 +40,10 @@ public class CourseBoardServiceImpl implements CourseBoardService {
         if (course == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "코스를 찾을 수 없습니다.");
         }
-        if (boardType.equals(BoardType.NOTICE) && !course.getTutor().equals(user)) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 공지를 쓸 수 있습니다.");
-        }
+        // Todo 현재 유저가 공지 등록할 권한 있는지 체크하는 기능 추가필요 (아래 주석쳐놓은 부분 참고)
+//        if (boardType.equals(BoardType.NOTICE) && course.getInstitution().getManagers()) {
+//            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 공지를 쓸 수 있습니다.");
+//        }
         courseBoardRepository.save(requestDto.toEntity(user, course, boardType));
         return true;
     }
@@ -114,11 +115,12 @@ public class CourseBoardServiceImpl implements CourseBoardService {
     @Override
     public List<BoardListResponseDto> getListByUser(UserDetails userDetails, BoardType boardType) {
         User user = userService.getAuth(userDetails);
-        if(user.isTutorState()){
-            return courseBoardRepository.findByCourse_Tutor(user).stream()
-                    .map(board -> BoardListResponseDto.from(board, courseCommentRepository.countByCourseBoard(board)))
-                    .toList();
-        }
+        // Todo 현재 유저가 매니저인 경우 교육기관의 코스리스트를 제공해주도록 수정해야함 (아래 주석 부분 참고)
+//        if(user.isTutorState()){
+//            return courseBoardRepository.findByCourse_Tutor(user).stream()
+//                    .map(board -> BoardListResponseDto.from(board, courseCommentRepository.countByCourseBoard(board)))
+//                    .toList();
+//        }
         return courseBoardRepository.findByUserAndType(user, boardType).stream()
                 .map(board -> BoardListResponseDto
                         .from(board, courseCommentRepository.countByCourseBoard(board)))

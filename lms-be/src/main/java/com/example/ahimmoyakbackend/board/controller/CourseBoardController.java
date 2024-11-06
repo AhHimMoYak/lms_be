@@ -25,6 +25,7 @@ public class CourseBoardController {
     private final CourseBoardService courseBoardService;
     private final CourseCommentService courseCommentService;
 
+    // Fixme 코스보드 생성시 코스가 아닌 코스프로바이드에 연결되도록 로직 변경 필요
     @PostMapping("/course/{courseId}/board/{boardType}")
     public ResponseEntity<String> createBoard(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -58,6 +59,7 @@ public class CourseBoardController {
                 : ResponseEntity.badRequest().body("게시글 삭제 실패");
     }
 
+    // Fixme 코스보드 리스트 불러올때, 코스가 아닌 코스프로바이드 정보로 불러오도록 로직 변경해야함
     @GetMapping("/course/{courseId}/board/{boardType}")
     public ResponseEntity<List<BoardListResponseDto>> boardList(
             @PathVariable("courseId") long courseId,
@@ -66,6 +68,7 @@ public class CourseBoardController {
         return ResponseEntity.ok(courseBoardService.getList(courseId, BoardType.valueOf(boardType.toUpperCase())));
     }
 
+    // Fixme 코스보드 리스트 불러올때, 코스가 아닌 코스프로바이드 정보로 불러오도록 로직 변경해야함
     @GetMapping(value = "/course/{courseId}/board/{boardType}", params = "page")
     public ResponseEntity<Page<BoardListResponseDto>> boardList(
             Pageable page,

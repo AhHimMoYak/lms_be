@@ -1,13 +1,11 @@
 package com.example.ahimmoyakbackend.live.entity;
 
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
 import com.example.ahimmoyakbackend.live.common.LiveState;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -35,9 +33,11 @@ public class LiveStreaming extends Timestamped {
     @Enumerated(EnumType.STRING)
     private LiveState state;
 
+    @Setter
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "course_provide_id")
+    private CourseProvide courseProvide;
+
 
     public void setState(LiveState state) {
         this.state = state;

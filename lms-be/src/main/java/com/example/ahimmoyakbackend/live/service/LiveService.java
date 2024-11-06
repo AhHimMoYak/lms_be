@@ -44,16 +44,17 @@ public class LiveService {
             throw new ApiException(HttpStatus.NOT_FOUND, "코스를 찾을 수 없습니다.");
         }
         Course course = optionalCourse.get();
-        if(!course.getTutor().equals(user)){
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 라이브를 생성할 수 있습니다.");
-        }
+        // Todo 라이브 생성시 교육기관 매니저인지 권한 확인
+//        if(!course.getTutor().equals(user)){
+//            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 라이브를 생성할 수 있습니다.");
+//        }
         liveStreamingRepository.save(requestDTO.toEntity(course));
         return true;
     }
 
     public LiveCourseResponseDTO getLive(Long liveId) {
         return liveStreamingRepository.findById(liveId)
-                .map(ls -> LiveCourseResponseDTO.from(ls, ls.getCourse()))
+                .map(ls -> LiveCourseResponseDTO.from(ls, ls.getCourseProvide().getCourse()))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "라이브 정보를 찾을 수 없습니다."));
     }
 
@@ -80,14 +81,15 @@ public class LiveService {
         Long tutorId = Long.parseLong(keyAndTutor[1]);
         LiveStreaming liveStreaming = liveStreamingRepository.findById(liveId).orElse(null);
         User tutor = userRepository.findById(tutorId).orElse(null);
-        if(liveStreaming != null && tutor != null){
-            if(liveStreaming.getCourse().getTutor().equals(tutor)){
-                liveStreaming.setState(LiveState.ON);
-                liveStatusRepository.save(new LiveStatus(liveId, LiveState.ON));
-                log.info("Publish live streaming success. stream_key: {}, tutor_id: {}", liveId, tutorId);
-                return true;
-            }
-        }
+        // Todo 라이브 시작시 시작한사람이 해당 교육기관 매니저인지 확인 하고 상태 변경하도록 해야함
+//        if(liveStreaming != null && tutor != null){
+//            if(liveStreaming.getCourse().getTutor().equals(tutor)){
+//                liveStreaming.setState(LiveState.ON);
+//                liveStatusRepository.save(new LiveStatus(liveId, LiveState.ON));
+//                log.info("Publish live streaming success. stream_key: {}, tutor_id: {}", liveId, tutorId);
+//                return true;
+//            }
+//        }
         log.error("Publish live streaming failed. stream_key: {}, tutor_id: {}", liveId, tutorId);
         return false;
     }

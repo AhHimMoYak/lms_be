@@ -16,6 +16,7 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
 
+    // Fixme 인롤먼트 생성시 코스가 아닌 코스프로바이드에 되도록 로직 변경해야함, 그러나 코스프로바이드 생성시 자동으로 생성되는것도 고려해야함
     @GetMapping("/{courseId}/enroll")
     public ResponseEntity<String> makeEnrollment(
             @AuthenticationPrincipal UserDetails userDetails,

@@ -13,7 +13,7 @@ import java.util.List;
 public record CourseDetailResponseDto(
         String title,
         String introduction,
-        String tutor,
+        String instructor,
         LocalDate beginDate,
         LocalDate endDate,
         CourseState state,
@@ -24,9 +24,10 @@ public record CourseDetailResponseDto(
         return CourseDetailResponseDto.builder()
                 .title(course.getTitle())
                 .introduction(course.getIntroduction())
-                .tutor(course.getTutor().getName())
-                .beginDate(course.getBeginDate())
-                .endDate(course.getEndDate())
+                .instructor(course.getInstructor())
+                // Todo 코스디테일 반환시 CourseProvide 의 beginDate, endDate 함께 반환하도록 Dto 수정
+//                .beginDate(course.getBeginDate())
+//                .endDate(course.getEndDate())
                 .state(course.getState())
                 .category(course.getCategory())
                 .curriculumList(curriculumList)

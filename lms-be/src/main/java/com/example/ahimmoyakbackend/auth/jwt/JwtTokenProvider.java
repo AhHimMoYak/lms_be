@@ -51,13 +51,13 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public String createAccessToken(String username, String email, boolean isTutor) {
+    public String createAccessToken(String username, String email, UserRole role) {
         Date date = new Date();
         long time = ACCESS_TIME;
         return BEARER_PREFIX + Jwts.builder()
                 .subject(username)
                 .claim("email", email)
-                .claim("tutor", isTutor)
+                .claim("tutor", role)
                 .issuer("Ahimmoyak")
                 .issuedAt(date)
                 .expiration(new Date(date.getTime() + time))
@@ -79,9 +79,9 @@ public class JwtTokenProvider {
 
 
 
-    public JwsDTO createAllToken(String userId, String email, boolean isTutor) {
+    public JwsDTO createAllToken(String userId, String email, UserRole role) {
         return JwsDTO.builder()
-                .accessToken(createAccessToken(userId, email, isTutor))
+                .accessToken(createAccessToken(userId, email, role))
                 .refreshToken(createRefreshToken(userId))
                 .build();
     }

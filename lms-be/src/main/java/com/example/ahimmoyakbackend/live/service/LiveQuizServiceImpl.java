@@ -36,9 +36,10 @@ public class LiveQuizServiceImpl implements LiveQuizService {
     public boolean create(UserDetails userDetails, long liveId, LiveQuizCreateRequestDto requestDto) {
         User user = userService.getAuth(userDetails);
         LiveStreaming live = liveStreamingRepository.findById(liveId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "라이브를 찾을 수 없습니다."));
-        if(!live.getCourse().getTutor().equals(user)) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 라이브에 퀴즈를 만들 수 있습니다.");
-        }
+        // Todo 라이브퀴즈 생성시 교육기관 매니저 권한 확인하도록 해야함
+//        if(!live.getCourse().getTutor().equals(user)) {
+//            throw new ApiException(HttpStatus.UNAUTHORIZED, "강사만 라이브에 퀴즈를 만들 수 있습니다.");
+//        }
         try {
             LiveQuiz liveQuiz = liveQuizRepository.save(requestDto.toEntity(live));
             liveQuizOptionRepository.saveAll(requestDto.options().stream()

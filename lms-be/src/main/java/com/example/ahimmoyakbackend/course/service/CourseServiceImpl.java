@@ -37,17 +37,19 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
+    // Todo 코스 생성시 교육기관 정보도 들어가도록 수정필요
     public Long create(UserDetails userDetails, CourseCreateRequestDto requestDto) {
-        return courseRepository.save(requestDto.toEntity(userService.getAuth(userDetails))).getId();
+        return courseRepository.save(requestDto.toEntity()).getId();
     }
 
     @Override
     @Transactional
     public boolean update(UserDetails userDetails, long id, CourseCreateRequestDto requestDto) {
         Course course = courseRepository.findById(id).orElse(null);
-        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
-            return false;
-        }
+        // Todo 코스 업데이트시 교육기관 매니저만 수정가능하도록 권한 확인 해야함 (아래 주석 참고)
+//        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
+//            return false;
+//        }
         courseRepository.save(course.patch(requestDto));
         return true;
     }
@@ -56,9 +58,10 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public boolean delete(UserDetails userDetails, long id) {
         Course course = courseRepository.findById(id).orElse(null);
-        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
-            return false;
-        }
+        // Todo 코스 삭제시 교육기관 매니저만 삭제가능하도록 권한 확인 해야함 (아래 주석 참고)
+//        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
+//            return false;
+//        }
         courseRepository.save(course.setState(CourseState.REMOVED));
         return true;
     }
@@ -67,7 +70,10 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseListResponseDto> getList(UserDetails userDetails) {
         User user = userService.getAuth(userDetails);
         List<Course> courseList;
-        if (user.isTutorState()){
+        // Todo 코스 리스트 받아올 때 강사의 리스트가 아닌, 매니저에 대해 해당 교육기관의 모든 코스 찾아오도록 수정해야함
+        if ( true
+//                user.isTutorState()
+        ){
             courseList = courseRepository.findAllByTutor(user);
         }else {
             courseList = courseRepository.findAllByEnrollments_User(user);

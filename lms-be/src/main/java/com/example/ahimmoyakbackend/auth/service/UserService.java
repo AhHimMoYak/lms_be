@@ -1,5 +1,6 @@
 package com.example.ahimmoyakbackend.auth.service;
 
+import com.example.ahimmoyakbackend.auth.common.UserRole;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.auth.dto.*;
 import com.example.ahimmoyakbackend.auth.entity.User;
@@ -33,7 +34,7 @@ public class UserService {
                 .birth(requestDto.getBirth())
                 .email(requestDto.getEmail())
                 .gender(requestDto.getGender())
-                .tutorState(requestDto.isTutorState())
+                .role(UserRole.NORMAL)
                 .build();
 
         userRepository.save(user);
@@ -52,7 +53,7 @@ public class UserService {
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
 
-        JwsDTO jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.isTutorState());
+        JwsDTO jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.getRole());
 
         response.addHeader(JwtTokenProvider.ACCESS_TOKEN, jwsDto.getAccessToken());
         response.addHeader(JwtTokenProvider.REFRESH_TOKEN, jwsDto.getRefreshToken());

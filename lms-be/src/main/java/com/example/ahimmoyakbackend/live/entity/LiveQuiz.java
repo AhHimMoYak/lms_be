@@ -32,6 +32,7 @@ public class LiveQuiz extends Timestamped {
     private LiveStreaming liveStreaming;
 
     @Setter
+    @Builder.Default
     @OneToMany(mappedBy = "liveQuiz", orphanRemoval = true)
     private List<LiveQuizOption> liveQuizOptions = new ArrayList<>();
 

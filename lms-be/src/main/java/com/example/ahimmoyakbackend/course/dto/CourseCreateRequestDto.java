@@ -12,19 +12,17 @@ import java.time.LocalDate;
 public record CourseCreateRequestDto(
    String title,
    String introduction,
-   LocalDate beginDate,
-   LocalDate endDate,
+   String instructor,
    CourseCategory category
 ) {
-    public Course toEntity(User tutor) {
+    // Todo 코스 생성시 교육기관 정보가 들어가도록 수정해야함
+    public Course toEntity() {
         return Course.builder()
                 .title(this.title)
                 .introduction(this.introduction)
-                .beginDate(this.beginDate)
-                .endDate(this.endDate)
                 .category(this.category)
-                .state(CourseState.NOT_STARTED)
-                .tutor(tutor)
+                .state(CourseState.AVAILABLE)
+                .instructor(this.instructor)
                 .build();
     }
 }

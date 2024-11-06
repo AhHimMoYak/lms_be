@@ -22,9 +22,10 @@ public class CurriculumServiceImpl implements CurriculumService {
     @Transactional
     public Long add(UserDetails userDetails, long courseId, String curriculumTitle) {
         Course course = courseRepository.findById(courseId).orElse(null);
-        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
-            return null;
-        }
+        // Todo 커리큘럼 추가시 해당 코스의 교육기관의 매니저인지 권한 확인 필요
+//        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
+//            return null;
+//        }
         long count = curriculumRepository.countByCourse(course);
         return curriculumRepository.save(Curriculum.builder()
                 .title(curriculumTitle)
@@ -38,9 +39,10 @@ public class CurriculumServiceImpl implements CurriculumService {
     @Transactional
     public boolean update(UserDetails userDetails, long curriculumId, String curriculumTitle) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
-        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))) {
-            return false;
-        }
+        // Todo 커리큘럼 수정시 해당 코스의 교육기관의 매니저인지 권한 확인 필요
+//        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))) {
+//            return false;
+//        }
         curriculumRepository.save(curriculum.patch(curriculumTitle));
         return true;
     }
@@ -49,9 +51,10 @@ public class CurriculumServiceImpl implements CurriculumService {
     @Transactional
     public boolean delete(UserDetails userDetails, long curriculumId) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
-        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))|| !curriculum.getContentsList().isEmpty()) {
-            return false;
-        }
+        // Todo 커리큘럼 삭제시 해당 코스의 교육기관의 매니저인지 권한 확인 필요
+//        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))|| !curriculum.getContentsList().isEmpty()) {
+//            return false;
+//        }
         curriculumRepository.delete(curriculum);
         return true;
     }

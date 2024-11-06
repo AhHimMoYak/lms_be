@@ -30,7 +30,7 @@ public class LiveCourseResponseDTO {
                 .title(liveStreaming.getTitle())
                 .course(course.getTitle())
                 .courseId(course.getId())
-                .instructor(course.getTutor().getName())
+                .instructor(course.getInstructor())
                 .startTime(liveStreaming.getStartTime())
                 .endTime(liveStreaming.getEndTime())
                 .state(liveStreaming.getState())

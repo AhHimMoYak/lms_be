@@ -41,9 +41,10 @@ public class ContentsServiceImpl implements ContentsService {
         if (curriculum == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "존재하지 않는 커리큘럼입니다.");
         }
-        if (!curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 코스의 튜터만 접근가능합니다.");
-        }
+        // Todo 코스에 컨텐츠 추가시 권한 확인하는 기능, 교육기관 매니저인지 확인해야함 (아래 주석부분 참고)
+//        if (!curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))) {
+//            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 코스의 튜터만 접근가능합니다.");
+//        }
         long count = contentsRepository.countByCurriculum(curriculum);
         FileInfoDto fileInfo = fileService.saveFile(requestDto.getFile(), requestDto.getType());
         Contents contents = contentsRepository.save(requestDto.toDto(curriculum, (int) count + 1));

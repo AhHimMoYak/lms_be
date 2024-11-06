@@ -38,7 +38,5 @@ public class Company extends Timestamped {
     @Column(length = 20, nullable = false)
     private String phone;
 
-    @OneToMany(mappedBy = "company")
-    private List<Affiliation> affiliations = new ArrayList<>();
 
 }
