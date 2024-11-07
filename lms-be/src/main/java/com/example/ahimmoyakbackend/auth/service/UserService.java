@@ -8,17 +8,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
-    MessageResponseDto createUser(UserJoinRequestDTO requestDto);
+    MessageResponseDto createUser(UserJoinRequestDto requestDto);
 
-    MessageResponseDto login(UserLoginRequestDTO requestDTO, HttpServletResponse response);
+    MessageResponseDto login(UserLoginRequestDto requestDTO, HttpServletResponse response);
 
     MessageResponseDto reissue();
 
-    MessageResponseDto checkExistName(ExistNameRequestDTO requestDTO);
+    MessageResponseDto checkExistName(ExistNameRequestDto requestDTO);
 
-    MessageResponseDto checkVerification(UserVerificationRequestDTO requestDTO, UserDetailsImpl userDetails);
+    MessageResponseDto checkVerification(UserVerificationRequestDto requestDTO, UserDetailsImpl userDetails);
 
-    MessageResponseDto updatePersonalInformation(UserInformationRequestDTO requestDTO, UserDetailsImpl userDetails);
+    MessageResponseDto updatePersonalInformation(UserInformationRequestDto requestDTO, UserDetailsImpl userDetails);
 
     UserInformationResponseDto getPersonalInformation(UserIdentificationRequestDto requestDto);
 

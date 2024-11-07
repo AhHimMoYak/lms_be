@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public MessageResponseDto createUser(UserJoinRequestDTO requestDto) {
+    public MessageResponseDto createUser(UserJoinRequestDto requestDto) {
 
         User user = User.builder()
                 .username(requestDto.getUsername())
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public MessageResponseDto login(UserLoginRequestDTO requestDTO, HttpServletResponse response) {
+    public MessageResponseDto login(UserLoginRequestDto requestDTO, HttpServletResponse response) {
         User findUser = userRepository.findByUsername(requestDTO.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("잘못된 요청입니다.")
         );
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
 
-        JwsDTO jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.getRole());
+        JwsDto jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.getRole());
 
         response.addHeader(JwtTokenProvider.ACCESS_TOKEN, jwsDto.getAccessToken());
         response.addHeader(JwtTokenProvider.REFRESH_TOKEN, jwsDto.getRefreshToken());
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public MessageResponseDto checkExistName(ExistNameRequestDTO requestDTO) {
+    public MessageResponseDto checkExistName(ExistNameRequestDto requestDTO) {
         try {
             if(!userRepository.existsByUsername(requestDTO.getUsername())) {
                 throw new IllegalArgumentException("잘못된 요청입니다.");
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public MessageResponseDto checkVerification(UserVerificationRequestDTO requestDTO, UserDetailsImpl userDetails) {
+    public MessageResponseDto checkVerification(UserVerificationRequestDto requestDTO, UserDetailsImpl userDetails) {
         User findUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("잘못된 요청입니다.")
         );
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    public MessageResponseDto updatePersonalInformation(UserInformationRequestDTO requestDTO, UserDetailsImpl userDetails) {
+    public MessageResponseDto updatePersonalInformation(UserInformationRequestDto requestDTO, UserDetailsImpl userDetails) {
         User findUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new IllegalArgumentException("잘못된 요청입니다.")
         );

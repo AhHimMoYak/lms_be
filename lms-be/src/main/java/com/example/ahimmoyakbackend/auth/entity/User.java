@@ -2,7 +2,7 @@ package com.example.ahimmoyakbackend.auth.entity;
 
 import com.example.ahimmoyakbackend.auth.common.Gender;
 import com.example.ahimmoyakbackend.auth.common.UserRole;
-import com.example.ahimmoyakbackend.auth.dto.UserInformationRequestDTO;
+import com.example.ahimmoyakbackend.auth.dto.UserInformationRequestDto;
 import com.example.ahimmoyakbackend.company.entity.Affiliation;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
 import com.example.ahimmoyakbackend.institution.entity.Manager;
@@ -59,7 +59,7 @@ public class User extends Timestamped {
     private Affiliation affiliation;
 
 
-    public void patch(UserInformationRequestDTO requestDTO, String passwordEncoder) {
+    public void patch(UserInformationRequestDto requestDTO, String passwordEncoder) {
         if (passwordEncoder != null) {
             this.password = passwordEncoder;
         }
