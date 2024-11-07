@@ -2,6 +2,7 @@ package com.example.ahimmoyakbackend.course.service;
 
 import com.example.ahimmoyakbackend.auth.service.UserService;
 import com.example.ahimmoyakbackend.course.common.ContentType;
+import com.example.ahimmoyakbackend.course.dto.ContentUpdateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsInfoResponseDto;
 import com.example.ahimmoyakbackend.course.dto.FileInfoDto;
@@ -86,5 +87,11 @@ public class ContentsServiceImpl implements ContentsService {
             fileInfo = contentsMaterial.getSavedName() + contentsMaterial.getPostfix();
         }
         return ContentsInfoResponseDto.from(contents, fileInfo);
+    }
+
+    @Override
+    public String Update(UserDetails userDetails, Long curriculumId, ContentUpdateRequestDto requestDto) {
+
+        return "";
     }
 }
