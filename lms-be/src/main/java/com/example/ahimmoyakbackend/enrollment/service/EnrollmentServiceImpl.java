@@ -88,13 +88,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("코스정보가 존재하지 않습니다 "));
 
-        Optional<Enrollment> enrollmentOptional = enrollmentRepository.findByUserIdAndCourseId(user.getId(), course.getId());
+//        Optional<Enrollment> enrollmentOptional = enrollmentRepository.findByUserIdAndCourseId(user.getId(), course.getId());
 
-        Long enrollmentId = enrollmentOptional.map(Enrollment::getId).orElse(null);
+//        Long enrollmentId = enrollmentOptional.map(Enrollment::getId).orElse(null);
 
-        return EnrollmentIdResponseDto.builder()
-                .id(enrollmentId)
-                .build();
+//        return EnrollmentIdResponseDto.builder()
+//                .id(enrollmentId)
+//                .build();
+
+        return null;
     }
 
     @Override
