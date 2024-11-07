@@ -2,6 +2,7 @@ package com.example.ahimmoyakbackend.course.controller;
 
 import com.example.ahimmoyakbackend.course.dto.CurriculumCreateRequestDto;
 import com.example.ahimmoyakbackend.course.service.CurriculumService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,19 +26,20 @@ public class CurriculumController {
     }
 
     @PatchMapping("/curriculum/{curriculumId}")
-    public ResponseEntity<String> updateCurriculum(
+    public ResponseEntity<MessageResponseDto> updateCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
             @RequestBody CurriculumCreateRequestDto requestDto,
             @PathVariable String courseId) {
-        return curriculumService.update(userDetails, curriculumId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 수정 성공") : ResponseEntity.badRequest().body("커리큘럼 수정 실패");
+
+        return ResponseEntity.ok(curriculumService.update(userDetails, curriculumId, requestDto.title()));
     }
 
     @DeleteMapping("/curriculum/{curriculumId}")
-    public ResponseEntity<String> deleteCurriculum(
+    public ResponseEntity<MessageResponseDto> deleteCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
             @PathVariable String courseId) {
-        return curriculumService.delete(userDetails, curriculumId) ? ResponseEntity.ok("커리큘럼 삭제 성공") : ResponseEntity.badRequest().body("커리큘럼 삭제 실패");
+        return ResponseEntity.ok(curriculumService.delete(userDetails, curriculumId));
     }
 }

@@ -3,6 +3,7 @@ package com.example.ahimmoyakbackend.course.controller;
 import com.example.ahimmoyakbackend.course.dto.ContentsCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsInfoResponseDto;
 import com.example.ahimmoyakbackend.course.service.ContentsService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +18,12 @@ public class ContentsController {
     private final ContentsService contentsService;
 
     @PostMapping
-    public ResponseEntity<String> addContents(
+    public ResponseEntity<MessageResponseDto> addContents(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
             @ModelAttribute ContentsCreateRequestDto requestDto
     ){
-        return contentsService.add(userDetails, curriculumId, requestDto) ? ResponseEntity.ok("콘텐츠 등록 성공") : ResponseEntity.badRequest().body("콘텐츠 등록 실패");
+        return ResponseEntity.ok(contentsService.add(userDetails, curriculumId, requestDto));
     }
 
     @GetMapping("/{contentsId}")

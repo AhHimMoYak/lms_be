@@ -1,6 +1,7 @@
 package com.example.ahimmoyakbackend.institution.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import com.example.ahimmoyakbackend.institution.dto.CreateInstitutionRequestDto;
 import com.example.ahimmoyakbackend.institution.dto.CreateInstitutionResponseDto;
 import com.example.ahimmoyakbackend.institution.dto.UserInstitutionIdResponseDto;
@@ -18,13 +19,11 @@ public class InstitutionController {
     private final InstitutionService institutionServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<String> createInstitution(
+    public ResponseEntity<MessageResponseDto> createInstitution(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateInstitutionRequestDto requestDto
     ){
-        return institutionServiceImpl.createInstitution(userDetails, requestDto)
-                ? ResponseEntity.ok("회사 등록 성공")
-                : ResponseEntity.badRequest().body("회사 등록 실패");
+        return ResponseEntity.ok(institutionServiceImpl.createInstitution(userDetails, requestDto));
     }
 
     @GetMapping()
@@ -35,13 +34,11 @@ public class InstitutionController {
     }
 
     @PatchMapping()
-    public ResponseEntity<String> updateInstitution(
+    public ResponseEntity<MessageResponseDto> updateInstitution(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateInstitutionRequestDto requestDto
     ){
-        return institutionServiceImpl.updateInstitution(userDetails, requestDto)
-                ? ResponseEntity.ok("회사 수정 성공")
-                : ResponseEntity.badRequest().body("회사 수정 실패");
+        return ResponseEntity.ok(institutionServiceImpl.createInstitution(userDetails, requestDto));
     }
 
     public ResponseEntity<UserInstitutionIdResponseDto> getInstitutionId(
