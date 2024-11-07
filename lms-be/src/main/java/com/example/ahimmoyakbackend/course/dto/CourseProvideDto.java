@@ -10,7 +10,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record CourseProvideDetailDto(
+public record CourseProvideDto(
         Long courseProvideId,
         String courseTitle,
         String companyName,
@@ -21,8 +21,8 @@ public record CourseProvideDetailDto(
         long attendeeCount,
         long deposit
 ) {
-    public static CourseProvideDetailDto from(CourseProvide courseProvide, Course course, Company company, Institution institution) {
-        return CourseProvideDetailDto.builder()
+    public static CourseProvideDto from(CourseProvide courseProvide, Course course, Company company, Institution institution) {
+        return CourseProvideDto.builder()
                 .courseProvideId(courseProvide.getId())
                 .courseTitle(course.getTitle())
                 .companyName(company.getName())

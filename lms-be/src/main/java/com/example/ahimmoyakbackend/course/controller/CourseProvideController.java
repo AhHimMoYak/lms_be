@@ -1,6 +1,7 @@
 package com.example.ahimmoyakbackend.course.controller;
 
-import com.example.ahimmoyakbackend.course.dto.*;
+import com.example.ahimmoyakbackend.course.dto.CourseProvideDetailResponseDto;
+import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
 import com.example.ahimmoyakbackend.course.service.CourseProvideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,27 +18,27 @@ public class CourseProvideController {
     private final CourseProvideService courseProvideService;
 
     @GetMapping("1")
-    public ResponseEntity<CourseProvideDetailByCompanyResponseDto> getCourseDetailByCompany(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CourseProvideDetailResponseDto> getCourseDetailByCompany(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(courseProvideService.getCourseDetailByCompany(userDetails));
     }
 
     @GetMapping("2")
-    public ResponseEntity<CourseProvideDetailByInstitutionResponseDto> getCourseDetailByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CourseProvideDetailResponseDto> getCourseDetailByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(courseProvideService.getCourseDetailByInstitution(userDetails));
     }
 
     @GetMapping("3")
-    public ResponseEntity<CourseProvideDetailByEmployeeResponseDto> getCourseDetailByEmployee(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CourseProvideDetailResponseDto> getCourseDetailByEmployee(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(courseProvideService.getCourseDetailByEmployee(userDetails));
     }
 
     @GetMapping("4")
-    public ResponseEntity<CourseProvideGetCourseListByInstitutionResponseDto> getCourseListByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CourseProvidesResponseDto> getCourseListByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(courseProvideService.getCourseListByInstitution(userDetails));
     }
 
     @GetMapping("5")
-    public ResponseEntity<CourseProvideGetCourseListByEmployeeResponseDto> getCourseListByEmployee(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CourseProvidesResponseDto> getCourseListByEmployee(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(courseProvideService.getCourseListByEmployee(userDetails));
     }
 
