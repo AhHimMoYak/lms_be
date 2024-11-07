@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,14 +70,14 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseListResponseDto> getList(UserDetails userDetails) {
         User user = userService.getAuth(userDetails);
-        List<Course> courseList;
+        List<Course> courseList = new ArrayList<>();
         // Todo 코스 리스트 받아올 때 강사의 리스트가 아닌, 매니저에 대해 해당 교육기관의 모든 코스 찾아오도록 수정해야함
         if ( true
 //                user.isTutorState()
         ){
-            courseList = courseRepository.findAllByTutor(user);
+//            courseList = courseRepository.findAllByTutor(user);
         }else {
-            courseList = courseRepository.findAllByEnrollments_User(user);
+//            courseList = courseRepository.findAllByEnrollments_User(user);
         }
         return courseList.stream()
                 .map(CourseListResponseDto::from)

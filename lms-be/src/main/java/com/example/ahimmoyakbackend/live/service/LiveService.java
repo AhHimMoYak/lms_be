@@ -61,17 +61,21 @@ public class LiveService {
     public List<LiveCourseResponseDTO> getLiveListByCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "코스를 찾을 수 없습니다."));
-        return liveStreamingRepository.findByCourse(course).stream()
-                .map(entity -> LiveCourseResponseDTO.from(entity, course))
-                .toList();
+//        return liveStreamingRepository.findByCourse(course).stream()
+//                .map(entity -> LiveCourseResponseDTO.from(entity, course))
+//                .toList();
+
+        return null;
 
     }
 
     public List<LiveTutorResponseDTO> getLiveListByTutor(UserDetails userDetails) {
-        User tutor = userService.getAuth(userDetails);
-        return liveStreamingRepository.findByCourse_Tutor(tutor).stream()
-                .map(entity -> LiveTutorResponseDTO.from(entity, tutor))
-                .toList();
+//        User tutor = userService.getAuth(userDetails);
+//        return liveStreamingRepository.findByCourse_Tutor(tutor).stream()
+//                .map(entity -> LiveTutorResponseDTO.from(entity, tutor))
+//                .toList();
+
+        return null;
     }
 
     @Transactional
