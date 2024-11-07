@@ -4,7 +4,6 @@ import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.auth.dto.*;
 import com.example.ahimmoyakbackend.auth.service.UserService;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
-import com.example.ahimmoyakbackend.global.exception.ApiException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
