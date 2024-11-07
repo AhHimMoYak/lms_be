@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVerificationRequestDTO {
+public class UserInformationRequestDto {
     private String password;
+    private String phone;
+    private String email;
 }

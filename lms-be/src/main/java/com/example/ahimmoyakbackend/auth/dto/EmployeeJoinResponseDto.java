@@ -1,13 +1,14 @@
 package com.example.ahimmoyakbackend.auth.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeJoinRequestDTO {
-    private String departmentId;
-    private String companyId;
+@AllArgsConstructor
+public class EmployeeJoinResponseDto {
+    private String message;
 }
