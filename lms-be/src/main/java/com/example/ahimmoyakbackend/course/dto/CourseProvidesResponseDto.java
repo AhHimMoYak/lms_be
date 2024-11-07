@@ -6,11 +6,11 @@ import java.util.List;
 
 @Builder
 public record CourseProvidesResponseDto(
-        List<CourseDetailResponseDto> courseDetailResponseDtoList
+        List<CourseProvideDto> courseDetailResponseDtoList
 ) {
-    public static CourseProvidesResponseDto from(List<CourseDetailResponseDto> courseDetailResponseDtoList) {
+    public static CourseProvidesResponseDto from(List<CourseProvideDto> courseProvideDtoList) {
         return CourseProvidesResponseDto.builder()
-                .courseDetailResponseDtoList(courseDetailResponseDtoList)
+                .courseDetailResponseDtoList(courseProvideDtoList)
                 .build();
     }
 }
