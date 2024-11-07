@@ -2,20 +2,18 @@ package com.example.ahimmoyakbackend.enrollment.service;
 
 import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.auth.service.UserService;
-import com.example.ahimmoyakbackend.course.common.EnrollmentState;
 import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
+import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentConfirmRequestDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentIdResponseDto;
-import com.example.ahimmoyakbackend.global.exception.ApiException;
+import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentSubmitEmployeeListRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -97,5 +95,17 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return EnrollmentIdResponseDto.builder()
                 .id(enrollmentId)
                 .build();
+    }
+
+    @Override
+    public String submitEmployeeListForEnrollment(UserDetails userDetails, EnrollmentSubmitEmployeeListRequestDto requestDto) {
+
+        return "";
+    }
+
+    @Override
+    public String confirmEnrollments(UserDetails userDetails, EnrollmentConfirmRequestDto requestDto) {
+
+        return "";
     }
 }
