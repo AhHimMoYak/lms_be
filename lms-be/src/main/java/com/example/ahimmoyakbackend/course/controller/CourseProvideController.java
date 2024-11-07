@@ -18,8 +18,8 @@ public class CourseProvideController {
     private final CourseProvideService courseProvideService;
 
     @GetMapping("1")
-    public ResponseEntity<CourseProvideDetailResponseDto> getCourseDetailByCompany(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(courseProvideService.getCourseDetailByCompany(userDetails));
+    public ResponseEntity<CourseProvideDetailResponseDto> getCourseDetail(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(courseProvideService.getCourseDetail(userDetails));
     }
 
     @GetMapping("2")
