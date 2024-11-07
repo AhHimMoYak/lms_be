@@ -9,6 +9,7 @@ import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentConfirmRequestDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentIdResponseDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentSubmitEmployeeListRequestDto;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -100,14 +101,18 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public String submitEmployeeListForEnrollment(UserDetails userDetails, EnrollmentSubmitEmployeeListRequestDto requestDto) {
+    public MessageResponseDto submitEmployeeListForEnrollment(UserDetails userDetails, EnrollmentSubmitEmployeeListRequestDto requestDto) {
 
-        return "";
+        return MessageResponseDto.builder()
+                .message("")
+                .build();
     }
 
     @Override
-    public String confirmEnrollments(UserDetails userDetails, EnrollmentConfirmRequestDto requestDto) {
+    public MessageResponseDto confirmEnrollments(UserDetails userDetails, EnrollmentConfirmRequestDto requestDto) {
 
-        return "";
+        return MessageResponseDto.builder()
+                .message("")
+                .build();
     }
 }

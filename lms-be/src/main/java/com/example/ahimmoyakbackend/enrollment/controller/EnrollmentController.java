@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentConfirmRequestDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentIdResponseDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentSubmitEmployeeListRequestDto;
 import com.example.ahimmoyakbackend.enrollment.service.EnrollmentService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,19 +65,19 @@ public class EnrollmentController {
         return ResponseEntity.status(HttpStatus.OK).body(getEnrolled);
     }
 
-    public ResponseEntity<String> submitEmployeeListForEnrollment(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(@AuthenticationPrincipal UserDetails userDetails,
                                                                   @RequestBody EnrollmentSubmitEmployeeListRequestDto requestDto){
-        String target = enrollmentService.submitEmployeeListForEnrollment(userDetails, requestDto);
+        MessageResponseDto responseDto = enrollmentService.submitEmployeeListForEnrollment(userDetails, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(target);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
     }
 
-    public  ResponseEntity<String> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
-                                                      @RequestBody EnrollmentConfirmRequestDto requestDto){
-        String target = enrollmentService.confirmEnrollments(userDetails, requestDto);
+    public  ResponseEntity<MessageResponseDto> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
+                                                                  @RequestBody EnrollmentConfirmRequestDto requestDto){
+        MessageResponseDto responseDto = enrollmentService.confirmEnrollments(userDetails, requestDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(target);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
 

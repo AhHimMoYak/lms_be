@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.course.dto.ContentUpdateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsInfoResponseDto;
 import com.example.ahimmoyakbackend.course.service.ContentsService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +33,12 @@ public class ContentsController {
         return ResponseEntity.ok(contentsService.getInfo(contentsId));
     }
 
-    public ResponseEntity<String> updateContent(@AuthenticationPrincipal UserDetails userDetails,
-                                                @PathVariable("curriculumId") Long curriculumId,
-                                                @ModelAttribute ContentUpdateRequestDto requestDto
+    public ResponseEntity<MessageResponseDto> updateContent(@AuthenticationPrincipal UserDetails userDetails,
+                                                            @PathVariable("curriculumId") Long curriculumId,
+                                                            @ModelAttribute ContentUpdateRequestDto requestDto
     ){
-        String target = contentsService.Update(userDetails, curriculumId, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(target);
+        MessageResponseDto responseDto = contentsService.Update(userDetails, curriculumId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
     }
 
