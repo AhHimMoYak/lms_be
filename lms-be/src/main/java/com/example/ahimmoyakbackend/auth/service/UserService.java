@@ -12,13 +12,13 @@ public interface UserService {
 
     MessageResponseDto login(UserLoginRequestDTO requestDTO, HttpServletResponse response);
 
-    UserReissueResponseDTO reissue();
+    MessageResponseDto reissue();
 
-    ExistNameResponseDTO checkExistName(ExistNameRequestDTO requestDTO);
+    MessageResponseDto checkExistName(ExistNameRequestDTO requestDTO);
 
-    UserVerificationResponseDTO checkVerification(UserVerificationRequestDTO requestDTO, UserDetailsImpl userDetails);
+    MessageResponseDto checkVerification(UserVerificationRequestDTO requestDTO, UserDetailsImpl userDetails);
 
-    UserInformationResponseDto updatePersonalInformation(UserInformationRequestDTO requestDTO, UserDetailsImpl userDetails);
+    MessageResponseDto updatePersonalInformation(UserInformationRequestDTO requestDTO, UserDetailsImpl userDetails);
 
     UserInformationResponseDto getPersonalInformation(UserIdentificationRequestDto requestDto);
 

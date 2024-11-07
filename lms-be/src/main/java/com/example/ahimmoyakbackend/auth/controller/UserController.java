@@ -37,26 +37,26 @@ public class UserController {
 
 
     @PostMapping("/reissue")
-    public ResponseEntity<UserReissueResponseDTO> checkRefreshToken() {
-        UserReissueResponseDTO responseDto = userService.reissue();
+    public ResponseEntity<MessageResponseDto> checkRefreshToken() {
+        MessageResponseDto responseDto = userService.reissue();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PostMapping("/exist/name")
-    public ResponseEntity<ExistNameResponseDTO> checkExistName(@RequestBody ExistNameRequestDTO requestDTO){
-        ExistNameResponseDTO responseDTO = userService.checkExistName(requestDTO);
+    public ResponseEntity<MessageResponseDto> checkExistName(@RequestBody ExistNameRequestDTO requestDTO){
+        MessageResponseDto responseDTO = userService.checkExistName(requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
 
     @PostMapping("/user/verification")
-    public ResponseEntity<UserVerificationResponseDTO> checkVerification(@RequestBody UserVerificationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserVerificationResponseDTO responseDTO = userService.checkVerification(requestDTO, userDetails);
+    public ResponseEntity<MessageResponseDto> checkVerification(@RequestBody UserVerificationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        MessageResponseDto responseDTO = userService.checkVerification(requestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @PostMapping("/user/update")
-    public ResponseEntity<UserInformationResponseDto> updatePersonalInformation(@RequestBody UserInformationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserInformationResponseDto responseDTO = userService.updatePersonalInformation(requestDTO, userDetails);
+    public ResponseEntity<MessageResponseDto> updatePersonalInformation(@RequestBody UserInformationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        MessageResponseDto responseDTO = userService.updatePersonalInformation(requestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
