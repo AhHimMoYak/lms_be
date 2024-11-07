@@ -28,16 +28,16 @@ public class CurriculumController {
     public ResponseEntity<String> updateCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
-            @RequestBody CurriculumCreateRequestDto requestDto
-            ) {
+            @RequestBody CurriculumCreateRequestDto requestDto,
+            @PathVariable String courseId) {
         return curriculumService.update(userDetails, curriculumId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 수정 성공") : ResponseEntity.badRequest().body("커리큘럼 수정 실패");
     }
 
     @DeleteMapping("/curriculum/{curriculumId}")
     public ResponseEntity<String> deleteCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable("curriculumId") long curriculumId
-    ) {
+            @PathVariable("curriculumId") long curriculumId,
+            @PathVariable String courseId) {
         return curriculumService.delete(userDetails, curriculumId) ? ResponseEntity.ok("커리큘럼 삭제 성공") : ResponseEntity.badRequest().body("커리큘럼 삭제 실패");
     }
 }
