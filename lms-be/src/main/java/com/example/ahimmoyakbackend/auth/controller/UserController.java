@@ -3,6 +3,8 @@ package com.example.ahimmoyakbackend.auth.controller;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.auth.dto.*;
 import com.example.ahimmoyakbackend.auth.service.UserService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
+import com.example.ahimmoyakbackend.global.exception.ApiException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -21,15 +23,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public ResponseEntity<UserJoinResponseDTO> join(@RequestBody @Valid UserJoinRequestDTO requestDto) {
-        UserJoinResponseDTO created = userService.create(requestDto);
+    public ResponseEntity<MessageResponseDto> join(@RequestBody @Valid UserJoinRequestDTO requestDto) {
+        MessageResponseDto created = userService.createUser(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(created);
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody UserLoginRequestDTO requestDto, HttpServletResponse response) {
-        UserLoginResponseDTO responseDto = userService.login(requestDto, response);
+    public ResponseEntity<MessageResponseDto> login(@RequestBody UserLoginRequestDTO requestDto, HttpServletResponse response) {
+        MessageResponseDto responseDto = userService.login(requestDto, response);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -53,13 +55,20 @@ public class UserController {
     }
 
     @PostMapping("/user/update")
-    public ResponseEntity<UserInformationResponseDTO> updatePersonalInformation(@RequestBody UserInformationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserInformationResponseDTO responseDTO = userService.updatePersonalInformation(requestDTO, userDetails);
+    public ResponseEntity<UserInformationResponseDto> updatePersonalInformation(@RequestBody UserInformationRequestDTO requestDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UserInformationResponseDto responseDTO = userService.updatePersonalInformation(requestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @GetMapping("/v1/manager/test")
-    public ResponseEntity<Object> test() {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @PostMapping()
+    public ResponseEntity<UserInformationResponseDto> checkUser(@RequestBody UserIdentificationRequestDto requestDto){
+        UserInformationResponseDto responseDto = userService.getPersonalInformation(requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PostMapping()
+    public ResponseEntity<MessageResponseDto> disconnectCompany(@RequestBody FormerCompanyInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        MessageResponseDto responseDto = userService.disconnectCompany(requestDto, userDetails);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
