@@ -44,7 +44,6 @@ public class InstitutionController {
                 : ResponseEntity.badRequest().body("회사 수정 실패");
     }
 
-    @GetMapping()
     public ResponseEntity<UserInstitutionIdResponseDto> getInstitutionId(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
