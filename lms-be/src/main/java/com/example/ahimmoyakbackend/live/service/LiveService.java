@@ -109,4 +109,8 @@ public class LiveService {
         chatService.deleteAll(liveId);
         log.info("Close live streaming. stream_key: {}, tutor_id: {}", liveId, keyAndTutor[1]);
     }
+
+    public boolean updateLive() {
+        return false;
+    }
 }
