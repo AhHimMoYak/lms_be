@@ -1,6 +1,8 @@
 package com.example.ahimmoyakbackend.enrollment.controller;
 
+import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentConfirmRequestDto;
 import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentIdResponseDto;
+import com.example.ahimmoyakbackend.enrollment.dto.EnrollmentSubmitEmployeeListRequestDto;
 import com.example.ahimmoyakbackend.enrollment.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -61,4 +63,21 @@ public class EnrollmentController {
         EnrollmentIdResponseDto getEnrolled = enrollmentService.getEnrollId(userDetails, courseId);
         return ResponseEntity.status(HttpStatus.OK).body(getEnrolled);
     }
+
+    public ResponseEntity<String> submitEmployeeListForEnrollment(@AuthenticationPrincipal UserDetails userDetails,
+                                                                  @RequestBody EnrollmentSubmitEmployeeListRequestDto requestDto){
+        String target = enrollmentService.submitEmployeeListForEnrollment(userDetails, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(target);
+
+    }
+
+    public  ResponseEntity<String> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
+                                                      @RequestBody EnrollmentConfirmRequestDto requestDto){
+        String target = enrollmentService.confirmEnrollments(userDetails, requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(target);
+    }
+
+
 }
