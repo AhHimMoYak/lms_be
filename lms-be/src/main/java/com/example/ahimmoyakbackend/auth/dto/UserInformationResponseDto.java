@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInformationResponseDTO {
-    private String message;
+public class UserInformationResponseDto {
+    private String name;
+    private String username;
+    private String birth;
+    private String phone;
+    private String email;
+    private String gender;
 }
