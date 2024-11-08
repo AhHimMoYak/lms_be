@@ -2,6 +2,7 @@ package com.example.ahimmoyakbackend.course.service;
 
 import com.example.ahimmoyakbackend.auth.service.UserService;
 import com.example.ahimmoyakbackend.course.common.ContentType;
+import com.example.ahimmoyakbackend.course.dto.ContentUpdateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.ContentsInfoResponseDto;
 import com.example.ahimmoyakbackend.course.dto.FileInfoDto;
@@ -13,6 +14,7 @@ import com.example.ahimmoyakbackend.course.repository.ContentsMaterialRepository
 import com.example.ahimmoyakbackend.course.repository.ContentsRepository;
 import com.example.ahimmoyakbackend.course.repository.ContentsVideoRepository;
 import com.example.ahimmoyakbackend.course.repository.CurriculumRepository;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import com.example.ahimmoyakbackend.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,7 @@ public class ContentsServiceImpl implements ContentsService {
 
     @Override
     @Transactional
-    public boolean add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto) {
+    public MessageResponseDto add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
         if (curriculum == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "존재하지 않는 커리큘럼입니다.");
@@ -48,7 +50,7 @@ public class ContentsServiceImpl implements ContentsService {
         long count = contentsRepository.countByCurriculum(curriculum);
         FileInfoDto fileInfo = fileService.saveFile(requestDto.getFile(), requestDto.getType());
         Contents contents = contentsRepository.save(requestDto.toDto(curriculum, (int) count + 1));
-        if(requestDto.getType().equals(ContentType.VIDEO)) {
+        if (requestDto.getType().equals(ContentType.VIDEO)) {
             contentsVideoRepository.save(ContentsVideo.builder()
                     .contents(contents)
                     .path(fileInfo.path())
@@ -58,7 +60,7 @@ public class ContentsServiceImpl implements ContentsService {
                     .timeAmount((long) fileInfo.duration().doubleValue())
                     .build()
             );
-        }else {
+        } else {
             contentsMaterialRepository.save(ContentsMaterial.builder()
                     .contents(contents)
                     .path(fileInfo.path())
@@ -68,7 +70,7 @@ public class ContentsServiceImpl implements ContentsService {
                     .build()
             );
         }
-        return true;
+        return MessageResponseDto.builder().message("컨텐츠 생성").build();
     }
 
     @Override
@@ -78,13 +80,21 @@ public class ContentsServiceImpl implements ContentsService {
             throw new ApiException(HttpStatus.NOT_FOUND, "콘텐츠를 찾을 수 없습니다.");
         }
         String fileInfo;
-        if(contents.getType().equals(ContentType.VIDEO)) {
+        if (contents.getType().equals(ContentType.VIDEO)) {
             ContentsVideo contentsVideo = contentsVideoRepository.findByContents(contents);
             fileInfo = contentsVideo.getSavedName() + contentsVideo.getPostfix();
-        }else {
+        } else {
             ContentsMaterial contentsMaterial = contentsMaterialRepository.findByContents(contents);
             fileInfo = contentsMaterial.getSavedName() + contentsMaterial.getPostfix();
         }
         return ContentsInfoResponseDto.from(contents, fileInfo);
+    }
+
+    @Override
+    public MessageResponseDto Update(UserDetails userDetails, Long curriculumId, ContentUpdateRequestDto requestDto) {
+
+        return MessageResponseDto.builder()
+                .message("")
+                .build();
     }
 }
