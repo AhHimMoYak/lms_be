@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserVerificationRequestDTO {
-    private String password;
+@NoArgsConstructor
+public class EmployeeJoinRequestDto {
+    private String departmentId;
+    private String companyId;
 }
