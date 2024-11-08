@@ -1,10 +1,12 @@
 package com.example.ahimmoyakbackend.company.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
+import com.example.ahimmoyakbackend.auth.dto.FormerCompanyInfoRequestDto;
 import com.example.ahimmoyakbackend.company.dto.*;
-import com.example.ahimmoyakbackend.company.service.CompanyServiceImpl;
+import com.example.ahimmoyakbackend.company.service.CompanyService;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ public class CompanyController {
 
     private final CompanyServiceImpl companyServiceImpl;
 
-//    @PostMapping()
+    @PostMapping("/company")
     public ResponseEntity<MessageResponseDto> createCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
@@ -24,14 +26,15 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.createCompany(userDetails, requestDto));
     }
 
+    @GetMapping("/company")
     public ResponseEntity<SearchCompanyResponseDto> searchCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody SearchCompanyRequestDto requestDto
+            @RequestParam String name
     ) {
-        return ResponseEntity.ok(companyServiceImpl.searchCompany(userDetails, requestDto));
+        return ResponseEntity.ok(companyService.searchCompany(userDetails, name));
     }
 
-//    @PatchMapping()
+    @PatchMapping("/company")
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId,
@@ -40,7 +43,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.updateCompany(userDetails, companyId, requestDto));
     }
 
-//    @DeleteMapping()
+    @DeleteMapping("/company")
     public ResponseEntity<MessageResponseDto> deleteCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId
@@ -48,23 +51,32 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.deleteCompany(userDetails, companyId));
     }
 
+    @GetMapping("/company/email/check")
     public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
-            @RequestBody CheckCompanyEmailRequestDto requestDto
+            @RequestParam String companyEmail
     ) {
         return ResponseEntity.ok(companyServiceImpl.checkCompanyEmail(requestDto));
     }
 
-
+    @PostMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @RequestBody AddAffiliationRequestDto requestDto
     ) {
         return ResponseEntity.ok(companyServiceImpl.addAffiliation(requestDto));
     }
 
-//    @GetMapping()
+    @DeleteMapping("/company/affiliation")
+    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/company/employees")
     public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyServiceImpl.getEmployeeList(userDetails));
     }
+
+    // TODO deleteAffiliation
 }

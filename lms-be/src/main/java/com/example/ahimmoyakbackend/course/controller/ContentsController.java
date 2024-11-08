@@ -19,7 +19,7 @@ public class ContentsController {
 
     private final ContentsService contentsService;
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<MessageResponseDto> addContents(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
@@ -33,11 +33,12 @@ public class ContentsController {
         return ResponseEntity.ok(contentsService.getInfo(contentsId));
     }
 
+    @PatchMapping("/{contentsId}")
     public ResponseEntity<MessageResponseDto> updateContent(@AuthenticationPrincipal UserDetails userDetails,
-                                                            @PathVariable("curriculumId") Long curriculumId,
+                                                            @PathVariable("contentsId") Long contentsId,
                                                             @ModelAttribute ContentUpdateRequestDto requestDto
     ){
-        MessageResponseDto responseDto = contentsService.Update(userDetails, curriculumId, requestDto);
+        MessageResponseDto responseDto = contentsService.Update(userDetails, contentsId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 
     }

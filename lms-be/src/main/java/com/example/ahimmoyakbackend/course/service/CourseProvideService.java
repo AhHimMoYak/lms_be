@@ -5,9 +5,9 @@ import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CourseProvideService {
-    CourseProvideDetailResponseDto getCourseDetail(UserDetails userDetails);
-    CourseProvideDetailResponseDto getCourseDetailByInstitution(UserDetails userDetails);
-    CourseProvideDetailResponseDto getCourseDetailByEmployee(UserDetails userDetails);
-    CourseProvidesResponseDto getCourseListByInstitution(UserDetails userDetails);
-    CourseProvidesResponseDto getCourseListByEmployee(UserDetails userDetails);
+    CourseProvideDetailResponseDto getCourseProvideDetail(UserDetails userDetails, Long courseProvideId);
+    CourseProvideDetailResponseDto getCourseProvideDetailByInstitution(UserDetails userDetails);
+    CourseProvideDetailResponseDto getCourseProvideDetailByEmployee(UserDetails userDetails);
+    CourseProvidesResponseDto getCourseProvideListByInstitution(UserDetails userDetails);
+    CourseProvidesResponseDto getCourseProvideListByEmployee(UserDetails userDetails);
 }

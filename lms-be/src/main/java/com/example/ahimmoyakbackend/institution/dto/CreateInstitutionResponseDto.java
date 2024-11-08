@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CreateInstitutionResponseDto(
+        Long id,
         String name,
         String ownerName,
         String businessNumber,

@@ -13,22 +13,22 @@ public class CourseProvideServiceImpl implements CourseProvideService {
     }
 
     @Override
-    public CourseProvideDetailResponseDto getCourseDetailByInstitution(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseProvideDetailByInstitution(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvideDetailResponseDto getCourseDetailByEmployee(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseProvideDetailByEmployee(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvidesResponseDto getCourseListByInstitution(UserDetails userDetails) {
+    public CourseProvidesResponseDto getCourseProvideListByInstitution(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvidesResponseDto getCourseListByEmployee(UserDetails userDetails) {
+    public CourseProvidesResponseDto getCourseProvideListByEmployee(UserDetails userDetails) {
         return null;
     }
 }

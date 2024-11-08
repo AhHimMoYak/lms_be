@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/course")
 public class EnrollmentController {
-
+// TODO 다 지워 주세요
     private final EnrollmentService enrollmentService;
 
     // Fixme 인롤먼트 생성시 코스가 아닌 코스프로바이드에 되도록 로직 변경해야함, 그러나 코스프로바이드 생성시 자동으로 생성되는것도 고려해야함
@@ -63,21 +63,6 @@ public class EnrollmentController {
 
         EnrollmentIdResponseDto getEnrolled = enrollmentService.getEnrollId(userDetails, courseId);
         return ResponseEntity.status(HttpStatus.OK).body(getEnrolled);
-    }
-
-    public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(@AuthenticationPrincipal UserDetails userDetails,
-                                                                  @RequestBody EnrollmentSubmitEmployeeListRequestDto requestDto){
-        MessageResponseDto responseDto = enrollmentService.submitEmployeeListForEnrollment(userDetails, requestDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-
-    }
-
-    public  ResponseEntity<MessageResponseDto> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
-                                                                  @RequestBody EnrollmentConfirmRequestDto requestDto){
-        MessageResponseDto responseDto = enrollmentService.confirmEnrollments(userDetails, requestDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
 

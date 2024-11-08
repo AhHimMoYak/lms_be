@@ -12,8 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnrollmentSubmitEmployeeListRequestDto {
-
-    private Long courseProvideId;
     private List<Long> employeeList;
 
 }
