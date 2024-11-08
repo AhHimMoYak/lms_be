@@ -24,7 +24,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.createCompany(userDetails, requestDto));
     }
 
-    @PostMapping()
     public ResponseEntity<SearchCompanyResponseDto> searchCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody SearchCompanyRequestDto requestDto
@@ -49,14 +48,13 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.deleteCompany(userDetails, companyId));
     }
 
-    @PostMapping()
     public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
             @RequestBody CheckCompanyEmailRequestDto requestDto
     ) {
         return ResponseEntity.ok(companyServiceImpl.checkCompanyEmail(requestDto));
     }
 
-    @PostMapping()
+
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @RequestBody AddAffiliationRequestDto requestDto
     ) {
