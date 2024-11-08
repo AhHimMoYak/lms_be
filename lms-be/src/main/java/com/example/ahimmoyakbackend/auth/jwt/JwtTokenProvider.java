@@ -2,7 +2,7 @@ package com.example.ahimmoyakbackend.auth.jwt;
 
 import com.example.ahimmoyakbackend.auth.common.UserRole;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsServiceImpl;
-import com.example.ahimmoyakbackend.auth.dto.JwsDTO;
+import com.example.ahimmoyakbackend.auth.dto.JwsDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -79,8 +79,8 @@ public class JwtTokenProvider {
 
 
 
-    public JwsDTO createAllToken(String userId, String email, UserRole role) {
-        return JwsDTO.builder()
+    public JwsDto createAllToken(String userId, String email, UserRole role) {
+        return JwsDto.builder()
                 .accessToken(createAccessToken(userId, email, role))
                 .refreshToken(createRefreshToken(userId))
                 .build();

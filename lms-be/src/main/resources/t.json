@@ -1,9 +1,0 @@
-{
-  "key": "number",
-  "title": "string",
-  "course": "string",
-  "instructor": "string",
-  "startTime": "LocalDateTime",
-  "endTime": "LocalDateTime",
-  "state": "string"
-}

@@ -6,9 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class MessageResponseDto {
-    private String message;
+public record MessageResponseDto(
+        String message
+) {
+    public static MessageResponseDto of(String message) {
+        return new MessageResponseDto(message);
+    }
 }
