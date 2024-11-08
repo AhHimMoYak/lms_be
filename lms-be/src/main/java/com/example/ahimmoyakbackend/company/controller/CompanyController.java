@@ -1,10 +1,7 @@
 package com.example.ahimmoyakbackend.company.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
-import com.example.ahimmoyakbackend.company.dto.CreateCompanyRequestDto;
-import com.example.ahimmoyakbackend.company.dto.SearchCompanyResponseDto;
-import com.example.ahimmoyakbackend.company.dto.SearchCompanyRequestDto;
-import com.example.ahimmoyakbackend.company.dto.UpdateCompanyRequestDto;
+import com.example.ahimmoyakbackend.company.dto.*;
 import com.example.ahimmoyakbackend.company.service.CompanyServiceImpl;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +47,26 @@ public class CompanyController {
             @RequestParam Long companyId
     ) {
         return ResponseEntity.ok(companyServiceImpl.deleteCompany(userDetails, companyId));
+    }
+
+    @PostMapping()
+    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
+            @RequestBody CheckCompanyEmailRequestDto requestDto
+    ) {
+        return ResponseEntity.ok(companyServiceImpl.checkCompanyEmail(requestDto));
+    }
+
+    @PostMapping()
+    public ResponseEntity<MessageResponseDto> addAffiliation(
+            @RequestBody AddAffiliationRequestDto requestDto
+    ) {
+        return ResponseEntity.ok(companyServiceImpl.addAffiliation(requestDto));
+    }
+
+    @GetMapping()
+    public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(companyServiceImpl.getEmployeeList(userDetails));
     }
 }
