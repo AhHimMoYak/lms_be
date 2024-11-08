@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "UserController")
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -59,13 +59,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @PostMapping()
+    //@PostMapping()
     public ResponseEntity<UserInformationResponseDto> checkUser(@RequestBody UserIdentificationRequestDto requestDto){
         UserInformationResponseDto responseDto = userService.getPersonalInformation(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping()
+    //@PostMapping()
     public ResponseEntity<MessageResponseDto> disconnectCompany(@RequestBody FormerCompanyInfoRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         MessageResponseDto responseDto = userService.disconnectCompany(requestDto, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
