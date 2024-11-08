@@ -16,7 +16,7 @@ public class CompanyController {
 
     private final CompanyServiceImpl companyServiceImpl;
 
-    @PostMapping()
+//    @PostMapping()
     public ResponseEntity<MessageResponseDto> createCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
@@ -31,7 +31,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.searchCompany(userDetails, requestDto));
     }
 
-    @PatchMapping()
+//    @PatchMapping()
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId,
@@ -40,7 +40,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.updateCompany(userDetails, companyId, requestDto));
     }
 
-    @DeleteMapping()
+//    @DeleteMapping()
     public ResponseEntity<MessageResponseDto> deleteCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId
@@ -61,7 +61,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyServiceImpl.addAffiliation(requestDto));
     }
 
-    @GetMapping()
+//    @GetMapping()
     public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
