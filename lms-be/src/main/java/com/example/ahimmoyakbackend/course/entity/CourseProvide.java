@@ -42,7 +42,7 @@ public class CourseProvide extends Timestamped {
     private int attendeeCount;
 
     @Column
-    private Long deposit;
+    private long deposit;
 
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)

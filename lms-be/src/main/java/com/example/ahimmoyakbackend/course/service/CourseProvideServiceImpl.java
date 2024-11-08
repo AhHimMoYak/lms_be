@@ -1,33 +1,34 @@
 package com.example.ahimmoyakbackend.course.service;
 
-import com.example.ahimmoyakbackend.course.dto.*;
+import com.example.ahimmoyakbackend.course.dto.CourseProvideDetailResponseDto;
+import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CourseProvideServiceImpl implements CourseProvideService {
     @Override
-    public CourseProvideDetailByCompanyResponseDto getCourseDetailByCompany(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseDetail(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvideDetailByInstitutionResponseDto getCourseDetailByInstitution(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseDetailByInstitution(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvideDetailByEmployeeResponseDto getCourseDetailByEmployee(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseDetailByEmployee(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvideGetCourseListByInstitutionResponseDto getCourseListByInstitution(UserDetails userDetails) {
+    public CourseProvidesResponseDto getCourseListByInstitution(UserDetails userDetails) {
         return null;
     }
 
     @Override
-    public CourseProvideGetCourseListByEmployeeResponseDto getCourseListByEmployee(UserDetails userDetails) {
+    public CourseProvidesResponseDto getCourseListByEmployee(UserDetails userDetails) {
         return null;
     }
 }
