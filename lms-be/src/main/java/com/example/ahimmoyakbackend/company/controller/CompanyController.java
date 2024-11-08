@@ -2,6 +2,7 @@ package com.example.ahimmoyakbackend.company.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.company.dto.CreateCompanyRequestDto;
+import com.example.ahimmoyakbackend.company.dto.SearchCompanyResponseDto;
 import com.example.ahimmoyakbackend.company.dto.SearchCompanyRequestDto;
 import com.example.ahimmoyakbackend.company.dto.UpdateCompanyRequestDto;
 import com.example.ahimmoyakbackend.company.service.CompanyServiceImpl;
@@ -27,7 +28,7 @@ public class CompanyController {
     }
 
     @PostMapping()
-    public ResponseEntity<MessageResponseDto> searchCompany(
+    public ResponseEntity<SearchCompanyResponseDto> searchCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody SearchCompanyRequestDto requestDto
     ) {
