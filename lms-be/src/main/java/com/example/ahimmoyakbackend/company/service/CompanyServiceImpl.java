@@ -1,10 +1,7 @@
 package com.example.ahimmoyakbackend.company.service;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
-import com.example.ahimmoyakbackend.company.dto.CreateCompanyRequestDto;
-import com.example.ahimmoyakbackend.company.dto.SearchCompanyResponseDto;
-import com.example.ahimmoyakbackend.company.dto.SearchCompanyRequestDto;
-import com.example.ahimmoyakbackend.company.dto.UpdateCompanyRequestDto;
+import com.example.ahimmoyakbackend.company.dto.*;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,5 +32,19 @@ public class CompanyServiceImpl implements CompanyService {
         return null;
     }
 
+    @Override
+    public MessageResponseDto checkCompanyEmail(CheckCompanyEmailRequestDto requestDto) {
+        return null;
+    }
+
+    @Override
+    public MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto) {
+        return null;
+    }
+
+    @Override
+    public GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails) {
+        return null;
+    }
 
 }
