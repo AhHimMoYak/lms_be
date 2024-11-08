@@ -55,4 +55,10 @@ public class LiveController {
         liveService.endLive(form.getName());
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping()
+    public ResponseEntity<Void> updateLive(){
+        boolean result = liveService.updateLive();
+        return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
 }
