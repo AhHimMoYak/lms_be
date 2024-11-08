@@ -5,6 +5,7 @@ import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.Curriculum;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.CurriculumRepository;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -37,25 +38,25 @@ public class CurriculumServiceImpl implements CurriculumService {
 
     @Override
     @Transactional
-    public boolean update(UserDetails userDetails, long curriculumId, String curriculumTitle) {
+    public MessageResponseDto update(UserDetails userDetails, long curriculumId, String curriculumTitle) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
         // Todo 커리큘럼 수정시 해당 코스의 교육기관의 매니저인지 권한 확인 필요
 //        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))) {
 //            return false;
 //        }
         curriculumRepository.save(curriculum.patch(curriculumTitle));
-        return true;
+        return MessageResponseDto.builder().message("커리큘럼 업데이트 성공").build();
     }
 
     @Override
     @Transactional
-    public boolean delete(UserDetails userDetails, long curriculumId) {
+    public MessageResponseDto delete(UserDetails userDetails, long curriculumId) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
         // Todo 커리큘럼 삭제시 해당 코스의 교육기관의 매니저인지 권한 확인 필요
 //        if (curriculum == null || !curriculum.getCourse().getTutor().equals(userService.getAuth(userDetails))|| !curriculum.getContentsList().isEmpty()) {
 //            return false;
 //        }
         curriculumRepository.delete(curriculum);
-        return true;
+        return MessageResponseDto.builder().message("커리큘럼 삭제 성공").build();
     }
 }

@@ -7,7 +7,7 @@ import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ContentsService {
-    boolean add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto);
+    MessageResponseDto add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto);
     ContentsInfoResponseDto getInfo(long contentsId);
     MessageResponseDto Update(UserDetails userDetails, Long curriculumId, ContentUpdateRequestDto requestDto);
 }

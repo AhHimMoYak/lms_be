@@ -38,7 +38,7 @@ public class ContentsServiceImpl implements ContentsService {
 
     @Override
     @Transactional
-    public boolean add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto) {
+    public MessageResponseDto add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId).orElse(null);
         if (curriculum == null) {
             throw new ApiException(HttpStatus.NOT_FOUND, "존재하지 않는 커리큘럼입니다.");
@@ -70,7 +70,7 @@ public class ContentsServiceImpl implements ContentsService {
                     .build()
             );
         }
-        return true;
+        return MessageResponseDto.builder().message("컨텐츠 생성").build();
     }
 
     @Override

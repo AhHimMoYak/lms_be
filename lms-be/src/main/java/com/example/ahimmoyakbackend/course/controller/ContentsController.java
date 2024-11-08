@@ -20,12 +20,12 @@ public class ContentsController {
     private final ContentsService contentsService;
 
     @PostMapping
-    public ResponseEntity<String> addContents(
+    public ResponseEntity<MessageResponseDto> addContents(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
             @ModelAttribute ContentsCreateRequestDto requestDto
     ){
-        return contentsService.add(userDetails, curriculumId, requestDto) ? ResponseEntity.ok("콘텐츠 등록 성공") : ResponseEntity.badRequest().body("콘텐츠 등록 실패");
+        return ResponseEntity.ok(contentsService.add(userDetails, curriculumId, requestDto));
     }
 
     @GetMapping("/{contentsId}")
