@@ -10,8 +10,8 @@ public interface CompanyService {
     MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto createCompanyRequestDto);
     List<SearchCompanyResponseDto> searchCompany(String name);
     MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
-    MessageResponseDto deleteCompany(UserDetailsImpl userDetails, Long companyId);
     MessageResponseDto checkCompanyEmail(CheckCompanyEmailRequestDto requestDto);
     MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto);
+    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
     GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails);
 }
