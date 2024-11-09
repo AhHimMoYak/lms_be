@@ -70,8 +70,23 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto) {
-        return null;
+        User user = userService.getAuth(userDetails);
+        if ( user.getRole() != UserRole.SUPERVISOR) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "회사를 수정할 권한이 없습니다.");
+        }
+        Company company = companyRepository.findById(companyId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
+        Company usercompany = user.getAffiliation().getCompany();
+        if (company != usercompany) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
+        }
+        company.patch(requestDto);
+        companyRepository.save(company);
+
+        return MessageResponseDto.builder()
+                .message("회사 수정 완료")
+                .build();
     }
 
     @Override
