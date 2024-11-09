@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -26,11 +28,10 @@ public class CompanyController {
     }
 
     @GetMapping("/company")
-    public ResponseEntity<SearchCompanyResponseDto> searchCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
     ) {
-        return ResponseEntity.ok(companyService.searchCompany(userDetails, name));
+        return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
     @PatchMapping("/company")
