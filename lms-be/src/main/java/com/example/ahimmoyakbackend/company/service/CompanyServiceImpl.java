@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
@@ -53,8 +56,17 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public SearchCompanyResponseDto searchCompany(UserDetailsImpl userDetails, String name) {
-        return SearchCompanyResponseDto.builder().build();
+    @Transactional(readOnly = true)
+    public List<SearchCompanyResponseDto> searchCompany(String name) {
+        List<Company> companies = companyRepository.findByNameContaining(name);
+
+        if (companies.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "해당하는 회사를 찾을 수 없습니다.");
+        }
+
+        return companies.stream()
+                .map(SearchCompanyResponseDto::from)
+                .collect(Collectors.toList());
     }
 
     @Override
