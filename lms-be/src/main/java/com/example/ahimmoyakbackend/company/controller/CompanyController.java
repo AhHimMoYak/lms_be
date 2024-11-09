@@ -1,7 +1,6 @@
 package com.example.ahimmoyakbackend.company.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
-import com.example.ahimmoyakbackend.auth.dto.FormerCompanyInfoRequestDto;
 import com.example.ahimmoyakbackend.company.dto.*;
 import com.example.ahimmoyakbackend.company.service.CompanyService;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
@@ -16,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class CompanyController {
 
-    private final CompanyServiceImpl companyServiceImpl;
+    private final CompanyService companyService;
 
     @PostMapping("/company")
     public ResponseEntity<MessageResponseDto> createCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyServiceImpl.createCompany(userDetails, requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
     }
 
     @GetMapping("/company")
@@ -40,7 +39,7 @@ public class CompanyController {
             @RequestParam Long companyId,
             @RequestBody UpdateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyServiceImpl.updateCompany(userDetails, companyId, requestDto));
+        return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
     }
 
     @DeleteMapping("/company")
@@ -48,34 +47,34 @@ public class CompanyController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId
     ) {
-        return ResponseEntity.ok(companyServiceImpl.deleteCompany(userDetails, companyId));
+        return ResponseEntity.ok(companyService.deleteCompany(userDetails, companyId));
     }
 
-    @GetMapping("/company/email/check")
-    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
-            @RequestParam String companyEmail
-    ) {
-        return ResponseEntity.ok(companyServiceImpl.checkCompanyEmail(requestDto));
-    }
+//    @GetMapping("/company/email/check")
+//    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
+//            @RequestParam String companyEmail
+//    ) {
+//        return ResponseEntity.ok(companyService.checkCompanyEmail(requestDto));
+//    }
 
     @PostMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @RequestBody AddAffiliationRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyServiceImpl.addAffiliation(requestDto));
+        return ResponseEntity.ok(companyService.addAffiliation(requestDto));
     }
 
-    @DeleteMapping("/company/affiliation")
-    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
+//    @DeleteMapping("/company/affiliation")
+//    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
+//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+//    }
 
     @GetMapping("/company/employees")
     public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return ResponseEntity.ok(companyServiceImpl.getEmployeeList(userDetails));
+        return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
     }
 
     // TODO deleteAffiliation
