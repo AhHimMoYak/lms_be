@@ -43,14 +43,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
     }
 
-    @DeleteMapping("/company")
-    public ResponseEntity<MessageResponseDto> deleteCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long companyId
-    ) {
-        return ResponseEntity.ok(companyService.deleteCompany(userDetails, companyId));
-    }
-
 //    @GetMapping("/company/email/check")
 //    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
 //            @RequestParam String companyEmail
@@ -71,6 +63,15 @@ public class CompanyController {
 //        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
 //    }
 
+    // 해당 유저 완전 삭제
+    @DeleteMapping("/company/employees")
+    public ResponseEntity<MessageResponseDto> deleteAffiliation(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, userId));
+    }
+
     @GetMapping("/company/employees")
     public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -78,5 +79,4 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
     }
 
-    // TODO deleteAffiliation
 }
