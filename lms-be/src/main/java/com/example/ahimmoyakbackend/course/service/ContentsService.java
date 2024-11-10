@@ -9,5 +9,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface ContentsService {
     MessageResponseDto add(UserDetails userDetails, long curriculumId, ContentsCreateRequestDto requestDto);
     ContentsInfoResponseDto getInfo(long contentsId);
-    MessageResponseDto Update(UserDetails userDetails, Long curriculumId, ContentUpdateRequestDto requestDto);
+    MessageResponseDto Update(UserDetails userDetails, Long contentsId, ContentUpdateRequestDto requestDto);
 }

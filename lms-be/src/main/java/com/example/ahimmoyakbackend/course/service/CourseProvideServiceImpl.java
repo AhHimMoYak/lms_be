@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CourseProvideServiceImpl implements CourseProvideService {
     @Override
-    public CourseProvideDetailResponseDto getCourseDetail(UserDetails userDetails) {
+    public CourseProvideDetailResponseDto getCourseProvideDetail(UserDetails userDetails, Long courseProvideId) {
         return null;
     }
 

@@ -91,7 +91,7 @@ public class ContentsServiceImpl implements ContentsService {
     }
 
     @Override
-    public MessageResponseDto Update(UserDetails userDetails, Long curriculumId, ContentUpdateRequestDto requestDto) {
+    public MessageResponseDto Update(UserDetails userDetails, Long contentsId, ContentUpdateRequestDto requestDto) {
 
         return MessageResponseDto.builder()
                 .message("")
