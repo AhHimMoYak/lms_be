@@ -11,7 +11,7 @@ public interface CompanyService {
     List<SearchCompanyResponseDto> searchCompany(String name);
     MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
     CheckCompanyResponseDto checkCompanyEmail(String companyEmail,String userEmail);
-    MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto);
+    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId);
     MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
     GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails);
 }

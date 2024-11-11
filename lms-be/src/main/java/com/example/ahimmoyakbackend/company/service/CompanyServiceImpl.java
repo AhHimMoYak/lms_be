@@ -114,8 +114,28 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto) {
-        return null;
+    public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId) {
+        User user = userService.getAuth(userDetails);
+
+        if (user.getAffiliation() != null) {
+            throw new ApiException(HttpStatus.CONFLICT, "이미 Affiliation 이 존재합니다");
+        }
+
+        Affiliation affiliation = Affiliation.builder()
+                .company(companyRepository.findById(companyId)
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 companyId 를 찾을수 없습니다.")))
+                .user(userRepository.findById(user.getId())
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 userId 를 찾을수 없습니다.")))
+                .isSupervisor(false)
+                .build();
+        affiliationRepository.save(affiliation);
+
+        user.updateRole(UserRole.EMPLOYEE);
+        userRepository.save(user);
+
+        return MessageResponseDto.builder()
+                .message("affiliation 생성 완료")
+                .build();
     }
 
     @Override

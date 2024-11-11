@@ -51,11 +51,12 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail,userEmail));
     }
 
-    @PostMapping("/company/affiliation")
+    @GetMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
-            @RequestBody AddAffiliationRequestDto requestDto
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long companyId
     ) {
-        return ResponseEntity.ok(companyService.addAffiliation(requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyId));
     }
 
     // 해당 유저 affiliation 관계만 제거
