@@ -11,7 +11,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 
 @Builder
-public record CourseProvideListDto(
+public record CourseProvideListResponseDto(
         Long courseProvideId,
         String courseTitle,
         String companyName,
