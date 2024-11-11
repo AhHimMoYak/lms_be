@@ -84,15 +84,17 @@ public class CompanyController {
     }
 
     // courseProvide
-    @GetMapping("/company/courseProvide")
-    public ResponseEntity<MessageResponseDto> CreateCourseProvider(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+    @PostMapping("/company/courseProvide")
+    public ResponseEntity<MessageResponseDto> CreateCourseProvide(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long courseId,
+            @RequestBody CreateCourseProvideRequestDto requestDto
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails,courseId,requestDto));
     }
 
     @GetMapping("/company/courseProvide/list")
-    public ResponseEntity<List<CourseProvideListDto>> getCourseProvideList(
+    public ResponseEntity<List<CourseProvideListResponseDto>> getCourseProvideList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyService.getCourseProvideList(userDetails));
