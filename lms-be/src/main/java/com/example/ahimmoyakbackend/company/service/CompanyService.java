@@ -8,10 +8,18 @@ import java.util.List;
 
 public interface CompanyService {
     MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto createCompanyRequestDto);
+
     List<SearchCompanyResponseDto> searchCompany(String name);
+
     MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
-    CheckCompanyResponseDto checkCompanyEmail(String companyEmail,String userEmail);
+
+    CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
+
     MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId);
+
+    MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
+
     MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
+
     GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails);
 }

@@ -94,6 +94,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
+    @Transactional
     public CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail) {
         String companyDomain = extractDomain(companyEmail);
         String userDomain = extractDomain(userEmail);
@@ -118,6 +119,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
+    @Transactional
     public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId) {
         User user = userService.getAuth(userDetails);
 
@@ -143,13 +145,28 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public MessageResponseDto disconnectCompany(UserDetailsImpl userDetails, Long userId) {
-        User supervisor = userService.getAuth(userDetails);
-        if (supervisor.getRole() != UserRole.SUPERVISOR) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 권한이 없습니다.");
+    @Transactional
+    public MessageResponseDto disconnectCompany(UserDetailsImpl userDetails) {
+        User user = userService.getAuth(userDetails);
+
+        if (user.getAffiliation() == null) {
+            throw new ApiException(HttpStatus.CONFLICT, "Affiliation 이 존재하지 않습니다.");
         }
 
-        return null;
+        if(enrollmentRepository.existsById(user.getId())) {
+            Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
+            if(enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())) {
+                enrollmentRepository.delete(enrollment);
+            }
+        }
+        affiliationRepository.delete(user.getAffiliation());
+
+        user.updateRole(UserRole.NORMAL);
+        userRepository.save(user);
+
+        return MessageResponseDto.builder()
+                .message("회사 탈퇴 완료")
+                .build();
     }
 
     @Override
@@ -168,9 +185,9 @@ public class CompanyServiceImpl implements CompanyService {
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 계약이 존재하지 않습니다.")
         );
 
-        if(enrollmentRepository.existsById(user.getId())) {
+        if (enrollmentRepository.existsById(user.getId())) {
             Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
-            if(enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())  ) {
+            if (enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())) {
                 enrollmentRepository.delete(enrollment);
             }
         }
@@ -190,6 +207,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails) {
         return null;
     }

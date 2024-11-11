@@ -48,7 +48,7 @@ public class CompanyController {
             @RequestParam String companyEmail,
             @RequestParam String userEmail
     ) {
-        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail,userEmail));
+        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
     }
 
     @GetMapping("/company/affiliation")
@@ -59,14 +59,15 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyId));
     }
 
-    // 해당 유저 affiliation 관계만 제거
-//    @DeleteMapping("/company/affiliation")
-//    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
-//        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-//    }
+    // 내가 회사 탈퇴
+    @DeleteMapping("/company/affiliation")
+    public ResponseEntity<MessageResponseDto> detachCompany(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.disconnectCompany(userDetails));
+    }
 
-    // 해당 유저 완전 삭제
+    // supervisor 가 해당 유저를 회사에서 탈퇴
     @DeleteMapping("/company/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
