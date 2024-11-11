@@ -22,4 +22,10 @@ public interface CompanyService {
     MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
 
     List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
+
+    MessageResponseDto createCourseProvider(UserDetailsImpl userDetails);
+
+    List<CourseProvideListDto> getCourseProvideList(UserDetailsImpl userDetails);
+
+    MessageResponseDto submitEmployeeListForEnrollment (UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto);
 }

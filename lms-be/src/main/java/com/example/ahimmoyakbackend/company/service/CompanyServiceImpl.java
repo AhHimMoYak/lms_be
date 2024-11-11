@@ -226,4 +226,19 @@ public class CompanyServiceImpl implements CompanyService {
                 .toList();
     }
 
+    @Override
+    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails) {
+        return null;
+    }
+
+    @Override
+    public List<CourseProvideListDto> getCourseProvideList(UserDetailsImpl userDetails) {
+        return List.of();
+    }
+
+    @Override
+    public MessageResponseDto submitEmployeeListForEnrollment(UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto) {
+        return null;
+    }
+
 }
