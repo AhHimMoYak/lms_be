@@ -77,7 +77,7 @@ public class CompanyController {
     }
 
     @GetMapping("/company/employees")
-    public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
+    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyService.getEmployeeList(userDetails));

@@ -21,5 +21,5 @@ public interface CompanyService {
 
     MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
 
-    GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails);
+    List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
 }
