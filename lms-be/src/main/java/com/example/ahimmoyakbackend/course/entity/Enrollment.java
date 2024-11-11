@@ -38,5 +38,8 @@ public class Enrollment extends Timestamped {
     @JoinColumn(name = "course_provide_id", nullable = false)
     private CourseProvide courseProvide;
 
+    public void setState(Enrollment enrollment) {
+        enrollment.state = EnrollmentState.AVAILABLE;
+    }
 }
 
