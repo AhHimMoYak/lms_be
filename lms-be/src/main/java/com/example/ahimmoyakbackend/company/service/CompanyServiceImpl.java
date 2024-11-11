@@ -10,7 +10,12 @@ import com.example.ahimmoyakbackend.company.entity.Affiliation;
 import com.example.ahimmoyakbackend.company.entity.Company;
 import com.example.ahimmoyakbackend.company.repository.AffiliationRepository;
 import com.example.ahimmoyakbackend.company.repository.CompanyRepository;
+import com.example.ahimmoyakbackend.course.common.CourseProvideState;
+import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
+import com.example.ahimmoyakbackend.course.repository.CourseProvideRepository;
+import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import com.example.ahimmoyakbackend.global.exception.ApiException;
@@ -31,6 +36,8 @@ public class CompanyServiceImpl implements CompanyService {
     private final AffiliationRepository affiliationRepository;
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final CourseRepository courseRepository;
+    private final CourseProvideRepository courseProvideRepository;
 
     @Override
     @Transactional
@@ -155,7 +162,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         if(enrollmentRepository.existsById(user.getId())) {
             Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
-            if(enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())) {
+            if(enrollment.getCourseProvide().getCompany().getId().equals(user.getAffiliation().getCompany().getId())) {
                 enrollmentRepository.delete(enrollment);
             }
         }
@@ -187,7 +194,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         if (enrollmentRepository.existsById(user.getId())) {
             Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
-            if (enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())) {
+            if (enrollment.getCourseProvide().getCompany().getId().equals(user.getAffiliation().getCompany().getId())) {
                 enrollmentRepository.delete(enrollment);
             }
         }
@@ -227,16 +234,43 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails) {
-        return null;
+    @Transactional
+    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto) {
+        User supervisor = userService.getAuth(userDetails);
+        if (supervisor.getRole() != UserRole.SUPERVISOR) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "수강신청 권한이 없습니다.");
+        }
+        Course course = courseRepository.findById(courseId).orElseThrow(
+                () -> new ApiException(HttpStatus.NOT_FOUND, "해당 Course 가 존재하지 않습니다.")
+        );
+
+        CourseProvide courseProvide = CourseProvide.builder()
+                .company(supervisor.getAffiliation().getCompany())
+                .beginDate(requestDto.beginDate())
+                .endDate(requestDto.endDate())
+                .state(CourseProvideState.PENDING)
+                .attendeeCount(requestDto.attendeeCount())
+                .deposit(requestDto.deposit())
+                .institution(course.getInstitution())
+                .course(course)
+                .enrollments(null)
+                .build();
+
+        courseProvideRepository.save(courseProvide);
+
+        return MessageResponseDto.builder()
+                .message("courseProvide 생성 완료")
+                .build();
     }
 
     @Override
-    public List<CourseProvideListDto> getCourseProvideList(UserDetailsImpl userDetails) {
+    @Transactional(readOnly = true)
+    public List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails) {
         return List.of();
     }
 
     @Override
+    @Transactional
     public MessageResponseDto submitEmployeeListForEnrollment(UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto) {
         return null;
     }
