@@ -1,5 +1,5 @@
 package com.example.ahimmoyakbackend.course.common;
 
 public enum CourseProvideState {
-    NOT_STARTED, ONGOING, FINISHED, REMOVED;
+    PENDING, DECLINED, ACCEPTED, ATTENDEE_PENDING, NOT_STARTED, ONGOING, FINISHED, REMOVED;
 }
