@@ -56,7 +56,7 @@ public class LiveController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping()
+    @PatchMapping("/{liveId}")
     public ResponseEntity<Void> updateLive(){
         boolean result = liveService.updateLive();
         return result ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
