@@ -18,7 +18,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public SearchCompanyResponseDto searchCompany(UserDetailsImpl userDetails, SearchCompanyRequestDto company) {
+    public SearchCompanyResponseDto searchCompany(UserDetailsImpl userDetails, String name) {
         return SearchCompanyResponseDto.builder().build();
     }
 
@@ -33,7 +33,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public MessageResponseDto checkCompanyEmail(CheckCompanyEmailRequestDto requestDto) {
+    public MessageResponseDto checkCompanyEmail(String email) {
         return null;
     }
 
@@ -44,6 +44,11 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails) {
+        return null;
+    }
+
+    @Override
+    public MessageResponseDto disconnectCompany(Long companyId, UserDetailsImpl userDetails) {
         return null;
     }
 

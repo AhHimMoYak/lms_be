@@ -18,39 +18,37 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/institution")
 public class InstitutionController {
 
-    private final InstitutionService institutionServiceImpl;
+    private final InstitutionService institutionService;
 
     @PostMapping
     public ResponseEntity<MessageResponseDto> createInstitution(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateInstitutionRequestDto requestDto
     ){
-        return ResponseEntity.ok(institutionServiceImpl.createInstitution(userDetails, requestDto));
+        return ResponseEntity.ok(institutionService.createInstitution(userDetails, requestDto));
     }
 
-    @GetMapping()
+    @GetMapping
+    public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseEntity.ok(institutionService.getInstitutionDetail(userDetails));
+    }
+
+    @GetMapping("/{institutionId}")
     public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long institutionId
-    ){
-        return ResponseEntity.ok(institutionServiceImpl.getInstitutionDetail(userDetails, institutionId));
+            @PathVariable Long institutionId){
+        return ResponseEntity.ok(institutionService.getInstitutionDetail(userDetails, institutionId));
     }
 
-    @PatchMapping()
+    @PatchMapping("/{institutionId}")
     public ResponseEntity<MessageResponseDto> updateInstitution(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody UpdateInstitutionRequestDto requestDto,
-            @RequestParam Long institutionId
-    ){
-        return ResponseEntity.ok(institutionServiceImpl.updateInstitution(userDetails, requestDto, institutionId));
+            @PathVariable Long institutionId){
+        return ResponseEntity.ok(institutionService.updateInstitution(userDetails, requestDto, institutionId));
     }
 
-    @GetMapping()
-    public ResponseEntity<UserInstitutionIdResponseDto> getInstitutionId(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-            ){
-        return ResponseEntity.ok(institutionServiceImpl.getInstitutionId(userDetails));
 
-    }
 
 }
