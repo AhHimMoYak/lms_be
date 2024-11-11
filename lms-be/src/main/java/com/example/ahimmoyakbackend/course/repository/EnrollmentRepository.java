@@ -1,12 +1,9 @@
 package com.example.ahimmoyakbackend.course.repository;
 
-import com.example.ahimmoyakbackend.auth.entity.User;
-import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
@@ -14,5 +11,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
 //    Optional<Enrollment> findByUserIdAndCourseId(Long id, Long id1);
 
-//    Enrollment findByUser_UsernameAndCourse(String username, Course course);
+    //    Enrollment findByUser_UsernameAndCourse(String username, Course course);
+    List<Enrollment> findAllByCourseProvide_Id(Long id);
 }
