@@ -91,9 +91,27 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public MessageResponseDto checkCompanyEmail(CheckCompanyEmailRequestDto requestDto) {
-        return null;
+    public CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail) {
+        String companyDomain = extractDomain(companyEmail);
+        String userDomain = extractDomain(userEmail);
+
+        boolean isDomainMatch = companyDomain.equals(userDomain);
+        return CheckCompanyResponseDto.builder()
+                .message(isDomainMatch ? "도메인이 일치합니다.": "도메인이 일치하지 않습니다.")
+                .success(isDomainMatch)
+                .build();
+
     }
+    private String extractDomain(String email) {
+        String[] parts = email.split("@");
+
+        if (parts.length == 2) {
+            return parts[1].toLowerCase();
+        } else {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "유효하지 않은 이메일 형식입니다");
+        }
+    }
+
 
     @Override
     public MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto) {

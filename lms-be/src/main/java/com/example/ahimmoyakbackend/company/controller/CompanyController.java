@@ -43,12 +43,13 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
     }
 
-//    @GetMapping("/company/email/check")
-//    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
-//            @RequestParam String companyEmail
-//    ) {
-//        return ResponseEntity.ok(companyService.checkCompanyEmail(requestDto));
-//    }
+    @GetMapping("/company/email/check")
+    public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
+            @RequestParam String companyEmail,
+            @RequestParam String userEmail
+    ) {
+        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail,userEmail));
+    }
 
     @PostMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
@@ -57,6 +58,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.addAffiliation(requestDto));
     }
 
+    // 해당 유저 affiliation 관계만 제거
 //    @DeleteMapping("/company/affiliation")
 //    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
 //        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
