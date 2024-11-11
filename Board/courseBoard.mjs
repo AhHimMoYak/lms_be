@@ -27,10 +27,7 @@ export const createBoard = async (event) => {
             title: body.title,
             content: body.content,
             commentCount: 0,
-            userId: body.userId,
-            courseProvideId: body.courseProvideId,
-            institutionId: body.institutionId,
-            type: body.type,
+            tags:[ body.username, body.institutionName, body.courseName, body.type]
         };
 
         await docClient.send(new PutCommand({
@@ -58,6 +55,8 @@ export const createBoard = async (event) => {
         };
     }
 };
+
+
 
 export const getBoards = async(event)=>{
     try{
@@ -176,7 +175,7 @@ export const getBoard = async (event) => {
 
 export const getBoardsByUser = async (event) => {
     try {
-        const { userId } = event.pathParameters;
+        const { username } = event.pathParameters;
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -186,16 +185,15 @@ export const getBoardsByUser = async (event) => {
             : null;
 
         // userId 값 확인
-        console.log('Received userId:', userId);
+        console.log('Received userId:', username);
         console.log('Query limit:', limit);
         console.log('Last Evaluated Key:', lastEvaluatedKey);
 
-        const response = await docClient.send(new QueryCommand({
+        const response = await docClient.send(new ScanCommand({
             TableName: TABLE_NAME,
-            IndexName: 'UserIndex',
-            KeyConditionExpression: 'userId = :userId',
+            FilterExpression: 'contains(tags, :tagValue)',
             ExpressionAttributeValues: {
-                ':userId': userId
+                ':tagValue': username
             },
             Limit: limit,
             ScanIndexForward: false,

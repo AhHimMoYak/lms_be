@@ -6,7 +6,6 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
-  stage: test
   environment:
     DYNAMODB_TABLE: ${self:service}
     REGION: ${aws:region}
@@ -33,6 +32,7 @@ provider:
             - logs:PutLogEvents
           Resource: "*"
 
+
 functions:
   createBoard:
     handler: courseBoard.createBoard
@@ -57,7 +57,7 @@ functions:
     handler: courseBoard.getBoardsByUser
     events:
       - httpApi:
-          path : /v1/api/courseProvide/{userId}/boards
+          path : /v1/api/courseProvide/{username}/boards
           method: GET
 
   getBoardsByCourseProvide:
@@ -100,53 +100,46 @@ resources:
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
-          - AttributeName: userId
-            AttributeType: S
-          - AttributeName: institutionId
-            AttributeType: S
-          - AttributeName: courseProvideId
-            AttributeType: S
-          - AttributeName: type
-            AttributeType: S
+
         KeySchema:
           - AttributeName: id
             KeyType: HASH
           - AttributeName: createdAt
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        GlobalSecondaryIndexes:
-          - IndexName: UserIndex
-            KeySchema:
-              - AttributeName: userId
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-          - IndexName: InstitutionIndex
-            KeySchema:
-              - AttributeName: institutionId
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-          - IndexName: CourseProvideIndex
-            KeySchema:
-              - AttributeName: courseProvideId
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-          - IndexName: TypeIndex
-            KeySchema:
-              - AttributeName: type
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
+#        GlobalSecondaryIndexes:
+#          - IndexName: UserIndex
+#            KeySchema:
+#              - AttributeName: userId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: InstitutionIndex
+#            KeySchema:
+#              - AttributeName: institutionId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: CourseProvideIndex
+#            KeySchema:
+#              - AttributeName: courseProvideId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: TypeIndex
+#            KeySchema:
+#              - AttributeName: type
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
 
 
 package:
