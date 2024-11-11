@@ -2,6 +2,7 @@ package com.example.ahimmoyakbackend.course.repository;
 
 import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +12,8 @@ import java.util.Optional;
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Override
     boolean existsById(Long id);
+
+    boolean existsByUserAndCourseProvide(User user, CourseProvide courseProvide);
 
 //    Optional<Enrollment> findByUserAndCourse(User user, Course course);
 
