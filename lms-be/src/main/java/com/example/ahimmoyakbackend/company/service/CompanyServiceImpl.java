@@ -10,6 +10,8 @@ import com.example.ahimmoyakbackend.company.entity.Affiliation;
 import com.example.ahimmoyakbackend.company.entity.Company;
 import com.example.ahimmoyakbackend.company.repository.AffiliationRepository;
 import com.example.ahimmoyakbackend.company.repository.CompanyRepository;
+import com.example.ahimmoyakbackend.course.entity.Enrollment;
+import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import com.example.ahimmoyakbackend.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final AffiliationRepository affiliationRepository;
     private final UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     @Transactional
@@ -97,11 +100,12 @@ public class CompanyServiceImpl implements CompanyService {
 
         boolean isDomainMatch = companyDomain.equals(userDomain);
         return CheckCompanyResponseDto.builder()
-                .message(isDomainMatch ? "도메인이 일치합니다.": "도메인이 일치하지 않습니다.")
+                .message(isDomainMatch ? "도메인이 일치합니다." : "도메인이 일치하지 않습니다.")
                 .success(isDomainMatch)
                 .build();
 
     }
+
     private String extractDomain(String email) {
         String[] parts = email.split("@");
 
@@ -139,11 +143,21 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public MessageResponseDto disconnectCompany(UserDetailsImpl userDetails, Long userId) {
+        User supervisor = userService.getAuth(userDetails);
+        if (supervisor.getRole() != UserRole.SUPERVISOR) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 권한이 없습니다.");
+        }
+
+        return null;
+    }
+
+    @Override
     @Transactional
     public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId) {
         User supervisor = userService.getAuth(userDetails);
         User user = userRepository.findById(userId).orElseThrow(
-                ()-> new ApiException(HttpStatus.NOT_FOUND,"해당 사원이 존재하지 않습니다.")
+                () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
         );
 
         if (supervisor.getRole() != UserRole.SUPERVISOR) {
@@ -151,12 +165,21 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         Affiliation affiliation = affiliationRepository.findByUserId(userId).orElseThrow(
-                () -> new ApiException(HttpStatus.NOT_FOUND,"해당 계약이 존재하지 않습니다.")
+                () -> new ApiException(HttpStatus.NOT_FOUND, "해당 계약이 존재하지 않습니다.")
         );
+
+        if(enrollmentRepository.existsById(user.getId())) {
+            Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
+            if(enrollment.getCourseProvide().getCompanyId().equals(user.getAffiliation().getCompany().getId())  ) {
+                enrollmentRepository.delete(enrollment);
+            }
+        }
 
         if (supervisor.getAffiliation().getCompany() != user.getAffiliation().getCompany()) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
         }
+
+
         affiliationRepository.delete(affiliation);
 
         user.updateRole(UserRole.NORMAL);
