@@ -83,4 +83,27 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
     }
 
+    // courseProvide
+    @GetMapping("/company/courseProvide")
+    public ResponseEntity<MessageResponseDto> CreateCourseProvider(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails));
+    }
+
+    @GetMapping("/company/courseProvide/list")
+    public ResponseEntity<List<CourseProvideListDto>> getCourseProvideList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(companyService.getCourseProvideList(userDetails));
+    }
+
+    @PostMapping("/company/courseProvide/employees")
+    public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody submitEmployeeListRequestDto requestDto
+    ) {
+        return ResponseEntity.ok(companyService.submitEmployeeListForEnrollment(userDetails,requestDto));
+    }
+
 }
