@@ -11,6 +11,7 @@ import com.example.ahimmoyakbackend.company.entity.Company;
 import com.example.ahimmoyakbackend.company.repository.AffiliationRepository;
 import com.example.ahimmoyakbackend.company.repository.CompanyRepository;
 import com.example.ahimmoyakbackend.course.common.CourseProvideState;
+import com.example.ahimmoyakbackend.course.common.EnrollmentState;
 import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
@@ -24,9 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -279,7 +282,37 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public MessageResponseDto submitEmployeeListForEnrollment(UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto) {
-        return null;
+        User supervisor = userService.getAuth(userDetails);
+        if (supervisor.getRole() != UserRole.SUPERVISOR) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 수강신청할 권한이 없습니다.");
+        }
+
+        List<User> userList = userRepository.findAllById(requestDto.employeeIdList());
+
+        CourseProvide courseProvide = courseProvideRepository.findById(requestDto.courseProvideId()).orElseThrow(
+                ()-> new ApiException(HttpStatus.NOT_FOUND,"해당 courseProvideId 가 존재하지 않습니다."));
+
+        for (User selected : userList) {
+            boolean enrollmentExists = enrollmentRepository.existsByUserAndCourseProvide(selected, courseProvide);
+            if (enrollmentExists) {
+                throw new ApiException(HttpStatus.CONFLICT, "이미 수강신청된 사원이 있습니다 " );
+            }
+
+            Enrollment enrollment = Enrollment.builder()
+                    .state(EnrollmentState.UNAVAILABLE)
+                    .certificateDate(LocalDateTime.now())
+                    .courseProvide(courseProvide)
+                    .user(selected)
+                    .build();
+            enrollmentRepository.save(enrollment);
+        }
+
+        courseProvide.updateCourseProvideState(CourseProvideState.ATTENDEE_PENDING);
+        courseProvideRepository.save(courseProvide);
+
+        return MessageResponseDto.builder()
+                .message("선택한 사원들을 교육기관에 넘기기 완료")
+                .build();
     }
 
 }
