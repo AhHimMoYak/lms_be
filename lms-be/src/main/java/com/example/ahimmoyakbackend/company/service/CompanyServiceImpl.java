@@ -208,8 +208,22 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails) {
-        return null;
+    public List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails) {
+        User supervisor = userService.getAuth(userDetails);
+        if (supervisor.getRole() != UserRole.SUPERVISOR) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 조회할 권한이 없습니다.");
+        }
+        Long companyId = supervisor.getAffiliation().getCompany().getId();
+
+        if(companyId == null) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "해당 supervisor 의 companyId가 존재하지 않습니다");
+        }
+
+        List<Affiliation> employees = affiliationRepository.findByCompany_Id(companyId);
+
+        return employees.stream()
+                .map(GetEmployeeListResponseDto::from)
+                .toList();
     }
 
 }
