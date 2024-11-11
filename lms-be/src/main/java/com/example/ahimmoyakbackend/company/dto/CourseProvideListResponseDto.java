@@ -9,6 +9,7 @@ import com.example.ahimmoyakbackend.institution.entity.Institution;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 public record CourseProvideListResponseDto(
@@ -22,10 +23,10 @@ public record CourseProvideListResponseDto(
         long attendeeCount,
         long deposit
 ) {
-    public static CourseProvideDto from(CourseProvide courseProvide, Course course, Company company, Institution institution) {
-        return CourseProvideDto.builder()
+    public static CourseProvideListResponseDto from(CourseProvide courseProvide, Company company, Institution institution) {
+        return CourseProvideListResponseDto.builder()
                 .courseProvideId(courseProvide.getId())
-                .courseTitle(course.getTitle())
+                .courseTitle(courseProvide.getCourse().getTitle())
                 .companyName(company.getName())
                 .institutionName(institution.getName())
                 .beginDate(courseProvide.getBeginDate())
