@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -266,7 +267,13 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional(readOnly = true)
     public List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails) {
-        return List.of();
+        User user = userService.getAuth(userDetails);
+        List<CourseProvide> courseProvideList = courseProvideRepository.findByCompany_Id(user.getAffiliation().getCompany().getId());
+
+
+        return courseProvideList.stream()
+                .filter(Objects::nonNull)
+                .map(courseProvide -> CourseProvideListResponseDto.from(courseProvide, user.getAffiliation().getCompany(), courseProvide.getInstitution())).collect(Collectors.toList());
     }
 
     @Override
