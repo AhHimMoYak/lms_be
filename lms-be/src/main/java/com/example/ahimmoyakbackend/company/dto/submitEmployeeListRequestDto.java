@@ -6,6 +6,6 @@ import java.util.List;
 
 public record submitEmployeeListRequestDto(
         Long courseProvideId,
-        List<Enrollment> enrollments
+        List<Long> employeeIdList
 ) {
 }
