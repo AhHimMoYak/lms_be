@@ -60,11 +60,11 @@ public class CourseProvide extends Timestamped {
     @OneToMany(mappedBy = "courseProvide")
     private List<Enrollment> enrollments = new ArrayList<>();
 
-    public void reject(CourseProvideState state) {
+    public void reject() {
         this.state = DECLINED;
     }
 
-    public void accept(CourseProvideState state) {
+    public void accept() {
         this.state = ACCEPTED;
     }
 
