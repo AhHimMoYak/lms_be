@@ -4,17 +4,29 @@ import com.example.ahimmoyakbackend.auth.common.UserRole;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.auth.repository.UserRepository;
+import com.example.ahimmoyakbackend.course.dto.CourseProvideDetailResponseDto;
+import com.example.ahimmoyakbackend.course.dto.CourseProvideDto;
+import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
+import com.example.ahimmoyakbackend.course.dto.EnrollmentInfoDto;
+import com.example.ahimmoyakbackend.course.entity.CourseProvide;
+import com.example.ahimmoyakbackend.course.entity.Enrollment;
+import com.example.ahimmoyakbackend.course.repository.CourseProvideRepository;
+import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
-import com.example.ahimmoyakbackend.institution.dto.CreateInstitutionRequestDto;
-import com.example.ahimmoyakbackend.institution.dto.UpdateInstitutionRequestDto;
-import com.example.ahimmoyakbackend.institution.dto.UserInstitutionIdResponseDto;
-import com.example.ahimmoyakbackend.institution.dto.GetInstitutionDetailRequestDto;
+import com.example.ahimmoyakbackend.institution.dto.*;
 import com.example.ahimmoyakbackend.institution.entity.Institution;
 import com.example.ahimmoyakbackend.institution.entity.Manager;
 import com.example.ahimmoyakbackend.institution.repository.InstitutionRepository;
 import com.example.ahimmoyakbackend.institution.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.ahimmoyakbackend.course.common.CourseProvideState.ACCEPTED;
+import static com.example.ahimmoyakbackend.course.common.CourseProvideState.DECLINED;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +35,8 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final UserRepository userRepository;
     private final InstitutionRepository institutionRepository;
     private final ManagerRepository managerRepository;
+    private final CourseProvideRepository courseProvideRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public MessageResponseDto createInstitution(UserDetailsImpl userDetails, CreateInstitutionRequestDto requestDto) {
@@ -75,10 +89,27 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    public GetInstitutionDetailRequestDto getInstitutionDetail(UserDetailsImpl userDetails) {
+
+        Institution institution = institutionRepository.findById(userDetails.getUser().getManager().getInstitution().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 교육 기간입니다."));
+
+        return GetInstitutionDetailRequestDto.builder()
+                .id(institution.getId())
+                .institutionName(institution.getName())
+                .ownerName(institution.getOwnerName())
+                .businessNumber(institution.getBusinessNumber())
+                .certifiedNumber(institution.getCertifiedNumber())
+                .email(institution.getEmail())
+                .phone(institution.getPhone())
+                .build();
+
+    }
+
+    @Override
     public GetInstitutionDetailRequestDto getInstitutionDetail(UserDetailsImpl userDetails, Long institutionId) {
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId 입니다"));
 
-        Institution institution = institutionRepository.findById(institutionId).orElseThrow(()-> new IllegalArgumentException("존재하지 않은 교육기관입니다."));
+        Institution institution = institutionRepository.findById(institutionId).orElseThrow(() -> new IllegalArgumentException("존재하지 않은 교육기관입니다."));
 
         return GetInstitutionDetailRequestDto.builder()
                 .id(institution.getId())
@@ -92,11 +123,93 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public UserInstitutionIdResponseDto getInstitutionId(UserDetailsImpl userDetails) {
-        Long institutionId = userDetails.getUser().getManager().getInstitution().getId();
+    public CourseProvidesResponseDto getCourseProvideListByInstitution(UserDetailsImpl userDetails) {
 
-        return UserInstitutionIdResponseDto.builder()
-                .institutionId(institutionId)
+        List<CourseProvide> courseProvides = courseProvideRepository.findAllByInstitution(userDetails.getUser().getManager().getInstitution());
+
+        List<CourseProvideDto> courseProvideDtoList = courseProvides.stream()
+                .map(courseProvide -> CourseProvideDto.builder()
+                        .courseProvideId(courseProvide.getId())
+                        .courseTitle(courseProvide.getCourse().getTitle())
+                        .companyName(courseProvide.getCompany().getName())
+                        .institutionName(courseProvide.getInstitution().getName())
+                        .beginDate(courseProvide.getBeginDate())
+                        .endDate(courseProvide.getEndDate())
+                        .state(courseProvide.getState())
+                        .attendeeCount(courseProvide.getAttendeeCount())
+                        .deposit(courseProvide.getDeposit())
+                        .build())
+                .collect(Collectors.toList());
+
+        return CourseProvidesResponseDto.builder()
+                .courseDetailResponseDtoList(courseProvideDtoList)
                 .build();
     }
+
+    @Override
+    public MessageResponseDto courseProvideResponse(UserDetailsImpl userDetails, Long courseProvideId, CourseProvideRequestDto requestDto) {
+
+        CourseProvide courseProvide = courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new IllegalArgumentException("계약 아이디가 없습니다."));
+
+
+        if (requestDto.state() == ACCEPTED) { // 수락 버튼을 눌렀을때 말입니다.
+            courseProvide.accept();
+            courseProvideRepository.save(courseProvide);
+            return MessageResponseDto.builder()
+                    .message("수락하셨습니다.")
+                    .build();
+        } else if (requestDto.state() == DECLINED) { // 거절 버튼을 눌렀을때 말입니다.
+            courseProvide.reject();
+            courseProvideRepository.save(courseProvide);
+            return MessageResponseDto.builder()
+                    .message("거절하셨습니다.")
+                    .build();
+        }
+
+        courseProvideRepository.save(courseProvide);
+        return MessageResponseDto.builder()
+                .message("수강 신청 응답 완료")
+                .build();
+    }
+
+    @Override
+    public CourseProvideDetailResponseDto getCourseProvideDetailByInstitution(UserDetails userDetails, Long courseProvideId) {
+
+        List<Enrollment> enrollments = enrollmentRepository.findAllByCourseProvide_Id(courseProvideId);
+        CourseProvide courseProvide = courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new IllegalArgumentException("계약 아이디가 없습니다."));
+        List<EnrollmentInfoDto> enrollmentInfoDto = enrollments.stream().map(enrollment -> EnrollmentInfoDto.builder()
+                        .enrollmentId(enrollment.getId())
+                        .username(enrollment.getUser().getUsername())
+                        .name(enrollment.getUser().getName())
+                        .email(enrollment.getUser().getEmail())
+                        .birth(enrollment.getUser().getBirth())
+                        .build())
+                .collect(Collectors.toList());
+
+        return CourseProvideDetailResponseDto.builder()
+                .beginDate(courseProvide.getBeginDate())
+                .endDate(courseProvide.getEndDate())
+                .attendeeCount(courseProvide.getAttendeeCount())
+                .state(courseProvide.getState())
+                .learnerList(enrollmentInfoDto)
+                .build();
+
+    }
+
+    @Override
+    public MessageResponseDto confirmEnrollments(UserDetails userDetails, ConfirmEnrollmentsRequestDto requestDto, Long courseProvideId) {
+
+        List<Enrollment> enrollments = enrollmentRepository.findAllById(requestDto.enrollmentList());
+        for (Enrollment enrollment : enrollments) {
+            enrollment.setState(enrollment);
+        }
+        enrollmentRepository.saveAll(enrollments);
+
+        return MessageResponseDto.builder()
+                .message("강의 등록 되었습니다.")
+                .build();
+
+
+    }
 }
+
