@@ -6,7 +6,6 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
-  stage: test
   environment:
     DYNAMODB_TABLE: ${self:service}
     REGION: ${aws:region}
@@ -26,6 +25,8 @@ provider:
           Resource:
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/comments"
+            - "arn:aws:dynamodb:${aws:region}:*:table/comments/index/*"
         - Effect: Allow
           Action:
             - logs:CreateLogGroup
@@ -57,7 +58,7 @@ functions:
     handler: courseBoard.getBoardsByUser
     events:
       - httpApi:
-          path : /v1/api/courseProvide/{userId}/boards
+          path : /v1/api/courseProvide/{userName}/boards
           method: GET
 
   getBoardsByCourseProvide:
@@ -81,14 +82,31 @@ functions:
           path: /v1/api/courseProvide/board/{id}/{createdAt}
           method: DELETE
 
-#  getBoardsByInstitution:
-#    handler: courseBoard.getBoardsByInstitution
-#    events:
-#      - httpApi:
-#          path : /v1/api/courseProvide/{institutionId}/{type}/boards
-#          method: GET
+  createComment:
+    handler: comment.createComment
+    events:
+      - httpApi:
+          path: /v1/api/comment
+          method: POST
 
-
+  getComments:
+    handler: comment.getComments
+    events:
+      - httpApi:
+          path: /v1/api/{boardId}/comments
+          method: GET
+  updateComment:
+    handler: comment.updateComment
+    events:
+      - httpApi:
+          path: /v1/api/comment/{id}/{createdAt}
+          method: PATCH
+  deleteComment:
+    handler: comment.deleteComment
+    events:
+      - httpApi:
+          path: /v1/api/comment/{id}/{createdAt}
+          method: DELETE
 resources:
   Resources:
     CourseBoardTable:
@@ -100,7 +118,7 @@ resources:
             AttributeType: S
           - AttributeName: createdAt
             AttributeType: S
-          - AttributeName: userId
+          - AttributeName: userName
             AttributeType: S
           - AttributeName: institutionId
             AttributeType: S
@@ -117,7 +135,7 @@ resources:
         GlobalSecondaryIndexes:
           - IndexName: UserIndex
             KeySchema:
-              - AttributeName: userId
+              - AttributeName: userName
                 KeyType: HASH
               - AttributeName: createdAt
                 KeyType: RANGE
@@ -147,7 +165,32 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-
+    CommentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: comments
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: boardId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: BoardIdIndex
+            KeySchema:
+              - AttributeName: boardId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
 
 package:
   patterns:
