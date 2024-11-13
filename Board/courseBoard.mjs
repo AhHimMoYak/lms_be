@@ -27,7 +27,7 @@ export const createBoard = async (event) => {
             title: body.title,
             content: body.content,
             commentCount: 0,
-            userId: body.userId,
+            userName: body.userName,
             courseProvideId: body.courseProvideId,
             institutionId: body.institutionId,
             type: body.type,
@@ -176,7 +176,7 @@ export const getBoard = async (event) => {
 
 export const getBoardsByUser = async (event) => {
     try {
-        const { userId } = event.pathParameters;
+        const { userName } = event.pathParameters;
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -185,25 +185,17 @@ export const getBoardsByUser = async (event) => {
             ? JSON.parse(event.queryStringParameters.lastEvaluatedKey)
             : null;
 
-        // userId 값 확인
-        console.log('Received userId:', userId);
-        console.log('Query limit:', limit);
-        console.log('Last Evaluated Key:', lastEvaluatedKey);
-
         const response = await docClient.send(new QueryCommand({
             TableName: TABLE_NAME,
             IndexName: 'UserIndex',
-            KeyConditionExpression: 'userId = :userId',
+            KeyConditionExpression: 'userName = :userName',
             ExpressionAttributeValues: {
-                ':userId': userId
+                ':userName': userName
             },
             Limit: limit,
             ScanIndexForward: false,
             ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
         }));
-
-        // DynamoDB 응답 확인
-        console.log('DynamoDB query response:', response);
 
         return {
             statusCode: 200,
