@@ -256,7 +256,7 @@ export const getBoardsByCourseProvide = async (event) => {
             },
             body: JSON.stringify({
                 items: response.Items || [],
-                lastEvaluatedKey: response.LastEvaluatedKey
+                lastEvaluatedKey: response.LastEvaluatedKey || null
             })
         };
     } catch (error) {

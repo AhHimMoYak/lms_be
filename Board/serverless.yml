@@ -33,79 +33,79 @@ provider:
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource: "*"
-
+MyApiMapping:
+  Type: 'AWS::ApiGatewayV2::ApiMapping'
+  Properties:
+    DomainName: api.ahimmoyak.click
+    ApiMappingKey: 'v1.board'
+    ApiId: !Ref MyApi
+    Stage: !Ref MyStage
 functions:
   createBoard:
     handler: courseBoard.createBoard
     events:
       - httpApi:
-          path: /v1/api/courseProvide/board
+          path: /courseProvide
           method: POST
   getBoard:
     handler: courseBoard.getBoard
     events:
       - httpApi:
-          path: /v1/api/courseProvide/board/{id}/{createdAt}
-          method: GET
-  getBoards:
-    handler: courseBoard.getBoards
-    events:
-      - httpApi:
-          path: /v1/api/courseProvide/boards
+          path: /{id}/{createdAt}
           method: GET
 
   getBoardsByUser:
     handler: courseBoard.getBoardsByUser
     events:
       - httpApi:
-          path : /v1/api/courseProvide/{userName}/boards
+          path : /userName/{userName}
           method: GET
 
   getBoardsByCourseProvide:
     handler: courseBoard.getBoardsByCourseProvide
     events:
       - httpApi:
-          path : /v1/api/courseProvide/{courseProvideId}/{type}/boards
+          path : /courseProvide/{courseProvideId}/{type}
           method: GET
 
   updateBoard:
     handler: courseBoard.updateBoard
     events:
       - httpApi:
-          path: /v1/api/courseProvide/board/{id}/{createdAt}
+          path: /courseProvide/{id}/{createdAt}
           method: PATCH
 
   deleteBoard:
     handler: courseBoard.deleteBoard
     events:
       - httpApi:
-          path: /v1/api/courseProvide/board/{id}/{createdAt}
+          path: /courseProvide/{id}/{createdAt}
           method: DELETE
 
   createComment:
     handler: comment.createComment
     events:
       - httpApi:
-          path: /v1/api/comment
+          path: /comment
           method: POST
 
   getComments:
     handler: comment.getComments
     events:
       - httpApi:
-          path: /v1/api/{boardId}/comments
+          path: /{boardId}/comments
           method: GET
   updateComment:
     handler: comment.updateComment
     events:
       - httpApi:
-          path: /v1/api/comment/{id}/{createdAt}
+          path: /comment/{id}/{createdAt}
           method: PATCH
   deleteComment:
     handler: comment.deleteComment
     events:
       - httpApi:
-          path: /v1/api/comment/{id}/{createdAt}
+          path: /comment/{id}/{createdAt}
           method: DELETE
 resources:
   Resources:
