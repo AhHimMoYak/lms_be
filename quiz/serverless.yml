@@ -1,0 +1,104 @@
+service: quiz-api
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}
+    REGION: ${aws:region}
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+  createPost:
+    handler: quiz.createPost  # 맞춰주신 대로 `createPost`로 설정
+    events:
+      - httpApi:
+          path: /create
+          method: POST
+
+  getPost:
+    handler: quiz.getPost  # 맞춰주신 대로 `getPost`로 설정
+    events:
+      - httpApi:
+          path: /{id}
+          method: GET
+
+  listPosts:
+    handler: quiz.listPosts  # 맞춰주신 대로 `listPosts`로 설정
+    events:
+      - httpApi:
+          path: /list
+          method: GET
+
+  updatePost:
+    handler: quiz.updatePost  # 맞춰주신 대로 `updatePost`로 설정
+    events:
+      - httpApi:
+          path: /{id}
+          method: PUT
+
+  deletePost:
+    handler: quiz.deletePost  # 맞춰주신 대로 `deletePost`로 설정
+    events:
+      - httpApi:
+          path: /{id}
+          method: DELETE
+
+resources:
+  Resources:
+    QuizTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "quiz.mjs"
+  individually: false
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    format: esm
+    sourcemap: true
+    target: node20
+    platform: node
+    outExtension:
+      ".js": ".mjs"
+    mainFields:
+      - module
+      - main
