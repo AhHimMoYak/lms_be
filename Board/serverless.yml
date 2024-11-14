@@ -1,0 +1,164 @@
+service: course-board
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}
+    REGION: ${aws:region}
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+
+functions:
+  createBoard:
+    handler: courseBoard.createBoard
+    events:
+      - httpApi:
+          path: /v1/api/courseProvide/board
+          method: POST
+  getBoard:
+    handler: courseBoard.getBoard
+    events:
+      - httpApi:
+          path: /v1/api/courseProvide/board/{id}/{createdAt}
+          method: GET
+  getBoards:
+    handler: courseBoard.getBoards
+    events:
+      - httpApi:
+          path: /v1/api/courseProvide/boards
+          method: GET
+
+  getBoardsByUser:
+    handler: courseBoard.getBoardsByUser
+    events:
+      - httpApi:
+          path : /v1/api/courseProvide/{username}/boards
+          method: GET
+
+  getBoardsByCourseProvide:
+    handler: courseBoard.getBoardsByCourseProvide
+    events:
+      - httpApi:
+          path : /v1/api/courseProvide/{courseProvideId}/{type}/boards
+          method: GET
+
+  updateBoard:
+    handler: courseBoard.updateBoard
+    events:
+      - httpApi:
+          path: /v1/api/courseProvide/board/{id}/{createdAt}
+          method: PATCH
+
+  deleteBoard:
+    handler: courseBoard.deleteBoard
+    events:
+      - httpApi:
+          path: /v1/api/courseProvide/board/{id}/{createdAt}
+          method: DELETE
+
+#  getBoardsByInstitution:
+#    handler: courseBoard.getBoardsByInstitution
+#    events:
+#      - httpApi:
+#          path : /v1/api/courseProvide/{institutionId}/{type}/boards
+#          method: GET
+
+
+resources:
+  Resources:
+    CourseBoardTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+#        GlobalSecondaryIndexes:
+#          - IndexName: UserIndex
+#            KeySchema:
+#              - AttributeName: userId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: InstitutionIndex
+#            KeySchema:
+#              - AttributeName: institutionId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: CourseProvideIndex
+#            KeySchema:
+#              - AttributeName: courseProvideId
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+#          - IndexName: TypeIndex
+#            KeySchema:
+#              - AttributeName: type
+#                KeyType: HASH
+#              - AttributeName: createdAt
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: ALL
+
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "courseBoard.mjs"
+  individually: false
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    format: esm
+    sourcemap: true
+    target: node20
+    platform: node
+    outExtension:
+      ".js": ".mjs"
+    mainFields:
+      - module
+      - main
