@@ -44,19 +44,19 @@ functions:
           path: /live
           method: POST
 
-#  getChannel:
-#    handler: getChannel.handler
-#    events:
-#      - httpApi:
-#          path: /live/{id}/channel
-#          method: GET
-#
-#  getLive:
-#    handler: getLive.handler
-#    events:
-#      - httpApi:
-#          path: /live/{id}
-#          method: GET
+  getChannel:
+    handler: getChannel.handler
+    events:
+      - httpApi:
+          path: /live/{id}/channel
+          method: GET
+
+  getLive:
+    handler: getLive.handler
+    events:
+      - httpApi:
+          path: /live/{id}
+          method: GET
 #
 #  listChannel:
 #    handler: listChannel.handler
@@ -96,12 +96,16 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: startTime
-            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: courseProvideId-index
             KeySchema:
               - AttributeName: courseProvideId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: id-index
+            KeySchema:
+              - AttributeName: id
                 KeyType: HASH
               - AttributeName: startTime
                 KeyType: RANGE

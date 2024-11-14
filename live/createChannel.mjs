@@ -2,11 +2,6 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocumentClient,
     PutCommand,
-    GetCommand,
-    UpdateCommand,
-    DeleteCommand,
-    QueryCommand,
-    ScanCommand
 } from "@aws-sdk/lib-dynamodb";
 import {
     IvsClient,
@@ -58,10 +53,10 @@ export const handler = async (event) => {
             streamKey: response.streamKey.value,
             ingestEndpoint: response.channel.ingestEndpoint,
             playbackUrl: response.channel.playbackUrl,
-            createAt: now,
             title: body.title,
             instructor: body.instructor,
             courseProvideId: body.courseProvideId,
+            course: body.course,
             startTime: body.startTime,
             endTime: body.endTime,
             status: 'NOT_STARTED',     // 게시글 상태
