@@ -71,9 +71,9 @@ public class CompanyController {
     @DeleteMapping("/company/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, userId));
+        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
     }
 
     @GetMapping("/company/employees")

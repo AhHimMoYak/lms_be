@@ -182,9 +182,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId) {
+    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username) {
         User supervisor = userService.getAuth(userDetails);
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
         );
 
@@ -192,7 +192,7 @@ public class CompanyServiceImpl implements CompanyService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 삭제할 권한이 없습니다.");
         }
 
-        Affiliation affiliation = affiliationRepository.findByUserId(userId).orElseThrow(
+        Affiliation affiliation = affiliationRepository.findByUserId(user.getId()).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 계약이 존재하지 않습니다.")
         );
 

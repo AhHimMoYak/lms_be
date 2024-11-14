@@ -19,7 +19,7 @@ public interface CompanyService {
 
     MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
 
-    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
+    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username);
 
     List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
 
