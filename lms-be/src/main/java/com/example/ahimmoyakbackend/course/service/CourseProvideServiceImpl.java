@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CourseProvideServiceImpl implements CourseProvideService {
-    @Override
-    public CourseProvideDetailResponseDto getCourseProvideDetail(UserDetails userDetails, Long courseProvideId) {
-        return null;
-    }
 
     @Override
     public CourseProvideDetailResponseDto getCourseProvideDetailByInstitution(UserDetails userDetails) {
@@ -22,10 +18,6 @@ public class CourseProvideServiceImpl implements CourseProvideService {
         return null;
     }
 
-    @Override
-    public CourseProvidesResponseDto getCourseProvideListByInstitution(UserDetails userDetails) {
-        return null;
-    }
 
     @Override
     public CourseProvidesResponseDto getCourseProvideListByEmployee(UserDetails userDetails) {
