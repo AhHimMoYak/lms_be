@@ -12,7 +12,6 @@ public record CreateCompanyRequestDto(
 ) {
     public Company toEntity() {
         return Company.builder()
-                .id(id)
                 .name(name)
                 .ownerName(owner_name)
                 .businessNumber(business_number)

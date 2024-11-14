@@ -1,17 +1,31 @@
 package com.example.ahimmoyakbackend.company.service;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
-import com.example.ahimmoyakbackend.auth.dto.FormerCompanyInfoRequestDto;
 import com.example.ahimmoyakbackend.company.dto.*;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 
+import java.util.List;
+
 public interface CompanyService {
     MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto createCompanyRequestDto);
-    SearchCompanyResponseDto searchCompany(UserDetailsImpl userDetails, String name);
+
+    List<SearchCompanyResponseDto> searchCompany(String name);
+
     MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
-    MessageResponseDto deleteCompany(UserDetailsImpl userDetails, Long companyId);
-    MessageResponseDto checkCompanyEmail(String email);
-    MessageResponseDto addAffiliation(AddAffiliationRequestDto requestDto);
-    GetEmployeeListResponseDto getEmployeeList(UserDetailsImpl userDetails);
-    MessageResponseDto disconnectCompany(Long companyId, UserDetailsImpl userDetails);
+
+    CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
+
+    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId);
+
+    MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
+
+    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
+
+    List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
+
+    MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto);
+
+    List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails);
+
+    MessageResponseDto submitEmployeeListForEnrollment (UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto);
 }

@@ -1,7 +1,6 @@
 package com.example.ahimmoyakbackend.company.controller;
 
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
-import com.example.ahimmoyakbackend.auth.dto.FormerCompanyInfoRequestDto;
 import com.example.ahimmoyakbackend.company.dto.*;
 import com.example.ahimmoyakbackend.company.service.CompanyService;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
@@ -10,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,15 +24,14 @@ public class CompanyController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyService.createCompany(userDetails, requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
     }
 
     @GetMapping("/company")
-    public ResponseEntity<SearchCompanyResponseDto> searchCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
     ) {
-        return ResponseEntity.ok(companyService.searchCompany(userDetails, name));
+        return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
     @PatchMapping("/company")
@@ -43,40 +43,69 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
     }
 
-    @DeleteMapping("/company")
-    public ResponseEntity<MessageResponseDto> deleteCompany(
+    @GetMapping("/company/email/check")
+    public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
+            @RequestParam String companyEmail,
+            @RequestParam String userEmail
+    ) {
+        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
+    }
+
+    @GetMapping("/company/affiliation")
+    public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long companyId
     ) {
-        return ResponseEntity.ok(companyService.deleteCompany(userDetails, companyId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyId));
     }
 
-    @GetMapping("/company/email/check")
-    public ResponseEntity<MessageResponseDto> CheckCompanyEmail(
-            @RequestParam String companyEmail
-    ) {
-        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail));
-    }
-
-    @PostMapping("/company/affiliation")
-    public ResponseEntity<MessageResponseDto> addAffiliation(
-            @RequestBody AddAffiliationRequestDto requestDto
-    ) {
-        return ResponseEntity.ok(companyService.addAffiliation(requestDto));
-    }
-
+    // 내가 회사 탈퇴
     @DeleteMapping("/company/affiliation")
-    public ResponseEntity<MessageResponseDto> detachCompany(Long companyId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        MessageResponseDto responseDto = companyService.disconnectCompany(companyId, userDetails);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    public ResponseEntity<MessageResponseDto> detachCompany(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.disconnectCompany(userDetails));
+    }
+
+    // supervisor 가 해당 유저를 회사에서 탈퇴
+    @DeleteMapping("/company/employees")
+    public ResponseEntity<MessageResponseDto> deleteAffiliation(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, userId));
     }
 
     @GetMapping("/company/employees")
-    public ResponseEntity<GetEmployeeListResponseDto> getEmployeeList(
+    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
     }
 
-    // TODO deleteAffiliation
+    // courseProvide
+    @PostMapping("/company/courseProvide")
+    public ResponseEntity<MessageResponseDto> CreateCourseProvide(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long courseId,
+            @RequestBody CreateCourseProvideRequestDto requestDto
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails,courseId,requestDto));
+    }
+
+    @GetMapping("/company/courseProvide/list")
+    public ResponseEntity<List<CourseProvideListResponseDto>> getCourseProvideList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(companyService.getCourseProvideList(userDetails));
+    }
+
+    @PostMapping("/company/courseProvide/employees")
+    public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody submitEmployeeListRequestDto requestDto
+    ) {
+        return ResponseEntity.ok(companyService.submitEmployeeListForEnrollment(userDetails,requestDto));
+    }
+
 }

@@ -71,4 +71,10 @@ public class User extends Timestamped {
         }
     }
 
+    public void updateRole(UserRole role) {
+        if (role != null) {
+            this.role = role;
+        }
+    }
+
 }

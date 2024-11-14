@@ -27,6 +27,11 @@ public class CourseProvide extends Timestamped {
     @Column(nullable = false)
     private Long id;
 
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
     @Column(nullable = false)
     private LocalDate beginDate;
 
@@ -47,11 +52,6 @@ public class CourseProvide extends Timestamped {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
@@ -60,6 +60,12 @@ public class CourseProvide extends Timestamped {
     @OneToMany(mappedBy = "courseProvide")
     private List<Enrollment> enrollments = new ArrayList<>();
 
+
+    public void updateCourseProvideState(CourseProvideState state) {
+        if (state != null) {
+            this.state = state;
+        }
+    }
     public void reject() {
         this.state = DECLINED;
     }
