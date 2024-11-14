@@ -1,0 +1,130 @@
+service: ahmy-live
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${sls:stage}
+    REGION: ${aws:region}
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - ivs:*
+          Resource: "*"
+
+functions:
+  createChannel:
+    handler: createChannel.handler
+    events:
+      - httpApi:
+          path: /live
+          method: POST
+
+#  getChannel:
+#    handler: getChannel.handler
+#    events:
+#      - httpApi:
+#          path: /live/{id}/channel
+#          method: GET
+#
+#  getLive:
+#    handler: getLive.handler
+#    events:
+#      - httpApi:
+#          path: /live/{id}
+#          method: GET
+#
+#  listChannel:
+#    handler: listChannel.handler
+#    events:
+#      - httpApi:
+#          path: /live
+#          method: GET
+#
+#  updateChannel:
+#    handler: updateChannel.handler
+#    events:
+#      - httpApi:
+#          path: /live/{id}
+#          method: PUT
+#
+#  deleteChannel:
+#    handler: deleteChannel.handler
+#    events:
+#      - httpApi:
+#          path: /live/{id}
+#          method: DELETE
+
+resources:
+  Resources:
+    LiveTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: courseProvideId
+            AttributeType: S
+          - AttributeName: startTime
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: startTime
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: courseProvideId-index
+            KeySchema:
+              - AttributeName: courseProvideId
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "createChannel.mjs"
+  individually: false
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    format: esm
+    sourcemap: true
+    target: node20
+    platform: node
+    outExtension:
+      ".js": ".mjs"
+    mainFields:
+      - module
+      - main
