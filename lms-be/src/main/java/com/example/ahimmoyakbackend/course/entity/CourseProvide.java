@@ -1,9 +1,7 @@
 package com.example.ahimmoyakbackend.course.entity;
 
-import com.example.ahimmoyakbackend.auth.common.UserRole;
 import com.example.ahimmoyakbackend.company.entity.Company;
 import com.example.ahimmoyakbackend.course.common.CourseProvideState;
-import com.example.ahimmoyakbackend.course.common.EnrollmentState;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
 import com.example.ahimmoyakbackend.institution.entity.Institution;
 import jakarta.persistence.*;
@@ -12,6 +10,9 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.ahimmoyakbackend.course.common.CourseProvideState.ACCEPTED;
+import static com.example.ahimmoyakbackend.course.common.CourseProvideState.DECLINED;
 
 @Entity
 @Getter
@@ -46,6 +47,7 @@ public class CourseProvide extends Timestamped {
     @Column
     private long deposit;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
@@ -64,4 +66,12 @@ public class CourseProvide extends Timestamped {
             this.state = state;
         }
     }
+    public void reject() {
+        this.state = DECLINED;
+    }
+
+    public void accept() {
+        this.state = ACCEPTED;
+    }
+
 }

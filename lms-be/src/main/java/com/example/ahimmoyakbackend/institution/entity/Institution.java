@@ -1,8 +1,8 @@
 package com.example.ahimmoyakbackend.institution.entity;
 
-import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
+import com.example.ahimmoyakbackend.institution.dto.UpdateInstitutionRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,4 +47,20 @@ public class Institution extends Timestamped {
     @OneToMany(mappedBy = "institution")
     private List<Manager> managers = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "institution")
+    private List<CourseProvide> courseProvide = new ArrayList<>();
+
+    public Institution patch(UpdateInstitutionRequestDto requestDTO) {
+        if (requestDTO.ownerName() != null) {
+            this.ownerName = requestDTO.ownerName();
+        }
+        if (requestDTO.email() != null) {
+            this.email = requestDTO.email();
+        }
+        if (requestDTO.phone() != null) {
+            this.phone = requestDTO.phone();
+        }
+        return this;
+    }
 }
