@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.CourseDetailResponseDto;
 import com.example.ahimmoyakbackend.course.dto.CourseListResponseDto;
+import com.example.ahimmoyakbackend.course.dto.EmployeeCourseListResponseDto;
 import com.example.ahimmoyakbackend.course.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,6 +78,11 @@ public class CourseController {
     @GetMapping(value = "/all", params = {"page", "category"})
     public ResponseEntity<Page<CourseListResponseDto>> getAllCoursesList(Pageable pageable, CourseCategory category) {
         return ResponseEntity.ok(courseService.getAllList(pageable, category));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<EmployeeCourseListResponseDto>> getAllCoursesList(@RequestParam String userName) {
+        return ResponseEntity.ok(courseService.getAllList(userName));
     }
 
 }

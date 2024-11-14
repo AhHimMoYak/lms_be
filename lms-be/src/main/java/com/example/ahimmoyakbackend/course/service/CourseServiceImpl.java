@@ -6,7 +6,9 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.*;
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
+import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final UserService userService;
     private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public CourseDetailResponseDto getDetail(long id) {
@@ -108,5 +113,16 @@ public class CourseServiceImpl implements CourseService {
     public Page<CourseListResponseDto> getAllList(Pageable pageable, CourseCategory category) {
         return courseRepository.findAllByCategoryOrderByState(category, pageable)
                 .map(CourseListResponseDto::from);
+    }
+
+    @Override
+    public List<EmployeeCourseListResponseDto> getAllList(String userName) {
+
+        List<Enrollment> enrollments = enrollmentRepository.findByUser_Name(userName);
+
+        return enrollments.stream()
+                .filter(Objects::nonNull)
+                .map(enrollment -> EmployeeCourseListResponseDto.from(enrollment.getCourseProvide().getCourse(),enrollment.getCourseProvide()))
+                .collect(Collectors.toList());
     }
 }
