@@ -35,48 +35,50 @@ provider:
           Action:
             - ivs:*
           Resource: "*"
+  tags:
+    Name: ahim
 
 functions:
   createChannel:
     handler: createChannel.handler
     events:
       - httpApi:
-          path: /live
+          path: /v1
           method: POST
 
   getChannel:
     handler: getChannel.handler
     events:
       - httpApi:
-          path: /live/{id}/channel
+          path: /v1/{id}/channel
           method: GET
 
   getLive:
     handler: getLive.handler
     events:
       - httpApi:
-          path: /live/{id}
+          path: /v1/{id}
           method: GET
-#
-#  listChannel:
-#    handler: listChannel.handler
-#    events:
-#      - httpApi:
-#          path: /live
-#          method: GET
+
+  listChannel:
+    handler: listChannel.handler
+    events:
+      - httpApi:
+          path: /v1/list/{courseProvideId}
+          method: GET
 #
 #  updateChannel:
 #    handler: updateChannel.handler
 #    events:
 #      - httpApi:
-#          path: /live/{id}
+#          path: /v1/{id}
 #          method: PUT
 #
 #  deleteChannel:
 #    handler: deleteChannel.handler
 #    events:
 #      - httpApi:
-#          path: /live/{id}
+#          path: /v1/{id}
 #          method: DELETE
 
 resources:
@@ -106,6 +108,14 @@ resources:
           - IndexName: id-index
             KeySchema:
               - AttributeName: id
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: courseProvideId-index-sort
+            KeySchema:
+              - AttributeName: courseProvideId
                 KeyType: HASH
               - AttributeName: startTime
                 KeyType: RANGE
