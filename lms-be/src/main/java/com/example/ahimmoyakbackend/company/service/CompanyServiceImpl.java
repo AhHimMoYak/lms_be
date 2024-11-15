@@ -84,6 +84,16 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails) {
+        User user = userService.getAuth(userDetails);
+        Company company = companyRepository.findById(user.getAffiliation().getCompany().getId()).orElseThrow(
+                ()-> new ApiException(HttpStatus.NOT_FOUND,"유저의 회사를 찾을수 없습니다."));
+
+        return CompanyDetailResponseDto.builder().build().of(company);
+    }
+
+    @Override
     @Transactional
     public MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto) {
         User user = userService.getAuth(userDetails);

@@ -11,6 +11,8 @@ public interface CompanyService {
 
     List<SearchCompanyResponseDto> searchCompany(String name);
 
+    CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails);
+
     MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
 
     CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
