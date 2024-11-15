@@ -34,39 +34,46 @@ provider:
 
 functions:
   createPost:
-    handler: quiz.createPost  # 맞춰주신 대로 `createPost`로 설정
+    handler: quiz.createQuiz
     events:
       - httpApi:
-          path: /create
+          path: /v1/create
           method: POST
 
   getPost:
-    handler: quiz.getPost  # 맞춰주신 대로 `getPost`로 설정
+    handler: quiz.getQuiz
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/{id}
           method: GET
 
-  listPosts:
-    handler: quiz.listPosts  # 맞춰주신 대로 `listPosts`로 설정
+  listPostsByCourse: # 코스 ID로 퀴즈 목록 조회
+    handler: quiz.listQuizByCourse
     events:
       - httpApi:
-          path: /list
+          path: /v1/course/{courseId}/quizzes
           method: GET
 
   updatePost:
-    handler: quiz.updatePost  # 맞춰주신 대로 `updatePost`로 설정
+    handler: quiz.updateQuiz
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/{id}
           method: PUT
 
   deletePost:
-    handler: quiz.deletePost  # 맞춰주신 대로 `deletePost`로 설정
+    handler: quiz.deleteQuiz
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/{id}
           method: DELETE
+
+  answerQuiz:
+    handler: quiz.answerQuiz
+    events:
+      - httpApi:
+          path: /v1/answer
+          method: POST
 
 resources:
   Resources:
