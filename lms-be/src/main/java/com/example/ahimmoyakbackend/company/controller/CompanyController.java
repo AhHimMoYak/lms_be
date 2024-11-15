@@ -34,6 +34,13 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
+    @GetMapping("/company/info")
+    public ResponseEntity<CompanyDetailResponseDto> getCompany(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(companyService.getCompany(userDetails));
+    }
+
     @PatchMapping("/company")
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
