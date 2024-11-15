@@ -44,10 +44,10 @@ public class CompanyController {
     @PatchMapping("/company")
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long companyId,
+            @RequestParam String name,
             @RequestBody UpdateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
+        return ResponseEntity.ok(companyService.updateCompany(userDetails, name, requestDto));
     }
 
     @GetMapping("/company/email/check")

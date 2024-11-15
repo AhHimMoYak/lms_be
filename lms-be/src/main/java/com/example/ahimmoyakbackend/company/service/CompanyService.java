@@ -13,7 +13,7 @@ public interface CompanyService {
 
     CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails);
 
-    MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
+    MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto);
 
     CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
 
