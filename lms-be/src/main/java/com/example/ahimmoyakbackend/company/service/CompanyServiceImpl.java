@@ -297,10 +297,21 @@ public class CompanyServiceImpl implements CompanyService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 수강신청할 권한이 없습니다.");
         }
 
-        List<User> userList = userRepository.findAllById(requestDto.employeeIdList());
+        List<User> userList = userRepository.findAllByUsernameIn(requestDto.employeeUserName());
 
         CourseProvide courseProvide = courseProvideRepository.findById(requestDto.courseProvideId()).orElseThrow(
                 ()-> new ApiException(HttpStatus.NOT_FOUND,"해당 courseProvideId 가 존재하지 않습니다."));
+
+        if(!courseProvide.getState().equals(CourseProvideState.ACCEPTED)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "코스가 수강신청 할 상태가 아닙니다.");
+        }
+
+        int attendeeCount = courseProvide.getAttendeeCount();
+        int selectedEmployeeCount = userList.size();
+
+        if (selectedEmployeeCount > attendeeCount) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "선택된 사원 수가 수강신청 가능 인원보다 많습니다.");
+        }
 
         for (User selected : userList) {
             boolean enrollmentExists = enrollmentRepository.existsByUserAndCourseProvide(selected, courseProvide);
