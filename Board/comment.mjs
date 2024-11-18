@@ -16,6 +16,7 @@ export const createComment = async (event) => {
     try {
         const body = JSON.parse(event.body);
         const now = new Date().toISOString();
+        const { boardId } = event.pathParameters;
 
         const comment = {
             id: `comment_${uuidv4()}`,
@@ -23,7 +24,7 @@ export const createComment = async (event) => {
             updatedAt: now,
             content: body.content,
             userName: body.userName,
-            boardId : body.boardId
+            boardId: boardId
         };
 
         await docClient.send(new PutCommand({
@@ -31,16 +32,26 @@ export const createComment = async (event) => {
             Item: comment
         }));
 
-        return{
-            statusCode : 201,
-            headers:{
+        // 댓글이 성공적으로 생성되었을 때 게시글 상태 업데이트
+        await docClient.send(new UpdateCommand({
+            TableName: "course-board",
+            Key: { id: boardId },
+            UpdateExpression: "set commentCount = commentCount + :commentCount",
+            ExpressionAttributeValues: {
+                ":commentCount": 1
+            }
+        }));
+
+        return {
+            statusCode: 201,
+            headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
             body: JSON.stringify(comment)
         };
-    }catch (error){
-        console.error('댓글 실패:', error);
+    } catch (error) {
+        console.error('댓글 생성 실패:', error);
         return {
             statusCode: 500,
             headers: {
@@ -55,6 +66,8 @@ export const createComment = async (event) => {
 export const getComments = async (event) => {
     try {
         const {boardId} = event.pathParameters;
+        console.log("Received boardId:", boardId); // 디버깅 로그
+
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -71,10 +84,11 @@ export const getComments = async (event) => {
                 ':boardId': boardId
             },
             Limit: limit,
-            ScanIndexForward: false,
+            ScanIndexForward: true,
             ...(lastEvaluatedKey && {ExclusiveStartKey: lastEvaluatedKey})
 
         }));
+        console.log("Query response items:", response.Items);
         return {
             statusCode: 200,
             headers: {
@@ -87,21 +101,21 @@ export const getComments = async (event) => {
             })
         };
     }catch (error) {
-        console.error('작성자별 게시글 조회 실패:', error);
+        console.error('댓글 조회 실패:', error);
         return {
             statusCode: 500,
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({ message: '작성자별 게시글 조회에 실패했습니다.' })
+            body: JSON.stringify({ message: '댓글 조회에 실패했습니다.' })
         };
     }
 };
 
 export const updateComment = async (event) => {
     try{
-        const {id, createdAt} = event.pathParameters;
+        const {id} = event.pathParameters;
         const { content } = JSON.parse(event.body);
 
         const limit = event.queryStringParameters?.limit
@@ -114,7 +128,7 @@ export const updateComment = async (event) => {
 
         const response = await docClient.send(new UpdateCommand({
             TableName: TABLE_NAME,
-            Key: {id, createdAt},
+            Key: {id},
             UpdateExpression: 'set content = :content, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
                 ':content' : content,
@@ -145,13 +159,22 @@ export const updateComment = async (event) => {
 
 export const deleteComment = async (event) => {
     try {
-        const { id, createdAt } = event.pathParameters;
+        const { id } = event.pathParameters;
+        const body = JSON.parse(event.body);
 
         await docClient.send(new DeleteCommand({
             TableName: TABLE_NAME,
             Key: {
-                id,
-                createdAt
+                id
+            }
+        }));
+
+        await docClient.send(new UpdateCommand({
+            TableName: "course-board",
+            Key: { id: body.boardId },
+            UpdateExpression: "set commentCount = commentCount - :commentCount",
+            ExpressionAttributeValues: {
+                ":commentCount": 1
             }
         }));
 

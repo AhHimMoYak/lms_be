@@ -45,67 +45,67 @@ functions:
     handler: courseBoard.createBoard
     events:
       - httpApi:
-          path: /courseProvide
+          path: /v1/courseProvide
           method: POST
   getBoard:
     handler: courseBoard.getBoard
     events:
       - httpApi:
-          path: /{id}/{createdAt}
+          path: /v1/{id}
           method: GET
 
   getBoardsByUser:
     handler: courseBoard.getBoardsByUser
     events:
       - httpApi:
-          path : /userName/{userName}
+          path : /v1/userName/{userName}
           method: GET
 
   getBoardsByCourseProvide:
     handler: courseBoard.getBoardsByCourseProvide
     events:
       - httpApi:
-          path : /courseProvide/{courseProvideId}/{type}
+          path : /v1/courseProvide/{courseProvideId}/{type}
           method: GET
 
   updateBoard:
     handler: courseBoard.updateBoard
     events:
       - httpApi:
-          path: /courseProvide/{id}/{createdAt}
+          path: /v1/courseProvide/{id}
           method: PATCH
 
   deleteBoard:
     handler: courseBoard.deleteBoard
     events:
       - httpApi:
-          path: /courseProvide/{id}/{createdAt}
+          path: /v1/courseProvide/{id}
           method: DELETE
 
   createComment:
     handler: comment.createComment
     events:
       - httpApi:
-          path: /comment
+          path: /v1/{boardId}/comment
           method: POST
 
   getComments:
     handler: comment.getComments
     events:
       - httpApi:
-          path: /{boardId}/comments
+          path: /v1/{boardId}/comments
           method: GET
   updateComment:
     handler: comment.updateComment
     events:
       - httpApi:
-          path: /comment/{id}/{createdAt}
+          path: /v1/comment/{id}
           method: PATCH
   deleteComment:
     handler: comment.deleteComment
     events:
       - httpApi:
-          path: /comment/{id}/{createdAt}
+          path: /v1/comment/{id}
           method: DELETE
 resources:
   Resources:
@@ -120,30 +120,16 @@ resources:
             AttributeType: S
           - AttributeName: userName
             AttributeType: S
-          - AttributeName: institutionId
-            AttributeType: S
           - AttributeName: courseProvideId
-            AttributeType: S
-          - AttributeName: type
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         GlobalSecondaryIndexes:
           - IndexName: UserIndex
             KeySchema:
               - AttributeName: userName
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-          - IndexName: InstitutionIndex
-            KeySchema:
-              - AttributeName: institutionId
                 KeyType: HASH
               - AttributeName: createdAt
                 KeyType: RANGE
@@ -157,14 +143,7 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-          - IndexName: TypeIndex
-            KeySchema:
-              - AttributeName: type
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
+
     CommentsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -179,8 +158,6 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE
         GlobalSecondaryIndexes:
           - IndexName: BoardIdIndex
             KeySchema:
@@ -190,7 +167,16 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+          - IndexName: IdIndex
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+
 
 package:
   patterns:
