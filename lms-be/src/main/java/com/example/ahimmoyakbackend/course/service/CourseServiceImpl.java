@@ -6,7 +6,11 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.*;
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.CourseProvide;
+import com.example.ahimmoyakbackend.course.entity.Enrollment;
+import com.example.ahimmoyakbackend.course.repository.CourseProvideRepository;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
+import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final UserService userService;
     private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public CourseDetailResponseDto getDetail(long id) {
@@ -38,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    // Todo 코스 생성시 교육기관 정보도 들어가도록 수정필요
+    // Todo 코스 생성시 교육기관 정보도 들어가도록 수정필요 -> 수정 완료
     public Long create(UserDetails userDetails, CourseCreateRequestDto requestDto) {
         return courseRepository.save(requestDto.toEntity()).getId();
     }
@@ -47,10 +53,10 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public boolean update(UserDetails userDetails, long id, CourseCreateRequestDto requestDto) {
         Course course = courseRepository.findById(id).orElse(null);
-        // Todo 코스 업데이트시 교육기관 매니저만 수정가능하도록 권한 확인 해야함 (아래 주석 참고)
-//        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
-//            return false;
-//        }
+        // Todo 코스 업데이트시 교육기관 매니저만 수정가능하도록 권한 확인 해야함 (아래 주석 참고) -> 수정 완료
+        if (course == null || !course.getInstitution().getId().equals(userService.getAuth(userDetails).getId())) {
+            return false;
+        }
         courseRepository.save(course.patch(requestDto));
         return true;
     }
@@ -59,29 +65,32 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public boolean delete(UserDetails userDetails, long id) {
         Course course = courseRepository.findById(id).orElse(null);
-        // Todo 코스 삭제시 교육기관 매니저만 삭제가능하도록 권한 확인 해야함 (아래 주석 참고)
-//        if (course == null || !course.getTutor().equals(userService.getAuth(userDetails))) {
-//            return false;
-//        }
+        // Todo 코스 삭제시 교육기관 매니저만 삭제가능하도록 권한 확인 해야함 (아래 주석 참고) -> 수정 완료
+        if (course == null || !course.getInstitution().getId().equals(userService.getAuth(userDetails).getId())) {
+            return false;
+        }
         courseRepository.save(course.setState(CourseState.REMOVED));
         return true;
     }
 
+    // 교육기관 매니저가 교육기관 코스들의 목록 조회
     @Override
-    public List<CourseListResponseDto> getList(UserDetails userDetails) {
+    public List<CourseListResponseDto> getListByInstitution(UserDetails userDetails) {
         User user = userService.getAuth(userDetails);
-        List<Course> courseList = new ArrayList<>();
-        // Todo 코스 리스트 받아올 때 강사의 리스트가 아닌, 매니저에 대해 해당 교육기관의 모든 코스 찾아오도록 수정해야함
-        if ( true
-//                user.isTutorState()
-        ){
-//            courseList = courseRepository.findAllByTutor(user);
-        }else {
-//            courseList = courseRepository.findAllByEnrollments_User(user);
-        }
+        Long institutionId = user.getManager().getInstitution().getId();
+
+        List<Course> courseList = courseRepository.findByInstitution_Id(institutionId);
+
+
         return courseList.stream()
-                .map(CourseListResponseDto::from)
-                .toList();
+                .map(course -> new CourseListResponseDto(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getIntroduction(),
+                        course.getInstructor(),
+                        course.getState(),
+                        course.getCategory()
+                )).collect(Collectors.toList());
     }
 
     @Override
@@ -108,5 +117,37 @@ public class CourseServiceImpl implements CourseService {
     public Page<CourseListResponseDto> getAllList(Pageable pageable, CourseCategory category) {
         return courseRepository.findAllByCategoryOrderByState(category, pageable)
                 .map(CourseListResponseDto::from);
+    }
+
+    @Override
+    public List<CourseListResponseDto> getAllList(String userName) {
+
+        List<Enrollment> enrollments = enrollmentRepository.findByUser_Name(userName);
+
+
+        List<CourseListResponseDto> courseList = new ArrayList<>();
+
+
+        for (Enrollment enrollment : enrollments) {
+            CourseProvide courseProvider = enrollment.getCourseProvide();
+            if (courseProvider != null) {
+                Course course = courseProvider.getCourse();
+                if (course != null) {
+                    CourseListResponseDto courseDto = CourseListResponseDto.builder()
+                            .id(course.getId())
+                            .title(course.getTitle())
+                            .introduction(course.getIntroduction())
+                            .instructor(course.getInstructor())
+                            .state(course.getState())
+                            .category(course.getCategory())
+                            .build();
+
+                    courseList.add(courseDto);
+                }
+            }
+        }
+
+
+        return courseList;
     }
 }
