@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.auth.common.UserRole;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.auth.repository.UserRepository;
+import com.example.ahimmoyakbackend.course.common.CourseProvideState;
 import com.example.ahimmoyakbackend.course.dto.CourseProvideDetailResponseDto;
 import com.example.ahimmoyakbackend.course.dto.CourseProvideDto;
 import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
@@ -13,7 +14,10 @@ import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import com.example.ahimmoyakbackend.course.repository.CourseProvideRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
-import com.example.ahimmoyakbackend.institution.dto.*;
+import com.example.ahimmoyakbackend.institution.dto.CourseProvideRequestDto;
+import com.example.ahimmoyakbackend.institution.dto.CreateInstitutionRequestDto;
+import com.example.ahimmoyakbackend.institution.dto.GetInstitutionDetailRequestDto;
+import com.example.ahimmoyakbackend.institution.dto.UpdateInstitutionRequestDto;
 import com.example.ahimmoyakbackend.institution.entity.Institution;
 import com.example.ahimmoyakbackend.institution.entity.Manager;
 import com.example.ahimmoyakbackend.institution.repository.InstitutionRepository;
@@ -24,9 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.example.ahimmoyakbackend.course.common.CourseProvideState.ACCEPTED;
-import static com.example.ahimmoyakbackend.course.common.CourseProvideState.DECLINED;
 
 @Service
 @RequiredArgsConstructor
@@ -152,24 +153,21 @@ public class InstitutionServiceImpl implements InstitutionService {
         CourseProvide courseProvide = courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new IllegalArgumentException("계약 아이디가 없습니다."));
 
 
-        if (requestDto.state() == ACCEPTED) { // 수락 버튼을 눌렀을때 말입니다.
+        if (requestDto.state().equals(CourseProvideState.ACCEPTED)) { // 수락 버튼을 눌렀을 때
             courseProvide.accept();
             courseProvideRepository.save(courseProvide);
             return MessageResponseDto.builder()
                     .message("수락하셨습니다.")
                     .build();
-        } else if (requestDto.state() == DECLINED) { // 거절 버튼을 눌렀을때 말입니다.
+        } else if (requestDto.state().equals(CourseProvideState.DECLINED)) { // 거절 버튼을 눌렀을 때
             courseProvide.reject();
             courseProvideRepository.save(courseProvide);
             return MessageResponseDto.builder()
                     .message("거절하셨습니다.")
                     .build();
+        } else {
+            throw new IllegalArgumentException("유효하지 않은 상태 값입니다.");
         }
-
-        courseProvideRepository.save(courseProvide);
-        return MessageResponseDto.builder()
-                .message("수강 신청 응답 완료")
-                .build();
     }
 
     @Override
@@ -183,6 +181,7 @@ public class InstitutionServiceImpl implements InstitutionService {
                         .name(enrollment.getUser().getName())
                         .email(enrollment.getUser().getEmail())
                         .birth(enrollment.getUser().getBirth())
+                        .state(enrollment.getState())
                         .build())
                 .collect(Collectors.toList());
 
@@ -197,12 +196,19 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
-    public MessageResponseDto confirmEnrollments(UserDetails userDetails, ConfirmEnrollmentsRequestDto requestDto, Long courseProvideId) {
+    public MessageResponseDto confirmEnrollments(UserDetails userDetails, Long courseProvideId) {
 
-        List<Enrollment> enrollments = enrollmentRepository.findAllById(requestDto.enrollmentList());
+        CourseProvide courseProvide = courseProvideRepository.findById(courseProvideId)
+                .orElseThrow(() -> new IllegalArgumentException("계약 아이디가 없습니다."));
+
+        courseProvide.setState();
+
+        List<Enrollment> enrollments = courseProvide.getEnrollments();
         for (Enrollment enrollment : enrollments) {
-            enrollment.setState(enrollment);
+            enrollment.setState();  // 원하는 상태로 변경
         }
+
+        courseProvideRepository.save(courseProvide);
         enrollmentRepository.saveAll(enrollments);
 
         return MessageResponseDto.builder()
