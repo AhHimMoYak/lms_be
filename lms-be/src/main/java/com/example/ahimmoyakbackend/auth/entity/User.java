@@ -50,6 +50,7 @@ public class User extends Timestamped {
     private Gender gender;
 
     @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToOne(mappedBy = "user")
