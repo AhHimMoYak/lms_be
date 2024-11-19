@@ -73,13 +73,13 @@ functions:
       - httpApi:
           path: /v1/{id}
           method: PUT
-#
-#  deleteChannel:
-#    handler: deleteChannel.handler
-#    events:
-#      - httpApi:
-#          path: /v1/{id}
-#          method: DELETE
+
+  deleteChannel:
+    handler: deleteChannel.handler
+    events:
+      - httpApi:
+          path: /v1/{id}
+          method: DELETE
 
 resources:
   Resources:

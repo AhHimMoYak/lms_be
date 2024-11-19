@@ -53,6 +53,7 @@ export const handler = async (event) => {
             streamKey: response.streamKey.value,
             ingestEndpoint: response.channel.ingestEndpoint,
             playbackUrl: response.channel.playbackUrl,
+            arn: response.channel.arn,
             title: body.title,
             instructor: body.instructor,
             courseProvideId: body.courseProvideId,
