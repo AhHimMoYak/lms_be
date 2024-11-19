@@ -48,7 +48,12 @@ public class CompanyServiceImpl implements CompanyService {
     public MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto requestDto) {
         User user = userService.getAuth(userDetails);
 
-        if (companyRepository.existsByBusinessNumber(requestDto.business_number())) {
+        if (user.getAffiliation()!= null) {
+            String company = user.getAffiliation().getCompany().getName();
+            throw new ApiException(HttpStatus.CONFLICT, "이미 소속된 회사가 존재합니다 : " + company);
+        }
+
+        if (companyRepository.existsByBusinessNumber(requestDto.businessNumber())) {
             throw new ApiException(HttpStatus.CONFLICT, "이미 존재하는 사업자 번호입니다.");
         }
 
