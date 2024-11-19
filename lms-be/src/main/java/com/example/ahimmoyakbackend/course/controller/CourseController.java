@@ -22,7 +22,7 @@ public class CourseController {
     private final CourseService courseService;
 
     // Fixme 코스 디테일 조회할때 수강중인 코스(코스프로바이드) 인경우 코스프로바이드의 정보도 같이 반환해야함, 계약을 위해 코스정보만 조회하는경우도 필요 이 두가지 경우 모두 고려해서 로직 변경및 api 추가해야함
-    @GetMapping("/{courseId}")
+    @GetMapping("/{courseId}/detail")
     public ResponseEntity<CourseDetailResponseDto> getCourseDetail(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getDetail(courseId));
     }
@@ -52,10 +52,9 @@ public class CourseController {
         return courseService.delete(userDetails, courseId) ? ResponseEntity.ok("코스 삭제 성고") : ResponseEntity.badRequest().body("코스 삭제 실패");
     }
 
-    // Fixme 수강중인 코스 리스트 조회시 코스프로바이드 정보도 같이 제공되도록 로직 변경해야함
     @GetMapping
-    public ResponseEntity<List<CourseListResponseDto>> getCoursesList(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(courseService.getList(userDetails));
+    public ResponseEntity<List<CourseListResponseDto>> getCoursesListByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(courseService.getListByInstitution(userDetails));
     }
 
     // Fixme 코스 리스트 조회할때 수강중인 코스(코스프로바이드) 인경우 코스프로바이드의 정보도 같이 반환해야함, 계약을 위해 코스정보만 조회하는경우도 필요 이 두가지 경우 모두 고려해서 로직 변경및 api 추가해야함
@@ -77,6 +76,11 @@ public class CourseController {
     @GetMapping(value = "/all", params = {"page", "category"})
     public ResponseEntity<Page<CourseListResponseDto>> getAllCoursesList(Pageable pageable, CourseCategory category) {
         return ResponseEntity.ok(courseService.getAllList(pageable, category));
+    }
+
+    @GetMapping("/{userName}")
+    public ResponseEntity<List<CourseListResponseDto>> getAllCoursesList( @PathVariable String userName) {
+        return ResponseEntity.ok(courseService.getAllList(userName));
     }
 
 }
