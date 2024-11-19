@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.ahimmoyakbackend.course.common.CourseProvideState.ACCEPTED;
-import static com.example.ahimmoyakbackend.course.common.CourseProvideState.DECLINED;
+import static com.example.ahimmoyakbackend.course.common.CourseProvideState.*;
 
 @Entity
 @Getter
@@ -34,6 +33,7 @@ public class CourseProvide extends Timestamped {
     private LocalDate endDate;
 
     @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private CourseProvideState state;
 
     @Column(nullable = false)
@@ -68,4 +68,19 @@ public class CourseProvide extends Timestamped {
         this.state = ACCEPTED;
     }
 
+    public void startCourse() {
+        if (this.state == NOT_STARTED) {
+            this.state = CourseProvideState.ONGOING;
+        }
+    }
+
+    public void finishCourse() {
+        if (this.state == CourseProvideState.ONGOING) {
+            this.state = CourseProvideState.FINISHED;
+        }
+    }
+
+    public void setState() {
+        this.state = NOT_STARTED;
+    }
 }
