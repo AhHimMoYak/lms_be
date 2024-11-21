@@ -1,4 +1,4 @@
-service: quiz-api
+service: exam-api
 
 frameworkVersion: "4"
 
@@ -33,51 +33,58 @@ provider:
           Resource: "*"
 
 functions:
-  createQuiz:
-    handler: quiz.createQuiz
+  createExam:
+    handler: exam.createExam
     events:
       - httpApi:
-          path: /v1/create
+          path: /v1/exam/create
           method: POST
 
-  getQuiz:
-    handler: quiz.getQuiz
+  getExam:
+    handler: exam.getExam
     events:
       - httpApi:
-          path: /v1/{courseId}/{id}
+          path: /v1/exam/{id}
           method: GET
 
-  listQuizByCourse:
-    handler: quiz.listQuizByCourse
+  listExamsByCourse:
+    handler: exam.listExamsByCourse
     events:
       - httpApi:
-          path: /v1/{courseId}
+          path: /v1/exam/course/{courseId}
           method: GET
 
-  updateQuiz:
-    handler: quiz.updateQuiz
+  updateExam:
+    handler: exam.updateExam
     events:
       - httpApi:
-          path: /v1/{courseId}/{id}
+          path: /v1/exam/{id}
           method: PUT
 
-  deleteQuiz:
-    handler: quiz.deleteQuiz
+  updateExamStatus:
+    handler: exam.updateExamStatus
     events:
       - httpApi:
-          path: /v1/{courseId}/{id}
+          path: /v1/exam/{id}/status
+          method: PATCH
+
+  deleteExam:
+    handler: exam.deleteExam
+    events:
+      - httpApi:
+          path: /v1/exam/{id}
           method: DELETE
 
-  answerQuiz:
-    handler: quiz.answerQuiz
+  submitExamAnswers:
+    handler: exam.submitExamAnswers
     events:
       - httpApi:
-          path: /v1/{courseId}/{id}/answer
+          path: /v1/exam/{id}/submit
           method: POST
 
 resources:
   Resources:
-    QuizTable:
+    ExamTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
@@ -102,7 +109,7 @@ package:
   patterns:
     - "!node_modules/.bin/**"
     - "node_modules/**"
-    - "quiz.mjs"
+    - "exam.mjs"
   individually: false
 
 custom:
