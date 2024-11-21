@@ -1,4 +1,4 @@
-service: quiz-api
+service: exam-api
 
 frameworkVersion: "4"
 
@@ -24,7 +24,7 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/courseId-index"
         - Effect: Allow
           Action:
             - logs:CreateLogGroup
@@ -33,44 +33,58 @@ provider:
           Resource: "*"
 
 functions:
-  createPost:
-    handler: quiz.createPost  # 맞춰주신 대로 `createPost`로 설정
+  createExam:
+    handler: exam.createExam
     events:
       - httpApi:
-          path: /create
+          path: /v1/exam/create
           method: POST
 
-  getPost:
-    handler: quiz.getPost  # 맞춰주신 대로 `getPost`로 설정
+  getExam:
+    handler: exam.getExam
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/exam/{id}
           method: GET
 
-  listPosts:
-    handler: quiz.listPosts  # 맞춰주신 대로 `listPosts`로 설정
+  listExamsByCourse:
+    handler: exam.listExamsByCourse
     events:
       - httpApi:
-          path: /list
+          path: /v1/exam/course/{courseId}
           method: GET
 
-  updatePost:
-    handler: quiz.updatePost  # 맞춰주신 대로 `updatePost`로 설정
+  updateExam:
+    handler: exam.updateExam
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/exam/{id}
           method: PUT
 
-  deletePost:
-    handler: quiz.deletePost  # 맞춰주신 대로 `deletePost`로 설정
+  updateExamStatus:
+    handler: exam.updateExamStatus
     events:
       - httpApi:
-          path: /{id}
+          path: /v1/exam/{id}/status
+          method: PATCH
+
+  deleteExam:
+    handler: exam.deleteExam
+    events:
+      - httpApi:
+          path: /v1/exam/{id}
           method: DELETE
+
+  submitExamAnswers:
+    handler: exam.submitExamAnswers
+    events:
+      - httpApi:
+          path: /v1/exam/{id}/submit
+          method: POST
 
 resources:
   Resources:
-    QuizTable:
+    ExamTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
@@ -78,15 +92,24 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: courseId
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: courseId-index
+            KeySchema:
+              - AttributeName: courseId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
 package:
   patterns:
     - "!node_modules/.bin/**"
     - "node_modules/**"
-    - "quiz.mjs"
+    - "exam.mjs"
   individually: false
 
 custom:
