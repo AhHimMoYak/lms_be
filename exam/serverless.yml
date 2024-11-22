@@ -1,0 +1,127 @@
+service: exam-api
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}
+    REGION: ${aws:region}
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/courseId-index"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+  createExam:
+    handler: exam.createExam
+    events:
+      - httpApi:
+          path: /v1/exam/create
+          method: POST
+
+  getExam:
+    handler: exam.getExam
+    events:
+      - httpApi:
+          path: /v1/exam/{id}
+          method: GET
+
+  listExamsByCourse:
+    handler: exam.listExamsByCourse
+    events:
+      - httpApi:
+          path: /v1/exam/course/{courseId}
+          method: GET
+
+  updateExam:
+    handler: exam.updateExam
+    events:
+      - httpApi:
+          path: /v1/exam/{id}
+          method: PUT
+
+  updateExamStatus:
+    handler: exam.updateExamStatus
+    events:
+      - httpApi:
+          path: /v1/exam/{id}/status
+          method: PATCH
+
+  deleteExam:
+    handler: exam.deleteExam
+    events:
+      - httpApi:
+          path: /v1/exam/{id}
+          method: DELETE
+
+  submitExamAnswers:
+    handler: exam.submitExamAnswers
+    events:
+      - httpApi:
+          path: /v1/exam/{id}/submit
+          method: POST
+
+resources:
+  Resources:
+    ExamTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: courseId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: courseId-index
+            KeySchema:
+              - AttributeName: courseId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "exam.mjs"
+  individually: false
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    format: esm
+    sourcemap: true
+    target: node20
+    platform: node
+    outExtension:
+      ".js": ".mjs"
+    mainFields:
+      - module
+      - main

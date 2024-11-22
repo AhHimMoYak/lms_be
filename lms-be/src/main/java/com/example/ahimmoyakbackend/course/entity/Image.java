@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "course")
+@Table(name = "image")
 public class Image extends Timestamped {
 
     @Id

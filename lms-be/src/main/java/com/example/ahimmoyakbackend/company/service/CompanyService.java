@@ -11,15 +11,17 @@ public interface CompanyService {
 
     List<SearchCompanyResponseDto> searchCompany(String name);
 
-    MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto);
+    CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails);
+
+    MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto);
 
     CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
 
-    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId);
+    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, String companyName);
 
     MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
 
-    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId);
+    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username);
 
     List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
 

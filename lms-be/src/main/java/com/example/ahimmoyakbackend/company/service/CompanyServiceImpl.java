@@ -48,7 +48,12 @@ public class CompanyServiceImpl implements CompanyService {
     public MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto requestDto) {
         User user = userService.getAuth(userDetails);
 
-        if (companyRepository.existsByBusinessNumber(requestDto.business_number())) {
+        if (user.getAffiliation()!= null) {
+            String company = user.getAffiliation().getCompany().getName();
+            throw new ApiException(HttpStatus.CONFLICT, "이미 소속된 회사가 존재합니다 : " + company);
+        }
+
+        if (companyRepository.existsByBusinessNumber(requestDto.businessNumber())) {
             throw new ApiException(HttpStatus.CONFLICT, "이미 존재하는 사업자 번호입니다.");
         }
 
@@ -84,13 +89,23 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails) {
+        User user = userService.getAuth(userDetails);
+        Company company = companyRepository.findById(user.getAffiliation().getCompany().getId()).orElseThrow(
+                ()-> new ApiException(HttpStatus.NOT_FOUND,"유저의 회사를 찾을수 없습니다."));
+
+        return CompanyDetailResponseDto.builder().build().of(company);
+    }
+
+    @Override
     @Transactional
-    public MessageResponseDto updateCompany(UserDetailsImpl userDetails, Long companyId, UpdateCompanyRequestDto requestDto) {
+    public MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto) {
         User user = userService.getAuth(userDetails);
         if (user.getRole() != UserRole.SUPERVISOR) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "회사를 수정할 권한이 없습니다.");
         }
-        Company company = companyRepository.findById(companyId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
+        Company company = companyRepository.findByName(name).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
         Company usercompany = user.getAffiliation().getCompany();
         if (company != usercompany) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
@@ -131,7 +146,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId) {
+    public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, String companyName) {
         User user = userService.getAuth(userDetails);
 
         if (user.getAffiliation() != null) {
@@ -139,8 +154,8 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         Affiliation affiliation = Affiliation.builder()
-                .company(companyRepository.findById(companyId)
-                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 companyId 를 찾을수 없습니다.")))
+                .company(companyRepository.findByName(companyName)
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 회사를 찾을수 없습니다.")))
                 .user(userRepository.findById(user.getId())
                         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 userId 를 찾을수 없습니다.")))
                 .isSupervisor(false)
@@ -182,9 +197,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, Long userId) {
+    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username) {
         User supervisor = userService.getAuth(userDetails);
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
         );
 
@@ -192,7 +207,7 @@ public class CompanyServiceImpl implements CompanyService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 삭제할 권한이 없습니다.");
         }
 
-        Affiliation affiliation = affiliationRepository.findByUserId(userId).orElseThrow(
+        Affiliation affiliation = affiliationRepository.findByUserId(user.getId()).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 계약이 존재하지 않습니다.")
         );
 
@@ -287,10 +302,21 @@ public class CompanyServiceImpl implements CompanyService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 수강신청할 권한이 없습니다.");
         }
 
-        List<User> userList = userRepository.findAllById(requestDto.employeeIdList());
+        List<User> userList = userRepository.findAllByUsernameIn(requestDto.employeeUserName());
 
         CourseProvide courseProvide = courseProvideRepository.findById(requestDto.courseProvideId()).orElseThrow(
                 ()-> new ApiException(HttpStatus.NOT_FOUND,"해당 courseProvideId 가 존재하지 않습니다."));
+
+        if(!courseProvide.getState().equals(CourseProvideState.ACCEPTED)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "코스가 수강신청 할 상태가 아닙니다.");
+        }
+
+        int attendeeCount = courseProvide.getAttendeeCount();
+        int selectedEmployeeCount = userList.size();
+
+        if (selectedEmployeeCount > attendeeCount) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "선택된 사원 수가 수강신청 가능 인원보다 많습니다.");
+        }
 
         for (User selected : userList) {
             boolean enrollmentExists = enrollmentRepository.existsByUserAndCourseProvide(selected, courseProvide);

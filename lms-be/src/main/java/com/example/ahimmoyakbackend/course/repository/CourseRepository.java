@@ -1,6 +1,5 @@
 package com.example.ahimmoyakbackend.course.repository;
 
-import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.entity.Course;
 import org.springframework.data.domain.Page;
@@ -46,4 +45,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "WHEN c.state = 'FINISHED' THEN 3 ELSE 4 END ASC")
     Page<Course> findAllOrderByState(Pageable pageable);
 
+    List<Course> findByInstitution_Id(Long id);
 }

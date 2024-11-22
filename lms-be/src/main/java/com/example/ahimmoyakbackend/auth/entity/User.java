@@ -50,6 +50,7 @@ public class User extends Timestamped {
     private Gender gender;
 
     @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToOne(mappedBy = "user")
@@ -69,6 +70,9 @@ public class User extends Timestamped {
         if (requestDTO.getEmail() != null) {
             this.email = requestDTO.getEmail();
         }
+    }
+    public void patch() {
+        this.role = UserRole.MANAGER;
     }
 
     public void updateRole(UserRole role) {

@@ -60,9 +60,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<UserInformationResponseDto> checkUser(@RequestBody UserIdentificationRequestDto requestDto){
-        // TODO requestBody -> requestParam
-        UserInformationResponseDto responseDto = userService.getPersonalInformation(requestDto);
+    public ResponseEntity<UserInformationResponseDto> checkUser(@RequestParam String username) {
+        UserInformationResponseDto responseDto = userService.getPersonalInformation(username);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
