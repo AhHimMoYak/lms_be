@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class InstitutionController {
 
     private final InstitutionService institutionService;
-    private final CourseProvideService courseProvideService;
 
     @PostMapping
     public ResponseEntity<MessageResponseDto> createInstitution(
@@ -50,14 +49,14 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.updateInstitution(userDetails, requestDto, institutionId));
     }
 
-    @GetMapping(value = "/", params = "institutionId")
+    @GetMapping
     public ResponseEntity<CourseProvidesResponseDto> getCourseProvideListByInstitution(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return ResponseEntity.ok(institutionService.getCourseProvideListByInstitution(userDetails));
     }
 
     // 처음에 수강 신청 응답
-    @PatchMapping(value = "/{courseProvideId}", params = "courseProvideId")
+    @PatchMapping("/{courseProvideId}/response")
     public ResponseEntity<MessageResponseDto> courseProvideResponse(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                     @PathVariable Long courseProvideId,
                                                                     @RequestBody CourseProvideRequestDto requestDto) {
@@ -65,17 +64,16 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.courseProvideResponse(userDetails, courseProvideId, requestDto));
     }
 
-    @GetMapping("/{courseProvideId}/detail")
+    @GetMapping("/{courseProvideId}/courseProvideDetail")
     public ResponseEntity<CourseProvideDetailResponseDto> getCourseProvideDetailByInstitution(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long courseProvideId) {
         return ResponseEntity.ok(institutionService.getCourseProvideDetailByInstitution(userDetails, courseProvideId));
     }
 
     @PatchMapping("/{courseProvideId}/registration")// 수강등록
     public ResponseEntity<MessageResponseDto> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
-                                                                 @RequestBody ConfirmEnrollmentsRequestDto requestDto,
                                                                  @PathVariable Long courseProvideId) {
 
-        return ResponseEntity.ok(institutionService.confirmEnrollments(userDetails, requestDto, courseProvideId));
+        return ResponseEntity.ok(institutionService.confirmEnrollments(userDetails, courseProvideId));
     }
 
 }

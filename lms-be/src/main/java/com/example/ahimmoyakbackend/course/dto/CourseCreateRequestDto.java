@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.institution.entity.Institution;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public record CourseCreateRequestDto(
    String title,
    String introduction,
    String instructor,
+   Institution institution,
    CourseCategory category
 ) {
     // Todo 코스 생성시 교육기관 정보가 들어가도록 수정해야함
@@ -21,6 +23,7 @@ public record CourseCreateRequestDto(
                 .title(this.title)
                 .introduction(this.introduction)
                 .category(this.category)
+                .institution(this.institution)
                 .state(CourseState.AVAILABLE)
                 .instructor(this.instructor)
                 .build();

@@ -22,5 +22,5 @@ public interface InstitutionService {
 
     CourseProvideDetailResponseDto getCourseProvideDetailByInstitution(UserDetails userDetails, Long courseProvideId);
 
-    MessageResponseDto confirmEnrollments(UserDetails userDetails, ConfirmEnrollmentsRequestDto requestDto, Long courseProvideId);
+    MessageResponseDto confirmEnrollments(UserDetails userDetails, Long courseProvideId);
 }
