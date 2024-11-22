@@ -44,8 +44,8 @@ public class InstitutionServiceImpl implements InstitutionService {
 
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지않는 user 입니다"));
 
-        if (!user.getRole().equals(UserRole.MANAGER)) {
-            throw new IllegalArgumentException("해당 사용자는 등록 권한이 없습니다");
+        if ((user.getRole().equals(UserRole.MANAGER))){
+            throw new IllegalArgumentException("이미 교육기관에 소속되어있습니다.");
         }
 
         if (institutionRepository.existsByBusinessNumber(requestDto.businessNumber())) {
@@ -70,6 +70,8 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .user(user)
                 .institution(institution)
                 .build();
+
+        user.path();
         managerRepository.save(manager);
 
         return MessageResponseDto.builder().message("회사 생성 성공").build();
