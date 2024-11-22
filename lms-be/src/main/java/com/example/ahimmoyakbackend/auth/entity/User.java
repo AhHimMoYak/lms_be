@@ -71,5 +71,8 @@ public class User extends Timestamped {
             this.email = requestDTO.getEmail();
         }
     }
+    public void patch() {
+        this.role = UserRole.MANAGER;
+    }
 
 }
