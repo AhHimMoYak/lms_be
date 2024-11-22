@@ -78,8 +78,8 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getAllList(pageable, category));
     }
 
-    @GetMapping("/{userName}")
-    public ResponseEntity<List<CourseListResponseDto>> getAllCoursesList( @PathVariable String userName) {
+    @GetMapping("/user")
+    public ResponseEntity<List<EmployeeCourseListResponseDto>> getAllCoursesList(@RequestParam String userName) {
         return ResponseEntity.ok(courseService.getAllList(userName));
     }
 

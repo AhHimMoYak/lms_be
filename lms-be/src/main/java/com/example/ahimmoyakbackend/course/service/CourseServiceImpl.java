@@ -6,9 +6,7 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.*;
 import com.example.ahimmoyakbackend.course.entity.Course;
-import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
-import com.example.ahimmoyakbackend.course.repository.CourseProvideRepository;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,34 +118,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseListResponseDto> getAllList(String userName) {
+    public List<EmployeeCourseListResponseDto> getAllList(String userName) {
 
         List<Enrollment> enrollments = enrollmentRepository.findByUser_Name(userName);
 
-
-        List<CourseListResponseDto> courseList = new ArrayList<>();
-
-
-        for (Enrollment enrollment : enrollments) {
-            CourseProvide courseProvider = enrollment.getCourseProvide();
-            if (courseProvider != null) {
-                Course course = courseProvider.getCourse();
-                if (course != null) {
-                    CourseListResponseDto courseDto = CourseListResponseDto.builder()
-                            .id(course.getId())
-                            .title(course.getTitle())
-                            .introduction(course.getIntroduction())
-                            .instructor(course.getInstructor())
-                            .state(course.getState())
-                            .category(course.getCategory())
-                            .build();
-
-                    courseList.add(courseDto);
-                }
-            }
-        }
-
-
-        return courseList;
+        return enrollments.stream()
+                .filter(Objects::nonNull)
+                .map(enrollment -> EmployeeCourseListResponseDto.from(enrollment.getCourseProvide().getCourse(), enrollment.getCourseProvide()))
+                .collect(Collectors.toList());
     }
 }

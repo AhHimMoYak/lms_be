@@ -20,9 +20,7 @@ public interface UserService {
 
     MessageResponseDto updatePersonalInformation(UserInformationRequestDto requestDTO, UserDetailsImpl userDetails);
 
-    UserInformationResponseDto getPersonalInformation(UserIdentificationRequestDto requestDto);
-
-    MessageResponseDto disconnectCompany(FormerCompanyInfoRequestDto requestDto, UserDetailsImpl userDetails);
+    UserInformationResponseDto getPersonalInformation(String username);
 
     User getAuth(UserDetails userDetails);
 }

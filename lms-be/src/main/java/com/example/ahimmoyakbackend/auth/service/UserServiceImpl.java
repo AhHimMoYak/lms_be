@@ -8,8 +8,10 @@ import com.example.ahimmoyakbackend.auth.exception.InvalidPasswordException;
 import com.example.ahimmoyakbackend.auth.jwt.JwtTokenProvider;
 import com.example.ahimmoyakbackend.auth.repository.UserRepository;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
+import com.example.ahimmoyakbackend.global.exception.ApiException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -121,14 +123,17 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    @Override
-    public UserInformationResponseDto getPersonalInformation(UserIdentificationRequestDto requestDto) {
-        return null;
-    }
+    public UserInformationResponseDto getPersonalInformation(String username) {
+        User findUser = userRepository.findByUsername(username).orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "사용자가 없습니다"));
 
-    @Override
-    public MessageResponseDto disconnectCompany(FormerCompanyInfoRequestDto requestDto, UserDetailsImpl userDetails) {
-        return null;
+        return UserInformationResponseDto.builder()
+                .name(findUser.getName())
+                .username(findUser.getUsername())
+                .birth(findUser.getBirth())
+                .phone(findUser.getPhone())
+                .email(findUser.getEmail())
+                .gender(findUser.getGender())
+                .build();
     }
 
 }
