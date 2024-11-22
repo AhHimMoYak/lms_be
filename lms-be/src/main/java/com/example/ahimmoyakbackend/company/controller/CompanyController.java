@@ -34,13 +34,20 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
+    @GetMapping("/company/info")
+    public ResponseEntity<CompanyDetailResponseDto> getCompany(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(companyService.getCompany(userDetails));
+    }
+
     @PatchMapping("/company")
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long companyId,
+            @RequestParam String name,
             @RequestBody UpdateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyService.updateCompany(userDetails, companyId, requestDto));
+        return ResponseEntity.ok(companyService.updateCompany(userDetails, name, requestDto));
     }
 
     @GetMapping("/company/email/check")
@@ -54,9 +61,9 @@ public class CompanyController {
     @GetMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long companyId
+            @RequestParam String companyName
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyName));
     }
 
     // 내가 회사 탈퇴
@@ -71,9 +78,9 @@ public class CompanyController {
     @DeleteMapping("/company/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long userId
+            @RequestParam String username
     ) {
-        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, userId));
+        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
     }
 
     @GetMapping("/company/employees")
