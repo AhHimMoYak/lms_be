@@ -4,6 +4,7 @@ import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
 import com.example.ahimmoyakbackend.course.dto.CourseDetailResponseDto;
 import com.example.ahimmoyakbackend.course.dto.CourseListResponseDto;
+import com.example.ahimmoyakbackend.course.dto.EmployeeCourseListResponseDto;
 import com.example.ahimmoyakbackend.course.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
