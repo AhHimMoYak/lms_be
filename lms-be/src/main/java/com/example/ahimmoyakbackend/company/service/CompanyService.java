@@ -17,7 +17,7 @@ public interface CompanyService {
 
     CheckCompanyResponseDto checkCompanyEmail(String companyEmail, String userEmail);
 
-    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId);
+    MessageResponseDto addAffiliation(UserDetailsImpl userDetails, String companyName);
 
     MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
 

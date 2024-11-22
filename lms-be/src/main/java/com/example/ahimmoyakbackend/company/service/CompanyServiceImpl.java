@@ -146,7 +146,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, Long companyId) {
+    public MessageResponseDto addAffiliation(UserDetailsImpl userDetails, String companyName) {
         User user = userService.getAuth(userDetails);
 
         if (user.getAffiliation() != null) {
@@ -154,8 +154,8 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         Affiliation affiliation = Affiliation.builder()
-                .company(companyRepository.findById(companyId)
-                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 companyId 를 찾을수 없습니다.")))
+                .company(companyRepository.findByName(companyName)
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 회사를 찾을수 없습니다.")))
                 .user(userRepository.findById(user.getId())
                         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 userId 를 찾을수 없습니다.")))
                 .isSupervisor(false)

@@ -61,9 +61,9 @@ public class CompanyController {
     @GetMapping("/company/affiliation")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam Long companyId
+            @RequestParam String companyName
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyName));
     }
 
     // 내가 회사 탈퇴
