@@ -71,7 +71,7 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .institution(institution)
                 .build();
 
-        user.path();
+        user.patch();
         managerRepository.save(manager);
 
         return MessageResponseDto.builder().message("회사 생성 성공").build();
