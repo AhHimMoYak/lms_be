@@ -1,13 +1,12 @@
-service: course-board
-
-frameworkVersion: "4"
+service: board
 
 provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
   environment:
-    DYNAMODB_TABLE: ${self:service}
+    BOARD_TABLE: "course-board"
+    COMMENT_TABLE: "comment"
     REGION: ${aws:region}
   httpApi:
     cors: true
@@ -23,86 +22,87 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource:
-            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
-            - "arn:aws:dynamodb:${aws:region}:*:table/comments"
-            - "arn:aws:dynamodb:${aws:region}:*:table/comments/index/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.BOARD_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.BOARD_TABLE}/index/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.COMMENT_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.COMMENT_TABLE}/index/*"
         - Effect: Allow
           Action:
             - logs:CreateLogGroup
             - logs:CreateLogStream
             - logs:PutLogEvents
           Resource: "*"
-MyApiMapping:
-  Type: 'AWS::ApiGatewayV2::ApiMapping'
-  Properties:
-    DomainName: api.ahimmoyak.click
-    ApiMappingKey: 'v1.board'
-    ApiId: !Ref MyApi
-    Stage: !Ref MyStage
+
 functions:
   createBoard:
-    handler: courseBoard.createBoard
+    handler: lambda/board/createBoard.handler
     events:
       - httpApi:
           path: /v1/courseProvide
           method: POST
   getBoard:
-    handler: courseBoard.getBoard
+    handler: lambda/board/getBoard.handler
     events:
       - httpApi:
           path: /v1/{id}
           method: GET
 
   getBoardsByUser:
-    handler: courseBoard.getBoardsByUser
+    handler: lambda/board/getBoardsByUser.handler
     events:
       - httpApi:
           path : /v1/userName/{userName}
           method: GET
 
   getBoardsByCourseProvide:
-    handler: courseBoard.getBoardsByCourseProvide
+    handler: lambda/board/getBoardsByCourseProvide.handler
     events:
       - httpApi:
           path : /v1/courseProvide/{courseProvideId}/{type}
           method: GET
 
+  getBoardsByInstitution:
+    handler: lambda/board/getBoardsByInstitution.handler
+    events:
+      - httpApi:
+          path : /v1/institution/{institutionId}/{type}
+          method: GET
+
   updateBoard:
-    handler: courseBoard.updateBoard
+    handler: lambda/board/updateBoard.handler
     events:
       - httpApi:
           path: /v1/courseProvide/{id}
           method: PATCH
 
   deleteBoard:
-    handler: courseBoard.deleteBoard
+    handler: lambda/board/deleteBoard.handler
     events:
       - httpApi:
           path: /v1/courseProvide/{id}
           method: DELETE
 
   createComment:
-    handler: comment.createComment
+    handler: lambda/comment/createComment.handler
     events:
       - httpApi:
           path: /v1/{boardId}/comment
           method: POST
 
   getComments:
-    handler: comment.getComments
+    handler: lambda/comment/getComments.handler
     events:
       - httpApi:
           path: /v1/{boardId}/comments
           method: GET
   updateComment:
-    handler: comment.updateComment
+    handler: lambda/comment/updateComment.handler
     events:
       - httpApi:
           path: /v1/comment/{id}
           method: PATCH
   deleteComment:
-    handler: comment.deleteComment
+    handler: lambda/comment/deleteComment.handler
     events:
       - httpApi:
           path: /v1/comment/{id}
@@ -112,7 +112,7 @@ resources:
     CourseBoardTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        TableName: ${self:provider.environment.BOARD_TABLE}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -121,6 +121,8 @@ resources:
           - AttributeName: userName
             AttributeType: S
           - AttributeName: courseProvideId
+            AttributeType: S
+          - AttributeName: institutionId
             AttributeType: S
         KeySchema:
           - AttributeName: id
@@ -143,11 +145,19 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+          - IndexName: InstitutionIndex
+            KeySchema:
+              - AttributeName: institutionId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
 
     CommentsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: comments
+        TableName: ${self:provider.environment.COMMENT_TABLE}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -182,7 +192,8 @@ package:
   patterns:
     - "!node_modules/.bin/**"
     - "node_modules/**"
-    - "courseBoard.mjs"
+    - "lambda/**"
+    - "aws-clients.mjs"
   individually: false
 
 custom:
