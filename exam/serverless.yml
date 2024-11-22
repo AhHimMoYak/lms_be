@@ -37,49 +37,49 @@ functions:
     handler: exam.createExam
     events:
       - httpApi:
-          path: /v1/exam/create
+          path: /v1/create
           method: POST
 
   getExam:
     handler: exam.getExam
     events:
       - httpApi:
-          path: /v1/exam/{id}
+          path: /v1/{id}
           method: GET
 
   listExamsByCourse:
     handler: exam.listExamsByCourse
     events:
       - httpApi:
-          path: /v1/exam/course/{courseId}
+          path: /v1/course/{courseId}
           method: GET
 
   updateExam:
     handler: exam.updateExam
     events:
       - httpApi:
-          path: /v1/exam/{id}
+          path: /v1/{id}
           method: PUT
 
   updateExamStatus:
     handler: exam.updateExamStatus
     events:
       - httpApi:
-          path: /v1/exam/{id}/status
+          path: /v1/{id}/status
           method: PATCH
 
   deleteExam:
     handler: exam.deleteExam
     events:
       - httpApi:
-          path: /v1/exam/{id}
+          path: /v1/{id}
           method: DELETE
 
   submitExamAnswers:
     handler: exam.submitExamAnswers
     events:
       - httpApi:
-          path: /v1/exam/{id}/submit
+          path: /v1/{id}/submit
           method: POST
 
 resources:

@@ -7,7 +7,7 @@ import {
     DeleteCommand,
     QueryCommand
 } from "@aws-sdk/lib-dynamodb";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 // 환경 변수로부터 DynamoDB 설정 정보 가져오기
 const client = new DynamoDBClient({region: process.env.REGION || 'ap-northeast-2'});
@@ -26,7 +26,7 @@ export const createExam = async (event) => {
             courseId: body.courseId,
             title: body.title,
             description: body.description,
-            status: "NOT_STARTED", // 초기 상태 설정
+            examStatus: "NOT_STARTED", // 초기 상태 설정
             quizzes: body.quizzes.map((quiz) => ({
                 id: `quiz_${uuidv4()}`,
                 question: quiz.question,
@@ -171,23 +171,23 @@ export const updateExam = async (event) => {
         }
 
         const { id } = event.pathParameters;
-        const { title, description, status, quizzes } = JSON.parse(event.body);
+        const { title, description, examStatus, quizzes } = JSON.parse(event.body);
 
         const response = await docClient.send(new UpdateCommand({
             TableName: TABLE_NAME,
             Key: { id },
             UpdateExpression:
-                'SET #title = :title, #description = :description, #status = :status, #quizzes = :quizzes',
+                'SET #title = :title, #description = :description, #examStatus = :examStatus, #quizzes = :quizzes',
             ExpressionAttributeNames: {
                 '#title': 'title',
                 '#description': 'description',
-                '#status': 'status', // 예약어 대체
+                '#examStatus': 'examStatus', // 예약어 대체
                 '#quizzes': 'quizzes',
             },
             ExpressionAttributeValues: {
                 ':title': title,
                 ':description': description,
-                ':status': status,
+                ':examStatus': examStatus,
                 ':quizzes': quizzes.map((quiz) => ({
                     question: quiz.question,
                     choices: quiz.choices || ['', '', '', ''],
@@ -220,14 +220,14 @@ export const updateExamStatus = async (event) => {
         }
 
         const {id} = event.pathParameters;
-        const {status} = JSON.parse(event.body);
+        const {examStatus} = JSON.parse(event.body);
 
         const response = await docClient.send(new UpdateCommand({
             TableName: TABLE_NAME,
             Key: {id},
-            UpdateExpression: 'SET status = :status',
+            UpdateExpression: 'SET examStatus = :examStatus',
             ExpressionAttributeValues: {
-                ':status': status,
+                ':examStatus': examStatus,
             },
             ReturnValues: 'ALL_NEW',
         }));
@@ -306,9 +306,9 @@ export const submitExamAnswers = async (event) => {
             new UpdateCommand({
                 TableName: TABLE_NAME,
                 Key: { id },
-                UpdateExpression: "SET status = :status",
+                UpdateExpression: "SET examStatus = :examStatus",
                 ExpressionAttributeValues: {
-                    ":status": "COMPLETED",
+                    ":examStatus": "COMPLETED",
                 },
             })
         );
