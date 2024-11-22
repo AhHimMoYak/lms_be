@@ -13,8 +13,6 @@ public record CourseListResponseDto(
    String title,
    String introduction,
    String instructor,
-   LocalDate beginDate,
-   LocalDate endDate,
    CourseState state,
    CourseCategory category
 ) {

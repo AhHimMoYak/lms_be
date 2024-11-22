@@ -2,14 +2,11 @@ package com.example.ahimmoyakbackend.company.dto;
 
 import com.example.ahimmoyakbackend.company.entity.Company;
 import com.example.ahimmoyakbackend.course.common.CourseProvideState;
-import com.example.ahimmoyakbackend.course.dto.CourseProvideDto;
-import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.CourseProvide;
 import com.example.ahimmoyakbackend.institution.entity.Institution;
 import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 public record CourseProvideListResponseDto(
