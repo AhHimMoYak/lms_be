@@ -44,7 +44,8 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     // Todo 코스 생성시 교육기관 정보도 들어가도록 수정필요 -> 수정 완료
     public Long create(UserDetails userDetails, CourseCreateRequestDto requestDto) {
-        return courseRepository.save(requestDto.toEntity()).getId();
+        User user = userService.getAuth(userDetails);
+        return courseRepository.save(requestDto.toEntity(user, requestDto)).getId();
     }
 
     @Override

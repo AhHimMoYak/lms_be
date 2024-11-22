@@ -18,14 +18,14 @@ public record CourseCreateRequestDto(
    CourseCategory category
 ) {
     // Todo 코스 생성시 교육기관 정보가 들어가도록 수정해야함
-    public Course toEntity() {
+    public Course toEntity(User user, CourseCreateRequestDto requestDto) {
         return Course.builder()
-                .title(this.title)
-                .introduction(this.introduction)
-                .category(this.category)
-                .institution(this.institution)
+                .title(requestDto.title)
+                .introduction(requestDto.introduction)
+                .category(requestDto.category)
+                .institution(user.getManager().getInstitution())
                 .state(CourseState.AVAILABLE)
-                .instructor(this.instructor)
+                .instructor(requestDto.instructor)
                 .build();
     }
 }
