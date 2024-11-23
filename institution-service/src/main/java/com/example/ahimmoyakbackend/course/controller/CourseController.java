@@ -22,7 +22,6 @@ import java.util.List;
 public class CourseController {
     private final CourseService courseService;
 
-    // Fixme 코스 디테일 조회할때 수강중인 코스(코스프로바이드) 인경우 코스프로바이드의 정보도 같이 반환해야함, 계약을 위해 코스정보만 조회하는경우도 필요 이 두가지 경우 모두 고려해서 로직 변경및 api 추가해야함
     @GetMapping("/{courseId}/detail")
     public ResponseEntity<CourseDetailResponseDto> getCourseDetail(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getDetail(courseId));
@@ -58,7 +57,6 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getListByInstitution(userDetails));
     }
 
-    // Fixme 코스 리스트 조회할때 수강중인 코스(코스프로바이드) 인경우 코스프로바이드의 정보도 같이 반환해야함, 계약을 위해 코스정보만 조회하는경우도 필요 이 두가지 경우 모두 고려해서 로직 변경및 api 추가해야함
     @GetMapping("/all")
     public ResponseEntity<List<CourseListResponseDto>> getAllCoursesList() {
         return ResponseEntity.ok(courseService.getAllList());

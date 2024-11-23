@@ -3,7 +3,6 @@ package com.example.ahimmoyakbackend.institution.controller;
 import com.example.ahimmoyakbackend.auth.config.security.UserDetailsImpl;
 import com.example.ahimmoyakbackend.course.dto.CourseProvideDetailResponseDto;
 import com.example.ahimmoyakbackend.course.dto.CourseProvidesResponseDto;
-import com.example.ahimmoyakbackend.course.service.CourseProvideService;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import com.example.ahimmoyakbackend.institution.dto.*;
 import com.example.ahimmoyakbackend.institution.service.InstitutionService;
@@ -55,7 +54,6 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.getCourseProvideListByInstitution(userDetails));
     }
 
-    // 처음에 수강 신청 응답
     @PatchMapping("/{courseProvideId}/response")
     public ResponseEntity<MessageResponseDto> courseProvideResponse(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                     @PathVariable Long courseProvideId,
