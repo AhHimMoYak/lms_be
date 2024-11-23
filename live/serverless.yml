@@ -35,6 +35,10 @@ provider:
           Action:
             - ivs:*
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: "*"
   tags:
     Name: ahim
 
@@ -81,6 +85,17 @@ functions:
           path: /v1/{id}
           method: DELETE
 
+  updateChannelState:
+    handler: updateChannelState.handler
+    events:
+      - eventBridge:
+          eventBus: default
+          pattern:
+            source:
+              - aws.ivs
+            detail-type:
+              - IVS Stream State Change
+
 resources:
   Resources:
     LiveTable:
@@ -94,6 +109,8 @@ resources:
           - AttributeName: courseProvideId
             AttributeType: S
           - AttributeName: startTime
+            AttributeType: S
+          - AttributeName: arn
             AttributeType: S
         KeySchema:
           - AttributeName: id
@@ -121,6 +138,24 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+          - IndexName: arn-index
+            KeySchema:
+              - AttributeName: arn
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+#    IVSEventRule:
+#      Type: AWS::Events::Rule
+#      Properties:
+#        EventPattern:
+#          source:
+#            - aws.ivs
+#          detail-type:
+#            - IVS Stream State Change
+#        Targets:
+#          - Arn: !GetAtt UpdateChannelStateLambdaFunction.Arn
+#            Id: UpdateChannelState
+
 
 package:
   patterns:
