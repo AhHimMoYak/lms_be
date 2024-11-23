@@ -1,14 +1,11 @@
 package com.example.ahimmoyakbackend.company.entity;
 
-import com.example.ahimmoyakbackend.company.dto.UpdateCompanyRequestDto;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -38,15 +35,5 @@ public class Company extends Timestamped {
     @Column(length = 20, nullable = false)
     private String phone;
 
-    public void patch(UpdateCompanyRequestDto requestDto) {
-        if (!Objects.equals(this.name,requestDto.name()))
-            this.name = requestDto.name();
-        if (!Objects.equals(this.ownerName, requestDto.ownerName()))
-            this.ownerName = requestDto.ownerName();
-        if (!Objects.equals(this.email, requestDto.email()))
-            this.email = requestDto.email();
-        if (!Objects.equals(this.phone, requestDto.phone()))
-            this.phone = requestDto.phone();
-    }
 
 }
