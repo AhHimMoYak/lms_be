@@ -1,10 +1,7 @@
 package com.example.ahimmoyakbackend.course.service;
 
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
-import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
-import com.example.ahimmoyakbackend.course.dto.CourseDetailResponseDto;
-import com.example.ahimmoyakbackend.course.dto.CourseListResponseDto;
-import com.example.ahimmoyakbackend.course.dto.EmployeeCourseListResponseDto;
+import com.example.ahimmoyakbackend.course.dto.*;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +20,5 @@ public interface CourseService {
      List<CourseListResponseDto> getAllList(CourseCategory category);
      Page<CourseListResponseDto> getAllList(Pageable pageable, CourseCategory category);
      List<EmployeeCourseListResponseDto> getAllList(String userName);
-     MessageResponseDto saveContents(String courseId, Long curriculumId);
+     MessageResponseDto saveContents(Long curriculumId, List<GetContentsRequestDto> requestDtos);
 }

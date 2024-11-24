@@ -80,14 +80,11 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getAllList(userName));
     }
 
-    @PostMapping("/{courseId}/curriculums/{curriculumId}/save")
+    @PutMapping("/{courseId}/curriculums/{curriculumId}/save")
     public ResponseEntity<MessageResponseDto> saveContents(@PathVariable String courseId,
                                                            @PathVariable Long curriculumId,
                                                            @RequestBody List<GetContentsRequestDto> requestDtos) {
-        requestDtos.forEach(dto -> {
-            System.out.println("Processing content: " + dto);
-        });
-        return ResponseEntity.ok(courseService.saveContents(courseId, curriculumId));
+        return ResponseEntity.ok(courseService.saveContents(curriculumId, requestDtos));
     }
 
 }

@@ -7,6 +7,7 @@ import lombok.Builder;
 public record GetContentsRequestDto(
         String contentId,
         String contentTitle,
+        Integer idx,
         ContentType contentType,
         String s3Url
 ) {

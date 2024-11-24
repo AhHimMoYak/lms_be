@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 public class Contents extends Timestamped {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Column(nullable = false, length = 100)
