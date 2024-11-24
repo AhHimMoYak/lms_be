@@ -3,8 +3,6 @@ package com.example.ahimmoyakbackend.course.entity;
 import com.example.ahimmoyakbackend.course.common.ContentType;
 import com.example.ahimmoyakbackend.course.dto.GetContentsRequestDto;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
-import com.example.ahimmoyakbackend.institution.dto.UpdateInstitutionRequestDto;
-import com.example.ahimmoyakbackend.institution.entity.Institution;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
