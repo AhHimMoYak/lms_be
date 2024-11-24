@@ -9,6 +9,7 @@ import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -126,5 +127,10 @@ public class CourseServiceImpl implements CourseService {
                 .filter(Objects::nonNull)
                 .map(enrollment -> EmployeeCourseListResponseDto.from(enrollment.getCourseProvide().getCourse(), enrollment.getCourseProvide()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public MessageResponseDto saveContents(String courseId, Long curriculumId) {
+        return null;
     }
 }
