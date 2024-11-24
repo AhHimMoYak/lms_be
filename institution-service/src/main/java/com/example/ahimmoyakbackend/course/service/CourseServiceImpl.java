@@ -136,20 +136,28 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public MessageResponseDto saveContents(Long curriculumId, List<GetContentsRequestDto> requestDtos) {
         Curriculum curriculum = curriculumRepository.findById(curriculumId)
                 .orElseThrow(() -> new RuntimeException("Curriculum not found"));
+
+        List<Contents> existingContents = contentsRepository.findAllByCurriculumId(curriculumId);
+
+        List<String> requestContentIds = requestDtos.stream()
+                .map(GetContentsRequestDto::contentId)
+                .toList();
+
+        existingContents.stream()
+                .filter(content -> !requestContentIds.contains(content.getId()))
+                .forEach(contentsRepository::delete);
 
         requestDtos.forEach(dto -> {
             Contents existingContent = contentsRepository.findById(dto.contentId())
                     .orElse(null);
 
             if (existingContent != null) {
-
                 existingContent.patch(dto, curriculum);
-
                 contentsRepository.save(existingContent);
-
             } else {
                 Contents newContent = Contents.builder()
                         .id(dto.contentId())
@@ -159,12 +167,12 @@ public class CourseServiceImpl implements CourseService {
                         .curriculum(curriculum)
                         .s3Url(dto.s3Url())
                         .build();
-
                 contentsRepository.save(newContent);
             }
         });
 
         return new MessageResponseDto("콘텐츠 저장 완료");
     }
+
 
 }
