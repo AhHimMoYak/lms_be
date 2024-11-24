@@ -145,15 +145,11 @@ public class CourseServiceImpl implements CourseService {
                     .orElse(null);
 
             if (existingContent != null) {
-                Contents updatedContent = Contents.builder()
-                        .title(dto.contentTitle())
-                        .type(dto.contentType())
-                        .idx(dto.idx())
-                        .curriculum(curriculum)
-                        .s3Url(dto.s3Url())
-                        .build();
 
-                contentsRepository.save(updatedContent);
+                existingContent.patch(dto, curriculum);
+
+                contentsRepository.save(existingContent);
+
             } else {
                 Contents newContent = Contents.builder()
                         .id(dto.contentId())
