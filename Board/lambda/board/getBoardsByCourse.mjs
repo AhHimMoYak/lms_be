@@ -4,7 +4,7 @@ import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try {
-        const { courseProvideId, type } = event.pathParameters;
+        const { courseId, type } = event.pathParameters;
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -14,14 +14,14 @@ export const handler = async (event) => {
 
         const response = await docClient.send(new QueryCommand({
             TableName: process.env.BOARD_TABLE,
-            IndexName: 'CourseProvideIndex',
-            KeyConditionExpression: 'courseProvideId = :courseProvideId',
+            IndexName: 'CourseIndex',
+            KeyConditionExpression: 'courseId = :courseId',
             FilterExpression: '#type = :type',
             ExpressionAttributeNames: {
                 '#type': 'type'
             },
             ExpressionAttributeValues: {
-                ':courseProvideId': courseProvideId,
+                ':courseId': courseId,
                 ':type': type
             },
             Limit: limit,
