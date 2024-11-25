@@ -2,15 +2,15 @@ import {GetCommand} from "@aws-sdk/lib-dynamodb";
 import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
-    let id;
+    let boardId;
 
     console.log('Received event:', event);
     try {
         if (event.pathParameters) {
-            ({ id } = event.pathParameters);
+            ({ boardId } = event.pathParameters);
         }
 
-        if (!id) {
+        if (!boardId) {
             return {
                 statusCode: 400,
                 headers: {
@@ -27,7 +27,7 @@ export const handler = async (event) => {
         const { Item } = await docClient.send(new GetCommand({
             TableName: process.env.BOARD_TABLE,
             Key: {
-                id: id
+                id: boardId
             }
         }));
 
