@@ -33,15 +33,10 @@ jobs:
           chmod +x ./gradlew
           ./gradlew clean build
 
-      - name: Test
-        run: |
-          ls
-          pwd
-
       - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-1
+          aws-region: ap-northeast-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -53,6 +48,7 @@ jobs:
         run: echo ${{ steps.login-ecr.outputs.registry }}
 
       - name: Docker 이미지 생성
+        working-directory: ./company-service
         run: docker build -t company-cicd .
 
       - name: Dokcer 이미지 생성 확인
@@ -61,7 +57,7 @@ jobs:
           pwd
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag cicd-server ${{ steps.login-ecr.outputs.registry }}/company-cicd:latest
+        run: docker tag company-cicd ${{ steps.login-ecr.outputs.registry }}/ahim-cicd:latest
 
       - name: ECR에 docker image push 하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/company-cicd:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/ahim-cicd:latest
