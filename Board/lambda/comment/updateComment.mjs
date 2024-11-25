@@ -3,7 +3,7 @@ import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try{
-        const {id} = event.pathParameters;
+        const {commentId} = event.pathParameters;
         const { content } = JSON.parse(event.body);
 
         const limit = event.queryStringParameters?.limit
@@ -16,7 +16,7 @@ export const handler = async (event) => {
 
         const response = await docClient.send(new UpdateCommand({
             TableName: process.env.COMMENT_TABLE,
-            Key: {id},
+            Key: {id:commentId},
             UpdateExpression: 'set content = :content, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
                 ':content' : content,
