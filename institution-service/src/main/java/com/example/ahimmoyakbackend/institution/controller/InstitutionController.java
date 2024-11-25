@@ -27,6 +27,7 @@ public class InstitutionController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateInstitutionRequestDto requestDto
     ) {
+        //test
         return ResponseEntity.ok(institutionService.createInstitution(userDetails, requestDto));
     }
 
