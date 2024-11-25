@@ -62,7 +62,7 @@ jobs:
           pwd
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag cicd-server ${{ steps.login-ecr.outputs.registry }}/institution-cicd:latest
+        run: docker tag institution-cicd ${{ steps.login-ecr.outputs.registry }}/ahim-cicd:latest
 
       - name: ECR에 docker image push 하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/institution-cicd:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/ahim-cicd:latest
