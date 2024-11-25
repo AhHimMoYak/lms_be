@@ -5,7 +5,7 @@ on:
     branches:
       - microservice
     paths:
-      - 'student-service/**'
+      - './student-service/**'
 
 jobs:
   deploy:

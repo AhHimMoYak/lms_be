@@ -5,10 +5,7 @@ on:
     branches:
       - microservice
     paths:
-      - 'company-service/**'
-    paths-ignore:
-      - 'institution-service/**'
-      - 'student-service/**'
+      - './company-service/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest

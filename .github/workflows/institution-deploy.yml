@@ -5,7 +5,7 @@ on:
     branches:
       - microservice
     paths:
-      - 'institution-service/**'
+      - './institution-service/**'
 
 
 jobs:
