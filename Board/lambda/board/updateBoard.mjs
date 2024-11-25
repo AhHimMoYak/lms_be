@@ -3,14 +3,14 @@ import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try {
-        const { id } = event.pathParameters;
+        const { boardId } = event.pathParameters;
         const { title, content } = JSON.parse(event.body);
 
         // DynamoDB Update 명령 실행
         const response = await docClient.send(new UpdateCommand({
             TableName: process.env.BOARD_TABLE,
             Key: {
-                id: id
+                id: boardId
             },
             UpdateExpression: 'set title = :title, content = :content, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
