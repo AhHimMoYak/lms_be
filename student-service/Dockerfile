@@ -25,11 +25,15 @@ RUN chmod +x ./gradlew
 # 사용하지 않게 되면, gradlew 명령어가 리눅스가 아닌 윈도우 명령어로 인식되어 다음 명령어인 gradlew bootJar 명령어가 실행되지 않을 수 있음
 # dos2unix 명령어를 통해 gradlew 명령어를 리눅스 명령어로 인식되게 해줌
 RUN dos2unix ./gradlew
+# 실행 가능한 jar 파일로 패키징
+# 실제 프로젝트가 docker image 안에서 build 되면서 배포될 실행 가능한 jar 파일을 생성
 # Gradle 캐시를 활용하기 위해 dependencies를 먼저 빌드
 RUN ./gradlew dependencies || true
 
 # 실행 가능한 jar 파일로 패키징
 RUN ./gradlew bootJar --no-daemon
+
+
 ### stage 2 : executable stage ###
 
 # 두 번째 FROM 에 해당하는 실행 단계
