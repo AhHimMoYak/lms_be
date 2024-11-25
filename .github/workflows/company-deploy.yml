@@ -29,9 +29,7 @@ jobs:
 
       - name: 테스트 및 빌드하기
         working-directory: ./company-service
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build -x test
+        run:
           ./gradlew clean builds
 
       - name: Test
