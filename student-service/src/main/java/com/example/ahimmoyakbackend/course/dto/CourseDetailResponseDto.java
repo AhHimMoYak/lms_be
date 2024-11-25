@@ -18,6 +18,7 @@ public record CourseDetailResponseDto(
         LocalDate endDate,
         CourseState state,
         CourseCategory category,
+        Long institutionId,
         List<CurriculumListResponseDto> curriculumList
 ){
     public static CourseDetailResponseDto from(Course course, List<CurriculumListResponseDto> curriculumList) {
