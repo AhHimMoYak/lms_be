@@ -26,6 +26,7 @@ public record CourseDetailResponseDto(
                 .title(course.getTitle())
                 .introduction(course.getIntroduction())
                 .instructor(course.getInstructor())
+                .institutionId(course.getInstitution().getId())
                 // Todo 코스디테일 반환시 CourseProvide 의 beginDate, endDate 함께 반환하도록 Dto 수정
 //                .beginDate(course.getBeginDate())
 //                .endDate(course.getEndDate())
