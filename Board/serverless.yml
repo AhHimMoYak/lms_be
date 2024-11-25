@@ -136,9 +136,9 @@ resources:
           - AttributeName: userName
             AttributeType: S
           - AttributeName: courseId
-            AttributeType: S
+            AttributeType: N
           - AttributeName: institutionId
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: id
             KeyType: HASH
