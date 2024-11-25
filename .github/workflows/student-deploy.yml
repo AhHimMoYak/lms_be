@@ -7,7 +7,7 @@ on:
     types:
       - closed
     paths:
-      - './student-service/**'
+      - 'student-service/**'
 
 jobs:
   deploy:
