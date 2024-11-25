@@ -4,6 +4,7 @@ import {docClient} from "../aws-clients.mjs";
 export const handler = async (event) => {
     try {
         const { userName } = event.pathParameters;
+        const decodedUserName = decodeURIComponent(userName);
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -17,12 +18,13 @@ export const handler = async (event) => {
             IndexName: 'UserIndex',
             KeyConditionExpression: 'userName = :userName',
             ExpressionAttributeValues: {
-                ':userName': userName
+                ':userName': decodedUserName
             },
             Limit: limit,
             ScanIndexForward: false,
             ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
         }));
+
 
         return {
             statusCode: 200,
