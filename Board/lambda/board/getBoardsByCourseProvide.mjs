@@ -16,9 +16,9 @@ export const handler = async (event) => {
             TableName: process.env.BOARD_TABLE,
             IndexName: 'CourseProvideIndex',
             KeyConditionExpression: 'courseProvideId = :courseProvideId',
-            FilterExpression: '#type = :type',  // #type을 사용하여 예약어 우회
+            FilterExpression: '#type = :type',
             ExpressionAttributeNames: {
-                '#type': 'type'  // 'type'을 #type으로 매핑
+                '#type': 'type'
             },
             ExpressionAttributeValues: {
                 ':courseProvideId': courseProvideId,
