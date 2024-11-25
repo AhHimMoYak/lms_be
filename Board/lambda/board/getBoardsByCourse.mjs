@@ -11,7 +11,7 @@ export const handler = async (event) => {
         const lastEvaluatedKey = event.queryStringParameters?.lastEvaluatedKey
             ? JSON.parse(event.queryStringParameters.lastEvaluatedKey)
             : null;
-
+        const courseIdNumber = Number(courseId);
         const response = await docClient.send(new QueryCommand({
             TableName: process.env.BOARD_TABLE,
             IndexName: 'CourseIndex',
@@ -21,7 +21,7 @@ export const handler = async (event) => {
                 '#type': 'type'
             },
             ExpressionAttributeValues: {
-                ':courseId': courseId,
+                ':courseId': courseIdNumber,
                 ':type': type
             },
             Limit: limit,

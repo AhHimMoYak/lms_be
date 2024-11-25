@@ -11,6 +11,8 @@ export const handler = async (event) => {
             ? JSON.parse(event.queryStringParameters.lastEvaluatedKey)
             : null;
 
+        const institutionIdNumber = Number(institutionId);
+
         const queryParams = {
             TableName: process.env.BOARD_TABLE,
             IndexName: 'InstitutionIndex',
@@ -20,7 +22,7 @@ export const handler = async (event) => {
                 '#type': 'type'
             },
             ExpressionAttributeValues: {
-                ':institutionId': institutionId,
+                ':institutionId': institutionIdNumber,
                 ':type': type
             },
             Limit: limit,
