@@ -3,9 +3,12 @@
 ### stage 1 : builder stage ###
 
 # 베이스 이미지
-FROM openjdk:21-jdk AS builder
+FROM openjdk:21-jdk-slim AS builder
 
-# 생성될 docker image 안에서 gradle 빌드를 하기 위해서 필요한 파일(gradle, java 소스) 를 docker image 내부로 복사
+# 필수 패키지 설치 (xargs 포함)
+RUN apt-get update && apt-get install -y dos2unix findutils
+
+# 프로젝트 파일 복사
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
@@ -14,15 +17,18 @@ COPY src src
 
 # gradlew 실행 권한 부여 및 줄바꿈 변환
 RUN chmod +x ./gradlew
-RUN sed -i 's/\r$//' ./gradlew
+RUN dos2unix ./gradlew
+
+# Gradle 캐시를 활용하기 위해 dependencies를 먼저 빌드
+RUN ./gradlew dependencies || true
 
 # 실행 가능한 jar 파일로 패키징
-RUN ./gradlew bootJar
+RUN ./gradlew bootJar --no-daemon
 
 ### stage 2 : executable stage ###
 
 # 두 번째 FROM 에 해당하는 실행 단계
-FROM openjdk:21-jdk
+FROM openjdk:21-jdk-slim
 
 # 컨테이너의 홈 경로 지정
 WORKDIR /app
