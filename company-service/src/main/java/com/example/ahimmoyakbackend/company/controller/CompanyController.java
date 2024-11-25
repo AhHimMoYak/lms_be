@@ -20,7 +20,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/company")
-    public ResponseEntity<MessageResponseDto> createCompany(
+    public ResponseEntity<MessageResponseDto> createCompanyo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
