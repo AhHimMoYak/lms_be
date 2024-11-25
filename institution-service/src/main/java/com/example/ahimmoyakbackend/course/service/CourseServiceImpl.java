@@ -5,10 +5,15 @@ import com.example.ahimmoyakbackend.auth.service.UserService;
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.*;
+import com.example.ahimmoyakbackend.course.entity.Contents;
 import com.example.ahimmoyakbackend.course.entity.Course;
+import com.example.ahimmoyakbackend.course.entity.Curriculum;
 import com.example.ahimmoyakbackend.course.entity.Enrollment;
+import com.example.ahimmoyakbackend.course.repository.ContentsRepository;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
+import com.example.ahimmoyakbackend.course.repository.CurriculumRepository;
 import com.example.ahimmoyakbackend.course.repository.EnrollmentRepository;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +32,8 @@ public class CourseServiceImpl implements CourseService {
     private final UserService userService;
     private final CourseRepository courseRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final ContentsRepository contentsRepository;
+    private final CurriculumRepository curriculumRepository;
 
     @Override
     public CourseDetailResponseDto getDetail(long id) {
@@ -127,4 +134,45 @@ public class CourseServiceImpl implements CourseService {
                 .map(enrollment -> EmployeeCourseListResponseDto.from(enrollment.getCourseProvide().getCourse(), enrollment.getCourseProvide()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public MessageResponseDto saveContents(Long curriculumId, List<GetContentsRequestDto> requestDtos) {
+        Curriculum curriculum = curriculumRepository.findById(curriculumId)
+                .orElseThrow(() -> new RuntimeException("Curriculum not found"));
+
+        List<Contents> existingContents = contentsRepository.findAllByCurriculumId(curriculumId);
+
+        List<String> requestContentIds = requestDtos.stream()
+                .map(GetContentsRequestDto::contentId)
+                .toList();
+
+        existingContents.stream()
+                .filter(content -> !requestContentIds.contains(content.getId()))
+                .forEach(contentsRepository::delete);
+
+        requestDtos.forEach(dto -> {
+            Contents existingContent = contentsRepository.findById(dto.contentId())
+                    .orElse(null);
+
+            if (existingContent != null) {
+                existingContent.patch(dto, curriculum);
+                contentsRepository.save(existingContent);
+            } else {
+                Contents newContent = Contents.builder()
+                        .id(dto.contentId())
+                        .title(dto.contentTitle())
+                        .type(dto.contentType())
+                        .idx(dto.idx())
+                        .curriculum(curriculum)
+                        .s3Url(dto.s3Url())
+                        .build();
+                contentsRepository.save(newContent);
+            }
+        });
+
+        return new MessageResponseDto("콘텐츠 저장 완료");
+    }
+
+
 }
