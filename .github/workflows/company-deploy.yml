@@ -20,6 +20,9 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Create necessary directories
+        run: mkdir -p ./company-service/src/main/resources
+
       - name: application.yml 파일 만들기
         run: |
           echo -e "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" > ./company-service/src/main/resources/application.yml
