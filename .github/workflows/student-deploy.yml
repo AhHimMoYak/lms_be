@@ -4,11 +4,14 @@ on:
   pull_request:
     branches:
       - microservice
+    types:
+      - closed
     paths:
       - './student-service/**'
 
 jobs:
   deploy:
+    if: ${{github.event.pull_request.merged}}
     runs-on: ubuntu-latest
     steps:
       - name: Github Repository 파일 불러오기
