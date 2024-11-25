@@ -29,8 +29,8 @@ jobs:
 
       - name: 테스트 및 빌드하기
         run: |
-          chmod +x ./gradlew
-          ./gradlew clean build
+          chmod +x ./company-service/gradlew
+          ./company-service/gradlew clean build
 
       - name: Test
         run: |
