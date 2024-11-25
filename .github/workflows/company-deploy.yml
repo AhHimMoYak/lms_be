@@ -31,7 +31,8 @@ jobs:
         working-directory: ./company-service
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build
+          ./gradlew build -x test
+          ./gradlew clean builds
 
       - name: Test
         run: |
