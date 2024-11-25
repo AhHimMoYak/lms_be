@@ -31,7 +31,7 @@ jobs:
         working-directory: ./company-service
         run: |
           chmod +x ./gradlew
-          ./gradlew clean builds
+          ./gradlew clean build
 
       - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
