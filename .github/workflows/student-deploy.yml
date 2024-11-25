@@ -24,7 +24,7 @@ jobs:
         run: mkdir -p ./student-service/src/main/resources
 
       - name: application.yml 파일 만들기
-        run: echo "${{ secrets.STUDENT_APPLICATION_PROPERTIES }}" > ./student-service/src/main/resources/application.yml
+        run: echo -e "${{ secrets.STUDENT_APPLICATION_PROPERTIES }}" > ./student-service/src/main/resources/application.yml
 
       - name: 테스트 및 빌드하기
         working-directory: ./student-service
@@ -32,15 +32,10 @@ jobs:
           chmod +x ./gradlew
           ./gradlew clean build
 
-      - name: Test
-        run: |
-          ls
-          pwd
-
       - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-1
+          aws-region: ap-northeast-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
