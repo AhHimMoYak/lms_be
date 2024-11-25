@@ -37,76 +37,91 @@ functions:
   createBoard:
     handler: lambda/board/createBoard.handler
     events:
-      - httpApi:
-          path: /v1/courseProvide
+      - http:
+          path: /v1/course-provide
           method: POST
+          cors: true
+
   getBoard:
     handler: lambda/board/getBoard.handler
     events:
-      - httpApi:
-          path: /v1/{id}
+      - http:
+          path: /v1/{boardId}
           method: GET
+          cors: true
 
   getBoardsByUser:
     handler: lambda/board/getBoardsByUser.handler
     events:
-      - httpApi:
-          path : /v1/userName/{userName}
+      - http:
+          path: /v1/user-name/{userName}
           method: GET
+          cors: true
 
   getBoardsByCourseProvide:
     handler: lambda/board/getBoardsByCourseProvide.handler
     events:
-      - httpApi:
-          path : /v1/courseProvide/{courseProvideId}/{type}
+      - http:
+          path: /v1/course-provide/{courseProvideId}/{type}
           method: GET
+          cors: true
 
   getBoardsByInstitution:
     handler: lambda/board/getBoardsByInstitution.handler
     events:
-      - httpApi:
-          path : /v1/institution/{institutionId}/{type}
+      - http:
+          path: /v1/institutions/{institutionId}/{type}
           method: GET
+          cors: true
 
   updateBoard:
     handler: lambda/board/updateBoard.handler
     events:
-      - httpApi:
-          path: /v1/courseProvide/{id}
+      - http:
+          path: /v1/{boardId}
           method: PATCH
+          cors: true
 
   deleteBoard:
     handler: lambda/board/deleteBoard.handler
     events:
-      - httpApi:
-          path: /v1/courseProvide/{id}
+      - http:
+          path: /v1/{boardId}
           method: DELETE
+          cors: true
 
   createComment:
     handler: lambda/comment/createComment.handler
     events:
-      - httpApi:
-          path: /v1/{boardId}/comment
+      - http:
+          path: /v1/{boardId}/comments
           method: POST
+          cors: true
 
   getComments:
     handler: lambda/comment/getComments.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/{boardId}/comments
           method: GET
+          cors: true
+
   updateComment:
     handler: lambda/comment/updateComment.handler
     events:
-      - httpApi:
-          path: /v1/comment/{id}
+      - http:
+          path: /v1/comments/{commentId}
           method: PATCH
+          cors: true
+
   deleteComment:
     handler: lambda/comment/deleteComment.handler
     events:
-      - httpApi:
-          path: /v1/comment/{id}
+      - http:
+          path: /v1/comments/{commentId}
           method: DELETE
+          cors: true
+
 resources:
   Resources:
     CourseBoardTable:
@@ -196,16 +211,12 @@ package:
     - "aws-clients.mjs"
   individually: false
 
+plugins:
+  - serverless-domain-manager
 custom:
-  esbuild:
-    bundle: true
-    minify: false
-    format: esm
-    sourcemap: true
-    target: node20
-    platform: node
-    outExtension:
-      ".js": ".mjs"
-    mainFields:
-      - module
-      - main
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "board"
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateName: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"
