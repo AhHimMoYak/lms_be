@@ -3,13 +3,13 @@ import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try {
-        const { id } = event.pathParameters;
+        const { commentId } = event.pathParameters;
         const body = JSON.parse(event.body);
 
         await docClient.send(new DeleteCommand({
             TableName: process.env.COMMENT_TABLE,
             Key: {
-                id
+                id:commentId
             }
         }));
 
