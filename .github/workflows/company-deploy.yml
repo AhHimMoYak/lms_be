@@ -49,12 +49,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # ECR에 성공적으로 로그인이 되면, 반환되는 값을 docker image 파일명으로 사용하기 위해
-      # 반환된 값이 있는지 확인하기 위해 출력
       - name: ECR에 로그인 한 결과 확인
         run: echo ${{ steps.login-ecr.outputs.registry }}
 
-      # Dockerfile  을 참조해서 docker image 생성
       - name: Docker 이미지 생성
         run: docker build -t company-cicd .
 
@@ -62,7 +59,6 @@ jobs:
         run: |
           ls
           pwd
-      # ECR 의 URI 를 이요해서 docker image tag를 만듬
 
       - name: Docker 이미지에 Tag 붙이기
         run: docker tag cicd-server ${{ steps.login-ecr.outputs.registry }}/company-cicd:latest
