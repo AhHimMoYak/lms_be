@@ -29,13 +29,9 @@ jobs:
 
       - name: 테스트 및 빌드하기
         working-directory: ./company-service
-        run:
-          ./gradlew clean builds
-
-      - name: Test
         run: |
-          ls
-          pwd
+          chmod +x ./gradlew
+          ./gradlew clean builds
 
       - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
