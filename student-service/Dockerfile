@@ -6,6 +6,9 @@
 # 베이스 이미지
 FROM openjdk:21-jdk AS builder
 
+# 필수 패키지 설치 (xargs 포함)
+RUN apt-get update && apt-get install -y dos2unix findutils
+
 # 생성될 docker image 안에서 gradle 빌드를 하기 위해서 필요한 파일(gradle, java 소스) 를 docker image 내부로 복사
 COPY gradlew .
 COPY gradle gradle
@@ -22,15 +25,16 @@ RUN chmod +x ./gradlew
 # 사용하지 않게 되면, gradlew 명령어가 리눅스가 아닌 윈도우 명령어로 인식되어 다음 명령어인 gradlew bootJar 명령어가 실행되지 않을 수 있음
 # dos2unix 명령어를 통해 gradlew 명령어를 리눅스 명령어로 인식되게 해줌
 RUN dos2unix ./gradlew
-# 실행 가능한 jar 파일로 패키징
-# 실제 프로젝트가 docker image 안에서 build 되면서 배포될 실행 가능한 jar 파일을 생성
-RUN ./gradlew bootJar
+# Gradle 캐시를 활용하기 위해 dependencies를 먼저 빌드
+RUN ./gradlew dependencies || true
 
+# 실행 가능한 jar 파일로 패키징
+RUN ./gradlew bootJar --no-daemon
 ### stage 2 : executable stage ###
 
 # 두 번째 FROM 에 해당하는 실행 단계
 # openjdk:17-jdk-alpine 를 이용해서 item-service 마이크로 서비스를 실행
-FROM openjdk:21-jdk
+FROM openjdk:21-jdk-slim
 
 # 컨테이너의 홈 경로 지정
 WORKDIR /app
