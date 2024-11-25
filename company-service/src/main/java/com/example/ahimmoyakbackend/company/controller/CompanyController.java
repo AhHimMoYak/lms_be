@@ -21,7 +21,7 @@ public class CompanyController {
 
     @PostMapping("/company")
     public ResponseEntity<MessageResponseDto> createCompany(
-            //test 6
+            //test 7
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
