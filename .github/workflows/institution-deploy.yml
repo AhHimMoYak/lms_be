@@ -53,6 +53,7 @@ jobs:
         run: echo ${{ steps.login-ecr.outputs.registry }}
 
       - name: Docker 이미지 생성
+        working-directory: ./institution-service
         run: docker build -t institution-cicd .
 
       - name: Dokcer 이미지 생성 확인
