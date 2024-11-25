@@ -8,8 +8,8 @@ provider:
     BOARD_TABLE: "course-board"
     COMMENT_TABLE: "comment"
     REGION: ${aws:region}
-  httpApi:
-    cors: true
+  tags:
+    Name: ahim
   iam:
     role:
       statements:
