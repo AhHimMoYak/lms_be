@@ -1,16 +1,16 @@
 package com.example.ahimmoyakbackend.course.entity;
 
-import com.example.ahimmoyakbackend.auth.entity.User;
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
 import com.example.ahimmoyakbackend.course.common.CourseState;
 import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
 import com.example.ahimmoyakbackend.global.entity.Timestamped;
 import com.example.ahimmoyakbackend.institution.entity.Institution;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
