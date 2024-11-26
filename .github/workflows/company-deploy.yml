@@ -59,10 +59,10 @@ jobs:
           pwd
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag company-cicd ${{ steps.login-ecr.outputs.registry }}/company-service:latest1.1
+        run: docker tag company-cicd ${{ steps.login-ecr.outputs.registry }}/company-service:latest
 
       - name: ECR에 docker image push 하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest1.1
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest
 
       - name: 태스크 정의 업데이트
         id: task-def
@@ -71,7 +71,7 @@ jobs:
           TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ${{ secrets.ECS_TASK_DEFINITION_NAME }} --query 'taskDefinition')
           
           # 2. 새 이미지 URI로 컨테이너 정의 업데이트
-          NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE_URI "${{ steps.login-ecr.outputs.registry }}/company-service:latest1.1" '.containerDefinitions[0].image=$IMAGE_URI')
+          NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE_URI "${{ steps.login-ecr.outputs.registry }}/company-service:latest" '.containerDefinitions[0].image=$IMAGE_URI')
           
           # 3. 불필요한 정보 제거
           NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq '.taskDefinitionArn=null | .revision=null | .status=null | .requiresAttributes=null | .compatibilities=null | .registeredAt=null | .registeredBy=null')
