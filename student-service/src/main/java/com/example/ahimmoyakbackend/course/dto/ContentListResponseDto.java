@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record ContentListResponseDto(
-    long id,
+    String id,
     ContentType type,
     String title
 ) {
