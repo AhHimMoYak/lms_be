@@ -18,11 +18,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course")
+@RequestMapping("/api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
 
-    @GetMapping("/{courseId}/detail")
+    @GetMapping("/{courseId}/details")
     public ResponseEntity<CourseDetailResponseDto> getCourseDetail(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getDetail(courseId));
     }
