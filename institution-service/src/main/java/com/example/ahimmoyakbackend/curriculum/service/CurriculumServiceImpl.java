@@ -7,11 +7,14 @@ import com.example.ahimmoyakbackend.course.entity.Course;
 import com.example.ahimmoyakbackend.course.entity.Curriculum;
 import com.example.ahimmoyakbackend.course.repository.CourseRepository;
 import com.example.ahimmoyakbackend.course.repository.CurriculumRepository;
+import com.example.ahimmoyakbackend.curriculum.dto.CurriculumListByInstitutionResponseDto;
 import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +55,19 @@ public class CurriculumServiceImpl implements CurriculumService {
         curriculumRepository.delete(curriculum);
         return MessageResponseDto.builder().message("커리큘럼 삭제 완료").build();
 
+    }
+
+    @Override
+    public List<CurriculumListByInstitutionResponseDto> get(UserDetails userDetails, Long courseId) {
+
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("코스가 존재하지않습니다."));
+
+        return course.getCurriculumList().stream()
+                .map(curriculum -> CurriculumListByInstitutionResponseDto.builder()
+                        .curriculumId(curriculum.getId())
+                        .title(curriculum.getTitle())
+                        .idx(curriculum.getIdx())
+                        .build())
+                .toList();
     }
 }
