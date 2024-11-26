@@ -69,31 +69,31 @@ jobs:
         run: |
           
           TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition lms-be-def --query 'taskDefinition')
-          
-          
-          NEW_TASK_DEFINITION=$(echo "$TASK_DEFINITION" | jq '{
-            family: .family,
-            taskRoleArn: .taskRoleArn,
-            executionRoleArn: .executionRoleArn,
-            networkMode: .networkMode,
-            containerDefinitions: .containerDefinitions,
-            volumes: .volumes,
-            placementConstraints: .placementConstraints,
-            requiresCompatibilities: .requiresCompatibilities,
-            cpu: .cpu,
-            memory: .memory
+
+          # 2. 불필요한 필드 제거 및 유효한 필드만 유지
+            NEW_TASK_DEFINITION=$(echo "$TASK_DEFINITION" | jq '{
+          family: .family,
+          taskRoleArn: (.taskRoleArn // ""),
+          executionRoleArn: (.executionRoleArn // ""),
+          networkMode: .networkMode,
+          containerDefinitions: .containerDefinitions,
+          volumes: .volumes,
+          placementConstraints: .placementConstraints,
+          requiresCompatibilities: .requiresCompatibilities,
+          cpu: .cpu,
+          memory: .memory
           }')
           
-          
+          # 3. 새 컨테이너 이미지 설정
           FINAL_TASK_DEFINITION=$(echo "$NEW_TASK_DEFINITION" | jq --arg IMAGE_URI "503561434552.dkr.ecr.ap-northeast-2.amazonaws.com/web-service:latest" '
             .containerDefinitions[0].image = $IMAGE_URI
             ')
           
+            # 4. 새로운 태스크 정의를 JSON 파일로 저장
+            echo "$FINAL_TASK_DEFINITION" > new-task-def.json
           
-          echo "$FINAL_TASK_DEFINITION" > new-task-def.json
-          
-          
-          aws ecs register-task-definition --cli-input-json file://new-task-def.json
+            # 5. 새 태스크 정의 등록
+            aws ecs register-task-definition --cli-input-json file://new-task-def.json
 
       - name: ECS 서비스 업데이트 및 배포 강제
         run: |
