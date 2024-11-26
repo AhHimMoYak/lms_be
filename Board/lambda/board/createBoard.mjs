@@ -16,9 +16,9 @@ export const handler = async (event) => {
             content: body.content,
             commentCount: 0,
             userName: body.userName,
-            courseProvideId: body.courseProvideId,
-            institutionId: body.institutionId,
-            course:"코스 이름 받아야함.",  // TODO 추후 수정
+            courseId: Number(body.courseId),
+            institutionId: Number(body.institutionId),
+            course: body.course,
             type: body.type,
         };
 

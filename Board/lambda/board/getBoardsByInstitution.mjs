@@ -1,5 +1,5 @@
-import {QueryCommand} from "@aws-sdk/lib-dynamodb";
-import {docClient} from "../aws-clients.mjs";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { docClient } from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try {
@@ -11,23 +11,26 @@ export const handler = async (event) => {
             ? JSON.parse(event.queryStringParameters.lastEvaluatedKey)
             : null;
 
-        const response = await docClient.send(new QueryCommand({
+        const institutionIdNumber = Number(institutionId);
+
+        const queryParams = {
             TableName: process.env.BOARD_TABLE,
             IndexName: 'InstitutionIndex',
             KeyConditionExpression: 'institutionId = :institutionId',
-            FilterExpression: '#type = :type',  // #type을 사용하여 예약어 우회
+            FilterExpression: '#type = :type',
             ExpressionAttributeNames: {
-                '#type': 'type'  // 'type'을 #type으로 매핑
+                '#type': 'type'
             },
             ExpressionAttributeValues: {
-                ':institutionId': institutionId,
+                ':institutionId': institutionIdNumber,
                 ':type': type
             },
             Limit: limit,
             ScanIndexForward: false,
             ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
-        }));
+        };
 
+        const response = await docClient.send(new QueryCommand(queryParams));
         return {
             statusCode: 200,
             headers: {

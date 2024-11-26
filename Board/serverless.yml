@@ -8,8 +8,8 @@ provider:
     BOARD_TABLE: "course-board"
     COMMENT_TABLE: "comment"
     REGION: ${aws:region}
-  httpApi:
-    cors: true
+  tags:
+    Name: ahim
   iam:
     role:
       statements:
@@ -38,7 +38,7 @@ functions:
     handler: lambda/board/createBoard.handler
     events:
       - http:
-          path: /v1/course-provide
+          path: /v1/course
           method: POST
           cors: true
 
@@ -58,11 +58,11 @@ functions:
           method: GET
           cors: true
 
-  getBoardsByCourseProvide:
-    handler: lambda/board/getBoardsByCourseProvide.handler
+  getBoardsByCourse:
+    handler: lambda/board/getBoardsByCourse.handler
     events:
       - http:
-          path: /v1/course-provide/{courseProvideId}/{type}
+          path: /v1/course/{courseId}/{type}
           method: GET
           cors: true
 
@@ -135,10 +135,10 @@ resources:
             AttributeType: S
           - AttributeName: userName
             AttributeType: S
-          - AttributeName: courseProvideId
-            AttributeType: S
+          - AttributeName: courseId
+            AttributeType: N
           - AttributeName: institutionId
-            AttributeType: S
+            AttributeType: N
         KeySchema:
           - AttributeName: id
             KeyType: HASH
@@ -152,9 +152,9 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-          - IndexName: CourseProvideIndex
+          - IndexName: CourseIndex
             KeySchema:
-              - AttributeName: courseProvideId
+              - AttributeName: courseId
                 KeyType: HASH
               - AttributeName: createdAt
                 KeyType: RANGE
