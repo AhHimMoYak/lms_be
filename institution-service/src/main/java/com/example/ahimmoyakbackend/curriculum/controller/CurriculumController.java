@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course/{courseId}")
+@RequestMapping("/api/v1/courses/{courseId}")
 public class CurriculumController {
 
     private final CurriculumService curriculumService;
 
-    @PostMapping("/curriculum")
+    @PostMapping("/curriculums")
     public ResponseEntity<String> addCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("courseId") long courseId,
@@ -25,7 +25,7 @@ public class CurriculumController {
         return curriculumService.add(userDetails, courseId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 등록 성공") : ResponseEntity.badRequest().body("커리큘럼 등록 실패");
     }
 
-    @PatchMapping("/curriculum/{curriculumId}")
+    @PatchMapping("/curriculums/{curriculumId}")
     public ResponseEntity<String> updateCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
@@ -34,7 +34,7 @@ public class CurriculumController {
         return curriculumService.update(userDetails, curriculumId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 수정 성공") : ResponseEntity.badRequest().body("커리큘럼 수정 실패");
     }
 
-    @DeleteMapping("/curriculum/{curriculumId}")
+    @DeleteMapping("/curriculums/{curriculumId}")
     public ResponseEntity<String> deleteCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId
