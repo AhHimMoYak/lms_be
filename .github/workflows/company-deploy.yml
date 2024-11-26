@@ -63,3 +63,27 @@ jobs:
 
       - name: ECR에 docker image push 하기
         run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest
+      - name: 태스크 정의 업데이트
+        id: task-def
+        run: |
+          # 1. 기존 태스크 정의 가져오기
+          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition ${{ secrets.ECS_TASK_DEFINITION_NAME }} --query 'taskDefinition')
+          
+          # 2. 새 이미지 URI로 컨테이너 정의 업데이트
+          NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE_URI "${{ steps.login-ecr.outputs.registry }}/company-service:latest" '.containerDefinitions[0].image=$IMAGE_URI')
+          
+          # 3. 불필요한 정보 제거
+          NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq '.taskDefinitionArn=null | .revision=null | .status=null | .requiresAttributes=null | .compatibilities=null | .registeredAt=null | .registeredBy=null')
+          
+          # 4. 새 컨테이너 정의를 태스크 정의에 포함
+          FINAL_TASK_DEFINITION=$(echo $NEW_TASK_DEFINITION | jq --argjson containerDef "$NEW_CONTAINER_DEFINITION" '.containerDefinitions=$containerDef')
+          
+          # 5. 새로운 태스크 정의를 JSON 파일로 저장하고 등록
+          echo $FINAL_TASK_DEFINITION > new-task-def.json
+          aws ecs register-task-definition --cli-input-json file://new-task-def.json
+
+      - name: ECS 서비스 업데이트 및 배포 강제
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} \
+            --service ${{ secrets.ECS_SERVICE_NAME }} \
+            --force-new-deployment
