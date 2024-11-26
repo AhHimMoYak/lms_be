@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/file")
+@RequestMapping("/files")
 public class FileServerController {
 
     private final FileService fileService;
 
-    @GetMapping("/video/{info}")
+    @GetMapping("/videos/{info}")
     public ResponseEntity<ResourceRegion> streamVideo(@RequestHeader HttpHeaders httpHeaders, @PathVariable String info) {
         return fileService.streamVideo(httpHeaders, info);
     }
 
-    @GetMapping("/material/{info}")
+    @GetMapping("/materials/{info}")
     public ResponseEntity<Resource> downloadMaterial(@PathVariable String info) {
         return fileService.downloadMaterial(info);
     }

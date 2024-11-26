@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/institution")
+@RequestMapping("/api/v1/institutions")
 public class InstitutionController {
 
     private final InstitutionService institutionService;
@@ -28,13 +28,13 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.createInstitution(userDetails, requestDto));
     }
 
-    @GetMapping("/detail")
+    @GetMapping("/details")
     public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(institutionService.getInstitutionDetail(userDetails));
     }
 
-    @GetMapping("/{institutionId}/detail")
+    @GetMapping("/{institutionId}/details")
     public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long institutionId) {

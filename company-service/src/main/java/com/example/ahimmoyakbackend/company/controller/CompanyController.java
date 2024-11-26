@@ -19,7 +19,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/company")
+    @PostMapping("/companies")
     public ResponseEntity<MessageResponseDto> createCompany(
             //test !!
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -28,21 +28,21 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
     }
 
-    @GetMapping("/company")
+    @GetMapping("/companies")
     public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
     ) {
         return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
-    @GetMapping("/company/info")
+    @GetMapping("/companies/info")
     public ResponseEntity<CompanyDetailResponseDto> getCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyService.getCompany(userDetails));
     }
 
-    @PatchMapping("/company")
+    @PatchMapping("/companies")
     public ResponseEntity<MessageResponseDto> updateCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String name,
@@ -51,7 +51,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.updateCompany(userDetails, name, requestDto));
     }
 
-    @GetMapping("/company/email/check")
+    @GetMapping("/companies/emails/check")
     public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
             @RequestParam String companyEmail,
             @RequestParam String userEmail
@@ -59,7 +59,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
     }
 
-    @GetMapping("/company/affiliation")
+    @GetMapping("/companies/affiliations")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String companyName
@@ -68,7 +68,7 @@ public class CompanyController {
     }
 
     // 내가 회사 탈퇴
-    @DeleteMapping("/company/affiliation")
+    @DeleteMapping("/companies/affiliations")
     public ResponseEntity<MessageResponseDto> detachCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -76,7 +76,7 @@ public class CompanyController {
     }
 
     // supervisor 가 해당 유저를 회사에서 탈퇴
-    @DeleteMapping("/company/employees")
+    @DeleteMapping("/companies/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String username
@@ -84,7 +84,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
     }
 
-    @GetMapping("/company/employees")
+    @GetMapping("/companies/employees")
     public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -92,7 +92,7 @@ public class CompanyController {
     }
 
     // courseProvide
-    @PostMapping("/company/courseProvide")
+    @PostMapping("/companies/courseProvides")
     public ResponseEntity<MessageResponseDto> CreateCourseProvide(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long courseId,
@@ -101,14 +101,14 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails,courseId,requestDto));
     }
 
-    @GetMapping("/company/courseProvide/list")
+    @GetMapping("/companies/courseProvides/list")
     public ResponseEntity<List<CourseProvideListResponseDto>> getCourseProvideList(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return ResponseEntity.ok(companyService.getCourseProvideList(userDetails));
     }
 
-    @PostMapping("/company/courseProvide/employees")
+    @PostMapping("/companies/courseProvides/employees")
     public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody submitEmployeeListRequestDto requestDto

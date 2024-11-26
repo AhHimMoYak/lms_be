@@ -24,7 +24,7 @@ public class ChatController {
     private final SimpMessageSendingOperations messagingTemplate;
     private final ChatService chatService;
 
-    @MessageMapping("/chat/{liveId}")
+    @MessageMapping("/chats/{liveId}")
     public ResponseEntity<ChatMessageSubDto> message(@DestinationVariable long liveId, ChatMessagePubDto dto) {
         ChatMessageSubDto subDto = chatService.message(liveId, dto);
         if (subDto == null) {
@@ -34,7 +34,7 @@ public class ChatController {
         return ResponseEntity.ok(subDto);
     }
 
-    @GetMapping("/api/v1/live/{liveId}/chat")
+    @GetMapping("/api/v1/lives/{liveId}/chats")
     public ResponseEntity<List<ChatMessageSubDto>> getAllMessage(@PathVariable long liveId) {
         return ResponseEntity.ok(chatService.getAll(liveId));
     }
