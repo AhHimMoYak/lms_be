@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/live")
+@RequestMapping("/api/v1/lives")
 @RequiredArgsConstructor
 public class LiveController {
 
@@ -39,7 +39,7 @@ public class LiveController {
     }
 
     // Fixme 강사는 없으므로 매니저가 교육기관에 대한 모든 라이브를 조회하는 경우로 로직 변경해야함
-    @GetMapping("/instructor")
+    @GetMapping("/instructors")
     public ResponseEntity<List<LiveTutorResponseDTO>> getTutorLives(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok().body(liveService.getLiveListByTutor(userDetails));
     }

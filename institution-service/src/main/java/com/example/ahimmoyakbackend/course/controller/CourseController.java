@@ -16,11 +16,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course")
+@RequestMapping("/api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
 
-    @GetMapping("/{courseId}/detail")
+    @GetMapping("/{courseId}/details")
     public ResponseEntity<CourseDetailResponseDto> getCourseDetail(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getDetail(courseId));
     }
@@ -75,7 +75,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getAllList(pageable, category));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     public ResponseEntity<List<EmployeeCourseListResponseDto>> getAllCoursesList(@RequestParam String userName) {
         return ResponseEntity.ok(courseService.getAllList(userName));
     }
