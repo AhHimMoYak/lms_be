@@ -1,0 +1,222 @@
+service: board
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    BOARD_TABLE: "course-board"
+    COMMENT_TABLE: "comment"
+    REGION: ${aws:region}
+  tags:
+    Name: ahim
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.BOARD_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.BOARD_TABLE}/index/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.COMMENT_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.COMMENT_TABLE}/index/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+  createBoard:
+    handler: lambda/board/createBoard.handler
+    events:
+      - http:
+          path: /v1/course
+          method: POST
+          cors: true
+
+  getBoard:
+    handler: lambda/board/getBoard.handler
+    events:
+      - http:
+          path: /v1/{boardId}
+          method: GET
+          cors: true
+
+  getBoardsByUser:
+    handler: lambda/board/getBoardsByUser.handler
+    events:
+      - http:
+          path: /v1/user-name/{userName}
+          method: GET
+          cors: true
+
+  getBoardsByCourse:
+    handler: lambda/board/getBoardsByCourse.handler
+    events:
+      - http:
+          path: /v1/course/{courseId}/{type}
+          method: GET
+          cors: true
+
+  getBoardsByInstitution:
+    handler: lambda/board/getBoardsByInstitution.handler
+    events:
+      - http:
+          path: /v1/institutions/{institutionId}/{type}
+          method: GET
+          cors: true
+
+  updateBoard:
+    handler: lambda/board/updateBoard.handler
+    events:
+      - http:
+          path: /v1/{boardId}
+          method: PATCH
+          cors: true
+
+  deleteBoard:
+    handler: lambda/board/deleteBoard.handler
+    events:
+      - http:
+          path: /v1/{boardId}
+          method: DELETE
+          cors: true
+
+  createComment:
+    handler: lambda/comment/createComment.handler
+    events:
+      - http:
+          path: /v1/{boardId}/comments
+          method: POST
+          cors: true
+
+  getComments:
+    handler: lambda/comment/getComments.handler
+    events:
+      - http:
+          path: /v1/{boardId}/comments
+          method: GET
+          cors: true
+
+  updateComment:
+    handler: lambda/comment/updateComment.handler
+    events:
+      - http:
+          path: /v1/comments/{commentId}
+          method: PATCH
+          cors: true
+
+  deleteComment:
+    handler: lambda/comment/deleteComment.handler
+    events:
+      - http:
+          path: /v1/comments/{commentId}
+          method: DELETE
+          cors: true
+
+resources:
+  Resources:
+    CourseBoardTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.BOARD_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+          - AttributeName: userName
+            AttributeType: S
+          - AttributeName: courseId
+            AttributeType: N
+          - AttributeName: institutionId
+            AttributeType: N
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: UserIndex
+            KeySchema:
+              - AttributeName: userName
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: CourseIndex
+            KeySchema:
+              - AttributeName: courseId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: InstitutionIndex
+            KeySchema:
+              - AttributeName: institutionId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+    CommentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.COMMENT_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: boardId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: BoardIdIndex
+            KeySchema:
+              - AttributeName: boardId
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: IdIndex
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "lambda/**"
+    - "aws-clients.mjs"
+  individually: false
+
+plugins:
+  - serverless-domain-manager
+custom:
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "board"
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateName: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"
