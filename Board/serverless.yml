@@ -38,7 +38,7 @@ functions:
     handler: lambda/board/createBoard.handler
     events:
       - http:
-          path: /v1/course
+          path: /v1/courses
           method: POST
           cors: true
 
@@ -62,7 +62,7 @@ functions:
     handler: lambda/board/getBoardsByCourse.handler
     events:
       - http:
-          path: /v1/course/{courseId}/{type}
+          path: /v1/courses/{courseId}/{type}
           method: GET
           cors: true
 
