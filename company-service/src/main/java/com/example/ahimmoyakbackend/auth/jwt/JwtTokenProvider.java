@@ -57,7 +57,7 @@ public class JwtTokenProvider {
         return BEARER_PREFIX + Jwts.builder()
                 .subject(username)
                 .claim("email", email)
-                .claim("tutor", role)
+                .claim("role", role)
                 .issuer("Ahimmoyak")
                 .issuedAt(date)
                 .expiration(new Date(date.getTime() + time))
