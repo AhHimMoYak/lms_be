@@ -2,12 +2,17 @@ package com.example.ahimmoyakbackend.curriculum.controller;
 
 
 import com.example.ahimmoyakbackend.course.dto.CurriculumCreateRequestDto;
+import com.example.ahimmoyakbackend.course.dto.CurriculumCreateResponseDto;
+import com.example.ahimmoyakbackend.curriculum.dto.CurriculumListByInstitutionResponseDto;
 import com.example.ahimmoyakbackend.curriculum.service.CurriculumService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,29 +21,37 @@ public class CurriculumController {
 
     private final CurriculumService curriculumService;
 
+    @GetMapping("/curriculums")
+    public ResponseEntity<List<CurriculumListByInstitutionResponseDto>> getCurriculumListByInstitution(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long courseId
+    ) {
+        return ResponseEntity.ok(curriculumService.get(userDetails, courseId));
+    }
+
     @PostMapping("/curriculums")
-    public ResponseEntity<String> addCurriculum(
+    public ResponseEntity<CurriculumCreateResponseDto> addCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("courseId") long courseId,
             @RequestBody CurriculumCreateRequestDto requestDto
     ) {
-        return curriculumService.add(userDetails, courseId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 등록 성공") : ResponseEntity.badRequest().body("커리큘럼 등록 실패");
+        return ResponseEntity.ok(curriculumService.add(userDetails, courseId, requestDto));
     }
 
     @PatchMapping("/curriculums/{curriculumId}")
-    public ResponseEntity<String> updateCurriculum(
+    public ResponseEntity<MessageResponseDto> updateCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId,
             @RequestBody CurriculumCreateRequestDto requestDto
     ) {
-        return curriculumService.update(userDetails, curriculumId, requestDto.title()) ? ResponseEntity.ok("커리큘럼 수정 성공") : ResponseEntity.badRequest().body("커리큘럼 수정 실패");
+        return ResponseEntity.ok(curriculumService.update(userDetails, curriculumId, requestDto.title()));
     }
 
     @DeleteMapping("/curriculums/{curriculumId}")
-    public ResponseEntity<String> deleteCurriculum(
+    public ResponseEntity<MessageResponseDto> deleteCurriculum(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("curriculumId") long curriculumId
     ) {
-        return curriculumService.delete(userDetails, curriculumId) ? ResponseEntity.ok("커리큘럼 삭제 성공") : ResponseEntity.badRequest().body("커리큘럼 삭제 실패");
+        return ResponseEntity.ok(curriculumService.delete(userDetails, curriculumId));
     }
 }

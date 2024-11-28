@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/live/{liveId}/quiz")
+@RequestMapping("/api/v1/lives/{liveId}/quizes")
 public class LiveQuizController {
 
     private static final Logger log = LoggerFactory.getLogger(LiveQuizController.class);
@@ -42,23 +42,23 @@ public class LiveQuizController {
         return ResponseEntity.ok(liveQuizService.getList(liveId));
     }
 
-    @MessageMapping("/quiz/{liveId}")
+    @MessageMapping("/quizes/{liveId}")
     public ResponseEntity<LiveQuizResponseDto> sendQuiz(@DestinationVariable long liveId, QuizIdProxyDto dto) {
         LiveQuizResponseDto subDto = liveQuizService.send(liveId, dto.quizId());
         if (subDto == null) {
             return ResponseEntity.notFound().build();
         }
-        messagingTemplate.convertAndSend("/sub/quiz/" + liveId, subDto);
+        messagingTemplate.convertAndSend("/sub/quizes/" + liveId, subDto);
         return ResponseEntity.ok(subDto);
     }
 
-    @MessageMapping("/quiz/{liveId}/answer")
+    @MessageMapping("/quizes/{liveId}/answers")
     public ResponseEntity<List<QuizStatusSubDto>> answerQuiz(@DestinationVariable long liveId, QuizAnswerMsgDto pubDto) {
         List<QuizStatusSubDto> subDto = liveQuizService.answer(liveId, pubDto);
         if (subDto == null) {
             return ResponseEntity.notFound().build();
         }
-        messagingTemplate.convertAndSend("/sub/quiz/" + liveId + "/answer", subDto);
+        messagingTemplate.convertAndSend("/sub/quizes/" + liveId + "/answers", subDto);
         return ResponseEntity.ok(subDto);
     }
 }

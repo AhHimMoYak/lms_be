@@ -4,24 +4,24 @@ import {docClient} from "../aws-clients.mjs";
 
 export const handler = async (event) => {
     try {
-        const { courseProvideId, type } = event.pathParameters;
+        const { courseId, type } = event.pathParameters;
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
         const lastEvaluatedKey = event.queryStringParameters?.lastEvaluatedKey
             ? JSON.parse(event.queryStringParameters.lastEvaluatedKey)
             : null;
-
+        const courseIdNumber = Number(courseId);
         const response = await docClient.send(new QueryCommand({
             TableName: process.env.BOARD_TABLE,
-            IndexName: 'CourseProvideIndex',
-            KeyConditionExpression: 'courseProvideId = :courseProvideId',
-            FilterExpression: '#type = :type',  // #type을 사용하여 예약어 우회
+            IndexName: 'CourseIndex',
+            KeyConditionExpression: 'courseId = :courseId',
+            FilterExpression: '#type = :type',
             ExpressionAttributeNames: {
-                '#type': 'type'  // 'type'을 #type으로 매핑
+                '#type': 'type'
             },
             ExpressionAttributeValues: {
-                ':courseProvideId': courseProvideId,
+                ':courseId': courseIdNumber,
                 ':type': type
             },
             Limit: limit,
