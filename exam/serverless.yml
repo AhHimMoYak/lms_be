@@ -9,8 +9,6 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}
     REGION: ${aws:region}
-  httpApi:
-    cors: true
   iam:
     role:
       statements:
@@ -27,60 +25,56 @@ provider:
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/courseId-index"
         - Effect: Allow
           Action:
+            - logs:PutLogEvents
+
             - logs:CreateLogGroup
             - logs:CreateLogStream
-            - logs:PutLogEvents
           Resource: "*"
-
 functions:
   createExam:
-    handler: exam.createExam
+    handler: src/create-exam.handler
     events:
-      - httpApi:
-          path: /v1/exam/create
+      - http:
+          path: /v1/exam/{courseId}/create
           method: POST
+          cors: true
+    package:
+      include:
+        - src/create-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
 
   getExam:
-    handler: exam.getExam
+    handler: src/get-exam.handler
     events:
-      - httpApi:
-          path: /v1/exam/{id}
+      - http:
+          path: /v1/exam/{courseId}/get
           method: GET
+          cors: true
+    package:
+      include:
+        - src/get-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
 
-  listExamsByCourse:
-    handler: exam.listExamsByCourse
+  submitExam:
+    handler: src/submit-exam.handler
     events:
-      - httpApi:
-          path: /v1/exam/course/{courseId}
-          method: GET
-
-  updateExam:
-    handler: exam.updateExam
-    events:
-      - httpApi:
-          path: /v1/exam/{id}
-          method: PUT
-
-  updateExamStatus:
-    handler: exam.updateExamStatus
-    events:
-      - httpApi:
-          path: /v1/exam/{id}/status
-          method: PATCH
-
-  deleteExam:
-    handler: exam.deleteExam
-    events:
-      - httpApi:
-          path: /v1/exam/{id}
-          method: DELETE
-
-  submitExamAnswers:
-    handler: exam.submitExamAnswers
-    events:
-      - httpApi:
-          path: /v1/exam/{id}/submit
+      - http:
+          path: /v1/exam/submit
           method: POST
+          cors: true
+    package:
+      include:
+        - src/get-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
 
 resources:
   Resources:
@@ -90,38 +84,39 @@ resources:
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
           - AttributeName: courseId
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: courseId
             KeyType: HASH
-        GlobalSecondaryIndexes:
-          - IndexName: courseId-index
-            KeySchema:
-              - AttributeName: courseId
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
+
+    ExamSubmitTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: exam-submit-api
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: examId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: examId
+            KeyType: HASH
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "exam"
+    stage: dev
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateName: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"
 
 package:
   patterns:
-    - "!node_modules/.bin/**"
+    - "!./**"
+    - "src/**"
+    - "package.json"
     - "node_modules/**"
-    - "exam.mjs"
-  individually: false
-
-custom:
-  esbuild:
-    bundle: true
-    minify: false
-    format: esm
-    sourcemap: true
-    target: node20
-    platform: node
-    outExtension:
-      ".js": ".mjs"
-    mainFields:
-      - module
-      - main
