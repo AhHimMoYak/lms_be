@@ -16,7 +16,7 @@ export const handler = async (event) => {
         await docClient.send(new UpdateCommand({
             TableName: process.env.BOARD_TABLE,
             Key: { id: body.boardId },
-            UpdateExpression: "set commentCount = commentCount - :commentCount, institutionComment = institutionComment - :institutionComment",
+            UpdateExpression: "set commentCount = commentCount - :commentCount",
             ExpressionAttributeValues: {
                 ":commentCount": 1,
                 ":institutionComment" : Number(body.institutionComment)
