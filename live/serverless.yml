@@ -1,0 +1,179 @@
+service: ahmy-live
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${sls:stage}
+    REGION: ${aws:region}
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - ivs:*
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: "*"
+  tags:
+    Name: ahim
+
+functions:
+  createChannel:
+    handler: service/createChannel.handler
+    events:
+      - httpApi:
+          path: /v1
+          method: POST
+
+  getChannel:
+    handler: service/getChannel.handler
+    events:
+      - httpApi:
+          path: /v1/{id}/channel
+          method: GET
+
+  getLive:
+    handler: service/getLive.handler
+    events:
+      - httpApi:
+          path: /v1/{id}
+          method: GET
+
+  listChannel:
+    handler: service/listChannel.handler
+    events:
+      - httpApi:
+          path: /v1/list/{courseProvideId}
+          method: GET
+
+  updateChannel:
+    handler: service/updateChannel.handler
+    events:
+      - httpApi:
+          path: /v1/{id}
+          method: PUT
+
+  deleteChannel:
+    handler: service/deleteChannel.handler
+    events:
+      - httpApi:
+          path: /v1/{id}
+          method: DELETE
+
+  updateChannelState:
+    handler: service/updateChannelState.handler
+    events:
+      - eventBridge:
+          eventBus: default
+          pattern:
+            source:
+              - aws.ivs
+            detail-type:
+              - IVS Stream State Change
+
+resources:
+  Resources:
+    LiveTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: courseProvideId
+            AttributeType: S
+          - AttributeName: startTime
+            AttributeType: S
+          - AttributeName: arn
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: courseProvideId-index
+            KeySchema:
+              - AttributeName: courseProvideId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          - IndexName: id-index
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: courseProvideId-index-sort
+            KeySchema:
+              - AttributeName: courseProvideId
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: arn-index
+            KeySchema:
+              - AttributeName: arn
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+#    IVSEventRule:
+#      Type: AWS::Events::Rule
+#      Properties:
+#        EventPattern:
+#          source:
+#            - aws.ivs
+#          detail-type:
+#            - IVS Stream State Change
+#        Targets:
+#          - Arn: !GetAtt UpdateChannelStateLambdaFunction.Arn
+#            Id: UpdateChannelState
+
+
+package:
+  patterns:
+    - "!node_modules/.bin/**"
+    - "node_modules/**"
+    - "createChannel.mjs"
+  individually: false
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    format: esm
+    sourcemap: true
+    target: node20
+    platform: node
+    outExtension:
+      ".js": ".mjs"
+    mainFields:
+      - module
+      - main

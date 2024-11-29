@@ -18,7 +18,8 @@ export const handler = async (event) => {
             Key: { id: body.boardId },
             UpdateExpression: "set commentCount = commentCount - :commentCount",
             ExpressionAttributeValues: {
-                ":commentCount": 1
+                ":commentCount": 1,
+                ":institutionComment" : Number(body.institutionComment)
             }
         }));
 

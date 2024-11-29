@@ -15,6 +15,7 @@ export const handler = async (event) => {
             title: body.title,
             content: body.content,
             commentCount: 0,
+            institutionComment: 0,
             userName: body.userName,
             courseId: Number(body.courseId),
             institutionId: Number(body.institutionId),
