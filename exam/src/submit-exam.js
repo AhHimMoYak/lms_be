@@ -1,76 +1,80 @@
-const AWS = require('aws-sdk');
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
+import { DynamoDBDocumentClient, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({ region: process.env.REGION });
+const docClient = DynamoDBDocumentClient.from(client); // DocumentClient 생성
 
 export const handler = async (event) => {
     try {
-        const {courseProvideId, examId, username, answers} = JSON.parse(event.body);
+        const { examId, username, answers, courseId, courseProvideId } = JSON.parse(event.body);
 
-        // Validate incoming data
-        if (!courseProvideId || !examId || !username || !answers) {
+        // 필수 필드 검증
+        if (!examId || !username || !answers || !courseId || !courseProvideId) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({message: '필드 값이 유효하지 않습니다.'}),
+                headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: "필드 값이 유효하지 않습니다. 모든 필드를 입력해야 합니다." }),
             };
         }
 
-        // Retrieve exam data from DynamoDB
-        const examParams = {
-            TableName: 'exam-api',
-            Key: {examId: examId},
-        };
+        // 시험 데이터 조회
+        const getParams = { TableName: process.env.DYNAMODB_TABLE, Key: { examId, courseId } };
+        const examData = await docClient.send(new GetCommand(getParams));
 
-        const examData = await dynamoDB.get(examParams).promise();
-
+        // 시험 데이터가 없을 경우
         if (!examData.Item) {
             return {
                 statusCode: 404,
-                body: JSON.stringify({message: '시험을 찾을 수 없음.'}),
+                headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                body: JSON.stringify({ error: "시험 데이터를 찾을 수 없습니다." }),
             };
         }
 
         const quizzes = examData.Item.quizzes;
 
-        // 시험 답안 비교
-        const results = quizzes.map((quiz, index) => {
-            const isCorrect = quiz.correctAnswer === answers[index];
-            return {
-                question: quiz.question,
-                userAnswer: answers[index],
-                correctAnswer: quiz.correctAnswer,
-                isCorrect: isCorrect,
-            };
-        });
+        // 제출된 답변 검증 및 정답 비교
+        const results = quizzes.map((quiz, index) => ({
+            question: quiz.question,
+            userAnswer: answers[index],
+            correctAnswer: quiz.correctAnswer,
+            isCorrect: quiz.correctAnswer === answers[index],
+        }));
 
-        // DynamoDB에 결과 저장
-        const submissionParams = {
-            TableName: 'exam-submit-api', // Replace with your DynamoDB table for submissions
+        // 제출 데이터 저장
+        const putParams = {
+            TableName: process.env.EXAM_SUBMIT_TABLE,
             Item: {
-                submissionId: `${examId}-${username}`, // Unique ID for submission
-                examId: examId,
-                courseProvideId: courseProvideId,
-                username: username,
-                answers: answers,
-                status: 'COMPLETED', // Mark exam as completed
+                submissionId: `${examId}-${username}`,
+                examId,
+                courseId,
+                courseProvideId,
+                username,
+                answers,
+                status: "COMPLETED",
                 submittedAt: new Date().toISOString(),
-                results: results,
+                results,
             },
         };
 
-        await dynamoDB.put(submissionParams).promise();
+        await docClient.send(new PutCommand(putParams));
 
+        // 성공 응답
         return {
             statusCode: 200,
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             body: JSON.stringify({
-                message: 'Exam submitted successfully.',
-                results: results,
-                status: 'COMPLETED',
+                message: "시험 제출 성공",
+                results,
+                status: "COMPLETED",
             }),
         };
     } catch (error) {
-        console.error('Error:', error);
+        console.error("시험 제출 실패:", error);
+        // 에러 응답
         return {
             statusCode: 500,
-            body: JSON.stringify({message: '시험 제출 실패.'}),
+            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({ error: `시험 제출 실패: ${error.message}` }),
         };
     }
 };

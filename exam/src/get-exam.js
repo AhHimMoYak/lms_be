@@ -1,10 +1,10 @@
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { docClient } from "./aws-client.js"; // 기존 AWS 클라이언트 가져오기
+import {QueryCommand} from "@aws-sdk/lib-dynamodb";
+import {docClient} from "./aws-client.js"; // 기존 AWS 클라이언트 가져오기
 
 export const handler = async (event) => {
     try {
         // Path Parameters에서 courseId 가져오기
-        const { courseId } = event.pathParameters || {};
+        const {courseId} = event.pathParameters || {};
 
         if (!courseId) {
             return {
@@ -13,7 +13,7 @@ export const handler = async (event) => {
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*",
                 },
-                body: JSON.stringify({ error: "courseId가 누락되었습니다." }),
+                body: JSON.stringify({error: "courseId가 누락되었습니다."}),
             };
         }
 

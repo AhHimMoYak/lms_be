@@ -8,6 +8,7 @@ provider:
   region: ap-northeast-2
   environment:
     DYNAMODB_TABLE: ${self:service}
+    EXAM_SUBMIT_TABLE: exam-submit-api
     REGION: ${aws:region}
   iam:
     role:
@@ -22,11 +23,10 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/courseId-index"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.EXAM_SUBMIT_TABLE}"
         - Effect: Allow
           Action:
             - logs:PutLogEvents
-
             - logs:CreateLogGroup
             - logs:CreateLogStream
           Resource: "*"
@@ -35,7 +35,7 @@ functions:
     handler: src/create-exam.handler
     events:
       - http:
-          path: /v1/exam/{courseId}/create
+          path: /v1/{courseId}/create
           method: POST
           cors: true
     package:
@@ -50,7 +50,7 @@ functions:
     handler: src/get-exam.handler
     events:
       - http:
-          path: /v1/exam/{courseId}/get
+          path: /v1/{courseId}/get
           method: GET
           cors: true
     package:
@@ -61,11 +61,71 @@ functions:
         - src/**
         - node_modules/**
 
+  getExamDetail:
+    handler: src/get-exam-detail.handler
+    events:
+      - http:
+          path: /v1/{courseId}/{examId}/detail
+          method: GET
+          cors: true
+    package:
+      include:
+        - src/get-exam-detail.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
+  deleteExam:
+    handler: src/delete-exam.handler
+    events:
+      - http:
+          path: /v1/{courseId}/{examId}/delete
+          method: DELETE
+          cors: true
+    package:
+      include:
+        - src/delete-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
+  updateExam:
+    handler: src/update-exam.handler
+    events:
+      - http:
+          path: /v1/{courseId}/{examId}/edit
+          method: PUT
+          cors: true
+    package:
+      include:
+        - src/update-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
+  checkExam:
+    handler: src/check-exam.handler
+    events:
+      - http:
+          path: /v1/{courseId}/{examId}/check
+          method: GET
+          cors: true
+    package:
+      include:
+        - src/check-exam.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
   submitExam:
     handler: src/submit-exam.handler
     events:
       - http:
-          path: /v1/exam/submit
+          path: /v1/{courseId}/submit
           method: POST
           cors: true
     package:
@@ -86,21 +146,29 @@ resources:
         AttributeDefinitions:
           - AttributeName: courseId
             AttributeType: S
+          - AttributeName: examId
+            AttributeType: S
         KeySchema:
           - AttributeName: courseId
             KeyType: HASH
+          - AttributeName: examId
+            KeyType: RANGE
 
     ExamSubmitTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: exam-submit-api
+        TableName: ${self:provider.environment.EXAM_SUBMIT_TABLE}
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: examId
             AttributeType: S
+          - AttributeName: username
+            AttributeType: S
         KeySchema:
           - AttributeName: examId
             KeyType: HASH
+          - AttributeName: username
+            KeyType: RANGE
 
 plugins:
   - serverless-domain-manager
