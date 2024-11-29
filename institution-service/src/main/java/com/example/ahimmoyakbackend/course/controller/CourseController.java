@@ -1,11 +1,9 @@
 package com.example.ahimmoyakbackend.course.controller;
 
 import com.example.ahimmoyakbackend.course.common.CourseCategory;
-import com.example.ahimmoyakbackend.course.dto.CourseCreateRequestDto;
-import com.example.ahimmoyakbackend.course.dto.CourseDetailResponseDto;
-import com.example.ahimmoyakbackend.course.dto.CourseListResponseDto;
-import com.example.ahimmoyakbackend.course.dto.EmployeeCourseListResponseDto;
+import com.example.ahimmoyakbackend.course.dto.*;
 import com.example.ahimmoyakbackend.course.service.CourseService;
+import com.example.ahimmoyakbackend.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +16,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course")
+@RequestMapping("/api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
 
-    @GetMapping("/{courseId}/detail")
+    @GetMapping("/{courseId}/details")
     public ResponseEntity<CourseDetailResponseDto> getCourseDetail(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getDetail(courseId));
     }
@@ -43,7 +41,7 @@ public class CourseController {
     ) {
         return courseService.update(userDetails, courseId, requestDto) ? ResponseEntity.ok("코스 수정 성공") : ResponseEntity.badRequest().body("코스 수정 실패");
     }
- 
+
     @DeleteMapping("/{courseId}")
     public ResponseEntity<String> deleteCourse(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -77,9 +75,16 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getAllList(pageable, category));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     public ResponseEntity<List<EmployeeCourseListResponseDto>> getAllCoursesList(@RequestParam String userName) {
         return ResponseEntity.ok(courseService.getAllList(userName));
+    }
+
+    @PutMapping("/{courseId}/curriculums/{curriculumId}/save")
+    public ResponseEntity<MessageResponseDto> saveContents(@PathVariable String courseId,
+                                                           @PathVariable Long curriculumId,
+                                                           @RequestBody List<GetContentsRequestDto> requestDtos) {
+        return ResponseEntity.ok(courseService.saveContents(curriculumId, requestDtos));
     }
 
 }

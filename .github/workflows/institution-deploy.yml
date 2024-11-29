@@ -1,0 +1,66 @@
+name: institution-service deploy
+
+on:
+  pull_request:
+    branches:
+      - microservice
+    types:
+      - closed
+    paths:
+      - 'institution-service/**'
+
+
+jobs:
+  deploy:
+    if: ${{github.event.pull_request.merged}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK17 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Create necessary directories
+        run: mkdir -p ./institution-service/src/main/resources
+
+      - name: application.yml 파일 만들기
+        run: echo -e "${{ secrets.INSTITUTION_APPLICATION_PROPERTIES }}" > ./institution-service/src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        working-directory: ./institution-service
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: ECR에 로그인 하기.
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: ECR에 로그인 한 결과 확인
+        run: echo ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Docker 이미지 생성
+        working-directory: ./institution-service
+        run: docker build -t institution-cicd .
+
+      - name: Dokcer 이미지 생성 확인
+        run: |
+          ls
+          pwd
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag institution-cicd ${{ steps.login-ecr.outputs.registry }}/institution-service:latest
+
+      - name: ECR에 docker image push 하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/institution-service:latest

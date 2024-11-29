@@ -41,25 +41,25 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/exist/name")
+    @PostMapping("/exist/names")
     public ResponseEntity<MessageResponseDto> checkExistName(@RequestBody ExistNameRequestDto requestDto){
         MessageResponseDto responseDto = userService.checkExistName(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping("/user/verification")
+    @PostMapping("/users/verification")
     public ResponseEntity<MessageResponseDto> checkVerification(@RequestBody UserVerificationRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         MessageResponseDto responseDto = userService.checkVerification(requestDto, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/user/update")
+    @PostMapping("/users/update")
     public ResponseEntity<MessageResponseDto> updatePersonalInformation(@RequestBody UserInformationRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         MessageResponseDto responseDto = userService.updatePersonalInformation(requestDto, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/users")
     public ResponseEntity<UserInformationResponseDto> checkUser(@RequestParam String username) {
         UserInformationResponseDto responseDto = userService.getPersonalInformation(username);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);

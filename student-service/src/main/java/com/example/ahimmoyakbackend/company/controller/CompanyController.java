@@ -19,15 +19,15 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/company")
-    public ResponseEntity<MessageResponseDto> createCompany(
+    @PostMapping("/companies")
+    public ResponseEntity<MessageResponseDto> createCompanyo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
     }
 
-    @GetMapping("/company")
+    @GetMapping("/companies")
     public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
     ) {
@@ -35,7 +35,7 @@ public class CompanyController {
     }
 
     // 모르겠음
-    @GetMapping("/company/info")
+    @GetMapping("/companies/info")
     public ResponseEntity<CompanyDetailResponseDto> getCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -43,7 +43,7 @@ public class CompanyController {
     }
 
     // 모르겠음
-    @GetMapping("/company/email/check")
+    @GetMapping("/companies/emails/check")
     public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
             @RequestParam String companyEmail,
             @RequestParam String userEmail
@@ -51,7 +51,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
     }
 
-    @GetMapping("/company/affiliation")
+    @GetMapping("/companies/affiliations")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String companyName
@@ -60,7 +60,7 @@ public class CompanyController {
     }
 
     // 내가 회사 탈퇴
-    @DeleteMapping("/company/affiliation")
+    @DeleteMapping("/companies/affiliations")
     public ResponseEntity<MessageResponseDto> detachCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -68,7 +68,7 @@ public class CompanyController {
     }
 
     // supervisor 가 해당 유저를 회사에서 탈퇴
-    @DeleteMapping("/company/employees")
+    @DeleteMapping("/companies/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String username
