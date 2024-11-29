@@ -1,0 +1,75 @@
+{
+  "// DynamoDB Schema":
+  {
+    "id": "id",
+    "createdAt": "생성시간",
+    "updatedAt": "수정시간",
+    "streamKey": "스트림키",
+    "ingestEndpoint": "송출용 엔드포인트",
+    "playbackUrl": "재생 url",
+    "title": "제목",
+    "instructor": "강사이름",
+    "courseProvideId": "코스제공 id",
+    "course": "코스이름",
+    "startTime": "시작시간",
+    "endTime": "종료시간",
+    "status": "상태 [CREATED | ON | CANCELED | END]"
+  },
+
+  "// createChannel Request":
+  {
+    "title": "제목",
+    "instructor": "교육기관",
+    "courseProvideId": "코스제공Id",
+    "course": "코스",
+    "startTime": "시작시간",
+    "endTime": "종료시간"
+  },
+
+  "// getChannel Response":
+  {
+    "id": "채널 ID",
+    "createdAt": "생성 시간",
+    "updatedAt": "수정 시간",
+    "streamKey": "스트림키",
+    "ingestEndpoint": "송출 엔드포인트",
+    "playbackUrl": "재생 URL",
+    "title": "제목",
+    "instructor": "강사",
+    "course": "코스",
+    "startTime": "시작 시간",
+    "endTime": "종료 시간",
+    "status": "상태"
+  },
+
+  "// getLive Response":
+  {
+    "id": "채널 ID",
+    "createdAt": "생성 시간",
+    "updatedAt": "수정 시간",
+    "playbackUrl": "재생 URL",
+    "title": "제목",
+    "instructor": "강사",
+    "course": "코스",
+    "startTime": "시작 시간",
+    "endTime": "종료 시간",
+    "status": "상태"
+  },
+
+  "// listChannel Response":
+  [
+    {
+      "id": "채널 ID",
+      "createdAt": "생성 시간",
+      "updatedAt": "수정 시간",
+      "title": "제목",
+      "instructor": "강사",
+      "courseProvideId": "코스제공ID",
+      "course": "코스",
+      "startTime": "시작 시간",
+      "endTime": "종료 시간",
+      "status": "상태"
+    }
+  ]
+
+}

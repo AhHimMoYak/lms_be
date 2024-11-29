@@ -44,49 +44,49 @@ provider:
 
 functions:
   createChannel:
-    handler: createChannel.handler
+    handler: service/createChannel.handler
     events:
       - httpApi:
           path: /v1
           method: POST
 
   getChannel:
-    handler: getChannel.handler
+    handler: service/getChannel.handler
     events:
       - httpApi:
           path: /v1/{id}/channel
           method: GET
 
   getLive:
-    handler: getLive.handler
+    handler: service/getLive.handler
     events:
       - httpApi:
           path: /v1/{id}
           method: GET
 
   listChannel:
-    handler: listChannel.handler
+    handler: service/listChannel.handler
     events:
       - httpApi:
           path: /v1/list/{courseProvideId}
           method: GET
 
   updateChannel:
-    handler: updateChannel.handler
+    handler: service/updateChannel.handler
     events:
       - httpApi:
           path: /v1/{id}
           method: PUT
 
   deleteChannel:
-    handler: deleteChannel.handler
+    handler: service/deleteChannel.handler
     events:
       - httpApi:
           path: /v1/{id}
           method: DELETE
 
   updateChannelState:
-    handler: updateChannelState.handler
+    handler: service/updateChannelState.handler
     events:
       - eventBridge:
           eventBus: default
