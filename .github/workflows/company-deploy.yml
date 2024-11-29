@@ -27,13 +27,13 @@ jobs:
 
       - name: application.yml 파일 만들기
         run: |
-          echo -e "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" > ./company-service/src/main/resources/application.yml
+          echo -e "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" > ./company-service/src/main/resources/application.properties
 
-#      - name: 테스트 및 빌드하기
-#        working-directory: ./company-service
-#        run: |
-#          chmod +x ./gradlew
-#          ./gradlew clean build
+      - name: 테스트 및 빌드하기
+        working-directory: ./company-service
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
 
       - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
