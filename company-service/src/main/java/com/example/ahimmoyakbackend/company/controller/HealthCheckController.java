@@ -13,7 +13,7 @@ public class HealthCheckController {
     @GetMapping("/actuator/health")
     public ResponseEntity<String> healthCheck() {
 
-        log.info("/ healthy check");
-        return ResponseEntity.ok("Health Check Passed!");
+        log.info("/actuator/health healthy check");
+        return ResponseEntity.ok("Health Check Passed!!");
     }
 }

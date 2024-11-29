@@ -14,7 +14,8 @@ export const handler = async (event) => {
             updatedAt: now,
             content: body.content,
             userName: body.userName,
-            boardId: boardId
+            boardId: boardId,
+            is_institution: body.is_institution
         };
 
         await docClient.send(new PutCommand({
@@ -24,11 +25,14 @@ export const handler = async (event) => {
 
         // 댓글이 성공적으로 생성되었을 때 게시글 상태 업데이트
         await docClient.send(new UpdateCommand({
-            TableName: "course-board",
+            TableName: process.env.BOARD_TABLE,
             Key: { id: boardId },
-            UpdateExpression: "set commentCount = commentCount + :commentCount",
+            UpdateExpression:
+                "set commentCount = commentCount + :commentCount, institutionComment = institutionComment + :institutionComment"
+            ,
             ExpressionAttributeValues: {
-                ":commentCount": 1
+                ":commentCount": 1,
+                ":institutionComment": body.institutionComment
             }
         }));
 
