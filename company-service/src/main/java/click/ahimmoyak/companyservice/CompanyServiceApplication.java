@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class CompanyServiceApplication {
 
     public static void main(String[] args) {
-        // test
+        // test1
         SpringApplication.run(CompanyServiceApplication.class, args);
     }
 }
