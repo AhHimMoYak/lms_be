@@ -130,6 +130,20 @@ resources:
           - IpProtocol: -1
             CidrIp: 0.0.0.0/0
 
+    RDSSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: "Allow MySQL access for RDS"
+        VpcId: !Ref VPC
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 3306
+            ToPort: 3306
+            SourceSecurityGroupId: !Ref ECSSecurityGroup
+        SecurityGroupEgress:
+          - IpProtocol: -1
+            CidrIp: 0.0.0.0/0
+
     # ECS 클러스터 생성
     Cluster:
       Type: AWS::ECS::Cluster
@@ -261,6 +275,9 @@ resources:
             PortMappings:
               - ContainerPort: 8080
                 HostPort: 8080
+            Environment:
+              - Name: SPRING_PROFILES_ACTIVE
+                Value: local
             LogConfiguration:
               LogDriver: awslogs
               Options:
@@ -287,6 +304,7 @@ resources:
               - !Ref PublicSubnet2
             SecurityGroups:
               - !Ref ECSSecurityGroup
+              - !Ref RDSSecurityGroup
         LoadBalancers:
           - ContainerName: company-container
             ContainerPort: 8080
