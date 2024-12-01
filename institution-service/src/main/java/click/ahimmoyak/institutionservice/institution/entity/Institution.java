@@ -52,8 +52,17 @@ public class Institution extends Timestamped {
     private List<CourseProvide> courseProvide = new ArrayList<>();
 
     public Institution patch(UpdateInstitutionRequestDto requestDTO) {
+        if (requestDTO.name() != null) {
+            this.name = requestDTO.name();
+        }
         if (requestDTO.ownerName() != null) {
             this.ownerName = requestDTO.ownerName();
+        }
+        if (requestDTO.businessNumber() != null) {
+            this.ownerName = requestDTO.businessNumber();
+        }
+        if (requestDTO.certifiedNumber() != null) {
+            this.ownerName = requestDTO.certifiedNumber();
         }
         if (requestDTO.email() != null) {
             this.email = requestDTO.email();
