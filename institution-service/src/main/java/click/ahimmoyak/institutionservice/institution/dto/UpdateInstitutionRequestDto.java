@@ -12,8 +12,7 @@ public record UpdateInstitutionRequestDto(
     String businessNumber,
     String certifiedNumber,
     String email,
-    String phone,
-    Manager manager
+    String phone
 ){
     public static UpdateInstitutionRequestDto from(Institution institution){
         return UpdateInstitutionRequestDto.builder()
