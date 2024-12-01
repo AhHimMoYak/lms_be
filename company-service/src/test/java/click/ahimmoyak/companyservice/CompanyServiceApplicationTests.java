@@ -10,7 +10,7 @@ class CompanyServiceApplicationTests {
 
     @Test
     void contextLoads() {
-        //test!!!!
+        //test!
     }
 
 }
