@@ -54,7 +54,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getAllList(userName));
     }
 
-    @GetMapping("/curriculums/contents/{contentId}")
+    @GetMapping("/curriculums/contents/{contentId}")// 콘텐츠 디테일 보기
     public ResponseEntity<ContentDetailResponseDto> getContentDetail(@PathVariable Long contentId) {
         return ResponseEntity.ok(courseService.getContentDetail(contentId));
     }
@@ -69,5 +69,9 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getDetail(courseProvideId, userDetails));
     }
 
+    @GetMapping("/courseList") // 수강생의 courseList 조회
+    public ResponseEntity<List<CourseListResponseDto>> getAllCourseList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(courseService.getCourseList(userDetails));
+    }
 
 }

@@ -1,5 +1,6 @@
 package click.ahimmoyak.studentservice.course.repository;
 
+import click.ahimmoyak.studentservice.auth.entity.User;
 import click.ahimmoyak.studentservice.course.common.CourseProvideState;
 import click.ahimmoyak.studentservice.course.entity.CourseProvide;
 import click.ahimmoyak.studentservice.institution.entity.Institution;
@@ -16,5 +17,7 @@ public interface CourseProvideRepository extends JpaRepository<CourseProvide, Lo
     List<CourseProvide> findAllByBeginDateAndState(LocalDate beginDate, CourseProvideState state);
 
     List<CourseProvide> findAllByEndDateAndState(LocalDate endDate, CourseProvideState state);
+
+    List<CourseProvide> findByEnrollments_User(User user);
 }
 
