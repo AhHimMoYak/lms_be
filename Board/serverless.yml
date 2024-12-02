@@ -35,7 +35,7 @@ provider:
 
 functions:
   createBoard:
-    handler: lambda/board/createBoard.handler
+    handler: lambda/board/create-board.handler
     events:
       - http:
           path: /v1/courses
@@ -43,7 +43,7 @@ functions:
           cors: true
 
   getBoard:
-    handler: lambda/board/getBoard.handler
+    handler: lambda/board/get-board.handler
     events:
       - http:
           path: /v1/{boardId}
@@ -51,7 +51,7 @@ functions:
           cors: true
 
   getBoardsByUser:
-    handler: lambda/board/getBoardsByUser.handler
+    handler: lambda/board/get-user-boards.handler
     events:
       - http:
           path: /v1/user-name/{userName}
@@ -59,7 +59,7 @@ functions:
           cors: true
 
   getBoardsByCourse:
-    handler: lambda/board/getBoardsByCourse.handler
+    handler: lambda/board/get-course-boards.handler
     events:
       - http:
           path: /v1/courses/{courseId}/{type}
@@ -67,7 +67,7 @@ functions:
           cors: true
 
   getBoardsByInstitution:
-    handler: lambda/board/getBoardsByInstitution.handler
+    handler: lambda/board/get-institution-boards.handler
     events:
       - http:
           path: /v1/institutions/{institutionId}/{type}
@@ -75,7 +75,7 @@ functions:
           cors: true
 
   updateBoard:
-    handler: lambda/board/updateBoard.handler
+    handler: lambda/board/update-board.handler
     events:
       - http:
           path: /v1/{boardId}
@@ -83,7 +83,7 @@ functions:
           cors: true
 
   deleteBoard:
-    handler: lambda/board/deleteBoard.handler
+    handler: lambda/board/delete-board.handler
     events:
       - http:
           path: /v1/{boardId}
@@ -91,7 +91,7 @@ functions:
           cors: true
 
   createComment:
-    handler: lambda/comment/createComment.handler
+    handler: lambda/comment/create-comment.handler
     events:
       - http:
           path: /v1/{boardId}/comments
@@ -99,7 +99,7 @@ functions:
           cors: true
 
   getComments:
-    handler: lambda/comment/getComments.handler
+    handler: lambda/comment/get-comments.handler
     events:
       - http:
           path: /v1/{boardId}/comments
@@ -107,7 +107,7 @@ functions:
           cors: true
 
   updateComment:
-    handler: lambda/comment/updateComment.handler
+    handler: lambda/comment/update-comment.handler
     events:
       - http:
           path: /v1/comments/{commentId}
@@ -115,7 +115,7 @@ functions:
           cors: true
 
   deleteComment:
-    handler: lambda/comment/deleteComment.handler
+    handler: lambda/comment/delete-comment.handler
     events:
       - http:
           path: /v1/comments/{commentId}
