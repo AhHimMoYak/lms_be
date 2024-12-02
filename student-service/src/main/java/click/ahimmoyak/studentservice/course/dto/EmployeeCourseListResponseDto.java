@@ -21,7 +21,7 @@ public record EmployeeCourseListResponseDto(
 ) {
     public static EmployeeCourseListResponseDto from(Course course, CourseProvide courseProvide) {
         return EmployeeCourseListResponseDto.builder()
-                .id(course.getId())
+                .id(courseProvide.getId())
                 .title(course.getTitle())
                 .institution(course.getInstitution().getName())
                 .instructor(course.getInstructor())
