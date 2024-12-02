@@ -23,7 +23,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/companies")
-    public ResponseEntity<MessageResponseDto> createCompanyo(
+    public ResponseEntity<MessageResponseDto> createCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
     ) {
@@ -37,7 +37,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.searchCompany(name));
     }
 
-    // 모르겠음
     @GetMapping("/companies/info")
     public ResponseEntity<CompanyDetailResponseDto> getCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -45,7 +44,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getCompany(userDetails));
     }
 
-    // 모르겠음
     @GetMapping("/companies/emails/check")
     public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
             @RequestParam String companyEmail,
