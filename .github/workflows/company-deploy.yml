@@ -65,6 +65,10 @@ jobs:
         working-directory: ./company-service
         run: docker build -t company-cicd .
 
+      - name: Verify application.yml in Image
+        run: |
+          docker run --rm company-service:latest ls /app/application.yml
+
       - name: Dokcer 이미지 생성 확인
         run: |
           ls
