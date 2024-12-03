@@ -25,7 +25,6 @@ RUN ./gradlew dependencies || true
 
 # 실행 가능한 jar 파일로 패키징
 RUN ./gradlew bootJar --no-daemon
-
 ### stage 2 : executable stage ###
 
 # 두 번째 FROM 에 해당하는 실행 단계
@@ -45,6 +44,8 @@ EXPOSE 8080
 
 # spring boot 기반의 application 을 컨테이너가 실행이 될 때 실행이 되도록 설정
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:/app/application.yml"]
+
+# test
 
 
 
