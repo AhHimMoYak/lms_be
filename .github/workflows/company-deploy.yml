@@ -49,6 +49,10 @@ jobs:
       - name: ECR에 로그인 한 결과 확인
         run: echo ${{ steps.login-ecr.outputs.registry }}
 
+      - name: Check application.yml
+        run: |
+          ls ./company-service/src/main/resources/application.yml
+
       - name: Docker 이미지 생성
         working-directory: ./company-service
         run: docker build -t company-cicd .
