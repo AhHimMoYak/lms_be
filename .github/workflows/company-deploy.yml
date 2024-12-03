@@ -1,16 +1,23 @@
 name: company-service deploy
 
+#on:
+#  pull_request:
+#    branches:
+#      - microservice
+#    types:
+#      - closed
+#    paths:
+#      - 'company-service/**'
 on:
   pull_request:
     branches:
       - microservice
-    types:
-      - closed
     paths:
       - 'company-service/**'
+
 jobs:
   deploy:
-    if: ${{github.event.pull_request.merged}}
+#    if: ${{github.event.pull_request.merged}}
     runs-on: ubuntu-latest
     steps:
       - name: Github Repository 파일 불러오기
@@ -52,6 +59,7 @@ jobs:
       - name: Check application.yml
         run: |
           ls ./company-service/src/main/resources/application.yml
+          cat ./company-service/src/main/resources/application.yml
 
       - name: Docker 이미지 생성
         working-directory: ./company-service
