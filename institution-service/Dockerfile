@@ -9,6 +9,7 @@ FROM openjdk:21-jdk-slim AS builder
 RUN apt-get update && apt-get install -y dos2unix findutils
 
 # 프로젝트 파일 복사
+WORKDIR /app
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
@@ -34,13 +35,13 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # stage 1 에서 빌드된 패키지를 컨테이너의 홈 경로로 복사
-COPY --from=builder build/libs/*.jar /app/app.jar
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
 # application.yml 파일 복사
-COPY src/main/resources/application.yml /app/application.yml
+COPY src/main/resources/application.yml /app/resources/application.yml
 
 # 사용 가능한 port no 지정
 EXPOSE 8080
 
 # spring boot 기반의 application 을 컨테이너가 실행이 될 때 실행이 되도록 설정
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=file:/app/application.yml"]
