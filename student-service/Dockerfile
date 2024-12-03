@@ -36,6 +36,9 @@ WORKDIR /app
 # stage 1 에서 빌드된 패키지를 컨테이너의 홈 경로로 복사
 COPY --from=builder build/libs/*.jar /app/app.jar
 
+# application.yml 파일 복사
+COPY src/main/resources/application.yml /app/application.yml
+
 # 사용 가능한 port no 지정
 EXPOSE 8080
 
