@@ -3,14 +3,12 @@ package click.ahimmoyak.studentservice.course.service;
 import click.ahimmoyak.studentservice.auth.config.security.UserDetailsImpl;
 import click.ahimmoyak.studentservice.auth.entity.User;
 import click.ahimmoyak.studentservice.auth.repository.UserRepository;
-import click.ahimmoyak.studentservice.auth.service.UserService;
 import click.ahimmoyak.studentservice.course.common.ContentsHistoryState;
 import click.ahimmoyak.studentservice.course.common.CourseCategory;
+import click.ahimmoyak.studentservice.course.common.CourseProvideState;
+import click.ahimmoyak.studentservice.course.common.EnrollmentState;
 import click.ahimmoyak.studentservice.course.dto.*;
-import click.ahimmoyak.studentservice.course.entity.Contents;
-import click.ahimmoyak.studentservice.course.entity.ContentsHistory;
-import click.ahimmoyak.studentservice.course.entity.CourseProvide;
-import click.ahimmoyak.studentservice.course.entity.Enrollment;
+import click.ahimmoyak.studentservice.course.entity.*;
 import click.ahimmoyak.studentservice.course.repository.*;
 import click.ahimmoyak.studentservice.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.AbstractDocument;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -173,5 +170,25 @@ public class CourseServiceImpl implements CourseService {
         return MessageResponseDto.builder()
                 .message("history 생성 완료")
                 .build();
+    }
+
+    @Override
+    public List<CourseListResponseDto> getCourseList(UserDetailsImpl userDetails) {
+
+        List<CourseProvide> courseProvideList = courseProvideRepository.findByEnrollments_User(userDetails.getUser());
+
+        return courseProvideList.stream()
+                .filter(courseProvide -> courseProvide.getState() == CourseProvideState.ONGOING)
+                .filter(courseProvide -> courseProvide.getEnrollments().stream()
+                        .anyMatch(enrollment -> enrollment.getUser().equals(userDetails.getUser()) &&
+                                enrollment.getState() == EnrollmentState.AVAILABLE))
+                .map(courseProvide -> CourseListResponseDto.builder()
+                        .id(courseProvide.getId())
+                        .title(courseProvide.getCourse().getTitle())
+                        .introduction(courseProvide.getCourse().getIntroduction())
+                        .instructor(courseProvide.getCourse().getInstructor())
+                        .category(courseProvide.getCourse().getCategory())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
