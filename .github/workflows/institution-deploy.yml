@@ -9,7 +9,6 @@ on:
     paths:
       - 'institution-service/**'
 
-
 jobs:
   deploy:
     if: ${{github.event.pull_request.merged}}
