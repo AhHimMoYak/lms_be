@@ -31,7 +31,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
             + "JOIN c.curriculumList cu "
             + "JOIN cu.contentsList cont "
             + "WHERE e.user = :user AND cont.id = :contentId")
-    List<Enrollment> findEnrollmentsByUserAndContent(@Param("user") User user, @Param("contentId") Long contentId);
+    List<Enrollment> findEnrollmentsByUserAndContent(@Param("user") User user, @Param("contentId") String contentId);
 
     Optional<Enrollment> findByUserAndCourseProvide(User user, CourseProvide courseProvide);
 }
