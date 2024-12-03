@@ -19,14 +19,6 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/companies")
-    public ResponseEntity<MessageResponseDto> createCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CreateCompanyRequestDto requestDto
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
-    }
-
     @GetMapping("/companies")
     public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
