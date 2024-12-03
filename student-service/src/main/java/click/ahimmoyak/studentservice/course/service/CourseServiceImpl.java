@@ -139,6 +139,7 @@ public class CourseServiceImpl implements CourseService {
                 .contentId(content.getId())
                 .createdDate(content.getCreatedAt())
                 .modifiedDate(content.getModifiedAt())
+                .videoDuration(content.getVideoDuration())
                 .idx(content.getIdx())
                 .tittle(content.getTitle())
                 .curriculumId(content.getCurriculum().getId())

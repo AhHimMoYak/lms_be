@@ -32,6 +32,9 @@ public class Contents extends Timestamped {
     @Column(length = 255)
     private String s3Url;
 
+    @Column(length = 255)
+    private String videoDuration;
+
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;

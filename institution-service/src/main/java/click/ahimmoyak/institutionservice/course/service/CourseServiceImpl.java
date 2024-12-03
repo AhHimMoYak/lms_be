@@ -164,6 +164,7 @@ public class CourseServiceImpl implements CourseService {
                         .title(dto.contentTitle())
                         .type(dto.contentType())
                         .idx(dto.idx())
+                        .videoDuration(dto.videoDuration())
                         .curriculum(curriculum)
                         .s3Url(dto.s3Url())
                         .build();
