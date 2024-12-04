@@ -28,7 +28,7 @@ jobs:
 
       - name: Base64로 인코딩된 application.yml 디코딩 및 생성
         run: |
-          echo "${{ secrets.INSTITUTION_APPLICATION_PROPERTIES }}" | base64 -d > ./company-service/src/main/resources/application.yml
+          echo "${{ secrets.INSTITUTION_APPLICATION_PROPERTIES }}" | base64 -d > ./institution-service/src/main/resources/application.yml
 
       - name: 테스트 및 빌드하기
         working-directory: ./institution-service
