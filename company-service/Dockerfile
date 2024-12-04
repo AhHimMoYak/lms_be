@@ -32,9 +32,6 @@ WORKDIR /app
 # Stage 1에서 빌드된 jar 파일 복사
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
-# Base64로 인코딩된 application.yml 복사
-COPY application.yml.base64 /app/application.yml.base64
-
 # 포트 노출
 EXPOSE 8080
 
