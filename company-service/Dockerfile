@@ -4,7 +4,7 @@
 FROM openjdk:21-jdk-slim AS builder
 
 # 필수 패키지 설치
-RUN apt-get update && apt-get install -y dos2unix findutils base64
+RUN apt-get update && apt-get install -y dos2unix findutils
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -31,6 +31,9 @@ WORKDIR /app
 
 # Stage 1에서 빌드된 jar 파일 복사
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
+
+# Base64로 인코딩된 application.yml 복사
+COPY application.yml.base64 /app/application.yml.base64
 
 # 포트 노출
 EXPOSE 8080
