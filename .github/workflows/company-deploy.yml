@@ -8,6 +8,7 @@ on:
       - closed
     paths:
       - 'company-service/**'
+
 jobs:
   deploy:
     if: ${{github.event.pull_request.merged}}
@@ -16,18 +17,18 @@ jobs:
       - name: Github Repository 파일 불러오기
         uses: actions/checkout@v4
 
-      - name: JDK22 설치
+      - name: JDK21 설치
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 22
+          java-version: 21
 
       - name: Create necessary directories
         run: mkdir -p ./company-service/src/main/resources
 
-      - name: application.yml 파일 만들기
+      - name: Base64로 인코딩된 application.yml 디코딩 및 생성
         run: |
-          echo -e "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" > ./company-service/src/main/resources/application.yml
+          echo "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" | base64 -d > ./company-service/src/main/resources/application.yml
 
       - name: 테스트 및 빌드하기
         working-directory: ./company-service
@@ -49,10 +50,6 @@ jobs:
       - name: ECR에 로그인 한 결과 확인
         run: echo ${{ steps.login-ecr.outputs.registry }}
 
-      - name: Check application.yml
-        run: |
-          ls ./company-service/src/main/resources/application.yml
-
       - name: Docker 이미지 생성
         working-directory: ./company-service
         run: docker build -t company-cicd .
@@ -67,4 +64,3 @@ jobs:
 
       - name: ECR에 docker image push 하기
         run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest
-
