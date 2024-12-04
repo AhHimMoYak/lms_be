@@ -46,7 +46,6 @@ EXPOSE 8080
 # spring boot 기반의 application 을 컨테이너가 실행이 될 때 실행이 되도록 설정
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
 
-# test
 
 
 

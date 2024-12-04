@@ -1,23 +1,17 @@
 name: company-service deploy
 
-#on:
-#  pull_request:
-#    branches:
-#      - microservice
-#    types:
-#      - closed
-#    paths:
-#      - 'company-service/**'
 on:
   pull_request:
     branches:
       - microservice
+    types:
+      - closed
     paths:
       - 'company-service/**'
 
 jobs:
   deploy:
-#    if: ${{github.event.pull_request.merged}}
+    if: ${{github.event.pull_request.merged}}
     runs-on: ubuntu-latest
     steps:
       - name: Github Repository 파일 불러오기
@@ -35,14 +29,6 @@ jobs:
       - name: Base64로 인코딩된 application.yml 디코딩 및 생성
         run: |
           echo "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" | base64 -d > ./company-service/src/main/resources/application.yml
-
-      - name: 디코딩된 application.yml 내용 확인
-        run: cat ./company-service/src/main/resources/application.yml
-#
-#
-#      - name: application.yml 파일 만들기
-#        run: |
-#          echo -e "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" > ./company-service/src/main/resources/application.yml
 
       - name: 테스트 및 빌드하기
         working-directory: ./company-service
