@@ -70,9 +70,3 @@ jobs:
 
       - name: ECR에 docker image push 하기
         run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest
-
-      - name: Verify application.yml in Image
-        run: |
-          docker run --rm company-service:latest ls /app/application.yml
-
-
