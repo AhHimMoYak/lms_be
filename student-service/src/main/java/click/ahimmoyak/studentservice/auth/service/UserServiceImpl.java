@@ -32,12 +32,12 @@ public class UserServiceImpl implements UserService {
 
         User user = User.builder()
                 .username(requestDto.getUsername())
-                .name(requestDto.getName())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .birth(requestDto.getBirth())
-                .email(requestDto.getEmail())
-                .gender(requestDto.getGender())
-                .role(UserRole.NORMAL)
+//                .name(requestDto.getName())
+//                .password(passwordEncoder.encode(requestDto.getPassword()))
+//                .birth(requestDto.getBirth())
+//                .email(requestDto.getEmail())
+//                .gender(requestDto.getGender())
+//                .role(UserRole.NORMAL)
                 .build();
 
         userRepository.save(user);
@@ -56,10 +56,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
 
-        JwsDto jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.getRole());
-
-        response.addHeader(JwtTokenProvider.ACCESS_TOKEN, jwsDto.getAccessToken());
-        response.addHeader(JwtTokenProvider.REFRESH_TOKEN, jwsDto.getRefreshToken());
+//        JwsDto jwsDto = jwtTokenProvider.createAllToken(findUser.getUsername(), findUser.getEmail(), findUser.getRole());
+//
+//        response.addHeader(JwtTokenProvider.ACCESS_TOKEN, jwsDto.getAccessToken());
+//        response.addHeader(JwtTokenProvider.REFRESH_TOKEN, jwsDto.getRefreshToken());
 
         return MessageResponseDto.builder()
                 .message("로그인 완료")
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
                 () -> new IllegalArgumentException("잘못된 요청입니다.")
         );
 
-        findUser.patch(requestDTO, passwordEncoder.encode(requestDTO.getPassword()));
+//        findUser.patch(requestDTO, passwordEncoder.encode(requestDTO.getPassword()));
         userRepository.save(findUser);
 
         return MessageResponseDto.builder()
@@ -127,12 +127,12 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findByUsername(username).orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "사용자가 없습니다"));
 
         return UserInformationResponseDto.builder()
-                .name(findUser.getName())
-                .username(findUser.getUsername())
-                .birth(findUser.getBirth())
-                .phone(findUser.getPhone())
-                .email(findUser.getEmail())
-                .gender(findUser.getGender())
+//                .name(findUser.getName())
+//                .username(findUser.getUsername())
+//                .birth(findUser.getBirth())
+//                .phone(findUser.getPhone())
+//                .email(findUser.getEmail())
+//                .gender(findUser.getGender())
                 .build();
     }
 
