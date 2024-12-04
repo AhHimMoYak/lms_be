@@ -16,7 +16,7 @@ public record ContentListResponseDto(
                 .id(contents.getId())
                 .type(contents.getType())
                 .title(contents.getTitle())
-                .videoDuration(contents.getVideoDuration())s
+                .videoDuration(contents.getVideoDuration())
                 .build();
     }
 }
