@@ -31,6 +31,21 @@ provider:
             - logs:CreateLogStream
           Resource: "*"
 functions:
+  getExamList:
+    handler: src/get-exam-list.handler
+    events:
+      - http:
+          path: /v1/{courseId}/get
+          method: GET
+          cors: true
+    package:
+      include:
+        - src/get-exam-list.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
   createExam:
     handler: src/create-exam.handler
     events:
@@ -46,31 +61,16 @@ functions:
         - src/**
         - node_modules/**
 
-  getExam:
-    handler: src/get-exam.handler
+  manageExam:
+    handler: src/manage-exam.handler
     events:
       - http:
-          path: /v1/{courseId}/get
-          method: GET
+          path: /v1/{courseId}/{examId}/edit
+          method: PUT
           cors: true
     package:
       include:
-        - src/get-exam.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  getExamDetail:
-    handler: src/get-exam-detail.handler
-    events:
-      - http:
-          path: /v1/{courseId}/{examId}/detail
-          method: GET
-          cors: true
-    package:
-      include:
-        - src/get-exam-detail.js
+        - src/manage-exam.js
         - node_modules/aws-sdk/**
       exclude:
         - src/**
@@ -91,16 +91,16 @@ functions:
         - src/**
         - node_modules/**
 
-  updateExam:
-    handler: src/update-exam.handler
+  deleteQuiz:
+    handler: src/delete-quiz.handler
     events:
       - http:
-          path: /v1/{courseId}/{examId}/edit
-          method: PUT
+          path: /v1/{courseId}/{examId}/{quizId}/delete
+          method: DELETE
           cors: true
     package:
       include:
-        - src/update-exam.js
+        - src/delete-quiz.js
         - node_modules/aws-sdk/**
       exclude:
         - src/**
@@ -130,7 +130,7 @@ functions:
           cors: true
     package:
       include:
-        - src/get-exam.js
+        - src/get-exam-list.js
         - node_modules/aws-sdk/**
       exclude:
         - src/**
