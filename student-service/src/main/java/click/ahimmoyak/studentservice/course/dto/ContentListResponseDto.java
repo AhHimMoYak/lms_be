@@ -8,7 +8,8 @@ import lombok.Builder;
 public record ContentListResponseDto(
     String id,
     ContentType type,
-    String title
+    String title,
+    String videoDurations
 ) {
     public static ContentListResponseDto from(Contents contents) {
         return ContentListResponseDto.builder()

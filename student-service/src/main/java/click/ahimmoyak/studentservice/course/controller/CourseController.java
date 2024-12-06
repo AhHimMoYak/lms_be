@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/students/courses")
+@RequestMapping("/v1/students/courses")
 public class CourseController {
     private final CourseService courseService;
 
@@ -55,7 +55,7 @@ public class CourseController {
     }
 
     @GetMapping("/curriculums/contents/{contentId}")// 콘텐츠 디테일 보기
-    public ResponseEntity<ContentDetailResponseDto> getContentDetail(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentId) {
+    public ResponseEntity<ContentDetailResponseDto> getContentDetail(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String contentId) {
         courseService.createContentHistory(userDetails, contentId);
         return ResponseEntity.ok(courseService.getContentDetail(contentId));
     }

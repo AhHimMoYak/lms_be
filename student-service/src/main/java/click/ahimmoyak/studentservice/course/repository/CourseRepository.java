@@ -13,14 +13,6 @@ import java.util.List;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-//    List<Course> findAllByEnrollments_User(User user);
-
-//    List<Course> findAllByTutor(User tutor);
-
-    List<Course> findAllByCategory(CourseCategory category);
-
-    Page<Course> findAllByCategory(CourseCategory category, Pageable pageable);
-
     @Query("SELECT c FROM Course c WHERE c.category = :category AND c.state != 'REMOVED' " +
             "ORDER BY CASE WHEN c.state = 'NOT_STARTED' THEN 1 " +
             "WHEN c.state = 'ONGOING' THEN 2 " +
@@ -44,6 +36,4 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "WHEN c.state = 'ONGOING' THEN 2 " +
             "WHEN c.state = 'FINISHED' THEN 3 ELSE 4 END ASC")
     Page<Course> findAllOrderByState(Pageable pageable);
-
-    List<Course> findByInstitution_Id(Long id);
 }

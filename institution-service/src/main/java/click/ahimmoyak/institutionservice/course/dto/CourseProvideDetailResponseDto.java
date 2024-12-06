@@ -15,17 +15,4 @@ public record CourseProvideDetailResponseDto(
         CourseProvideState state,
         List<EnrollmentInfoDto> learnerList
 ) {
-    public static CourseProvideDetailResponseDto from(CourseProvide courseProvide) {
-        return CourseProvideDetailResponseDto.builder()
-                .beginDate(courseProvide.getBeginDate())
-                .endDate(courseProvide.getEndDate())
-                .attendeeCount(courseProvide.getAttendeeCount())
-                .state(courseProvide.getState())
-                .learnerList(
-                        courseProvide.getEnrollments().stream()
-                                .map(EnrollmentInfoDto::from)
-                                .toList()
-                )
-                .build();
-    }
 }
