@@ -14,17 +14,10 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 public class CompanyController {
 
     private final CompanyService companyService;
-
-    @GetMapping("/companies")
-    public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
-            @RequestParam String name
-    ) {
-        return ResponseEntity.ok(companyService.searchCompany(name));
-    }
 
     @GetMapping("/companies/info")
     public ResponseEntity<CompanyDetailResponseDto> getCompany(
@@ -40,22 +33,6 @@ public class CompanyController {
             @RequestBody UpdateCompanyRequestDto requestDto
     ) {
         return ResponseEntity.ok(companyService.updateCompany(userDetails, name, requestDto));
-    }
-
-    @GetMapping("/companies/emails/check")
-    public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
-            @RequestParam String companyEmail,
-            @RequestParam String userEmail
-    ) {
-        return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
-    }
-
-    @GetMapping("/companies/affiliations")
-    public ResponseEntity<MessageResponseDto> addAffiliation(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String companyName
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.addAffiliation(userDetails, companyName));
     }
 
     // 내가 회사 탈퇴
@@ -75,14 +52,14 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
     }
 
-    @GetMapping("/companies/employees")
-    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
-    }
+    // 소정이가 람다로 만들거임.
+//    @GetMapping("/companies/employees")
+//    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) {
+//        return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
+//    }
 
-    // courseProvide
     @PostMapping("/companies/courseProvides")
     public ResponseEntity<MessageResponseDto> CreateCourseProvide(
             @AuthenticationPrincipal UserDetailsImpl userDetails,

@@ -22,7 +22,4 @@ public interface CompanyService {
 
     MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
 
-    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username);
-
-
 }

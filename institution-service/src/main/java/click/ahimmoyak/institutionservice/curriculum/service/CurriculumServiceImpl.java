@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CurriculumServiceImpl implements CurriculumService {
 
-    private final UserService userService;
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;
 

@@ -122,7 +122,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<EmployeeCourseListResponseDto> getAllList(String userName) {
 
-        List<Enrollment> enrollments = enrollmentRepository.findByUser_Name(userName);
+        List<Enrollment> enrollments = enrollmentRepository.findByUser_Username(userName);
 
         return enrollments.stream()
                 .filter(Objects::nonNull)
