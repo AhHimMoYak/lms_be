@@ -10,7 +10,7 @@ class InstitutionServiceApplicationTest {
 
     @Test
     void contextLoads() {
-        //test
+        // test
     }
 
 }
