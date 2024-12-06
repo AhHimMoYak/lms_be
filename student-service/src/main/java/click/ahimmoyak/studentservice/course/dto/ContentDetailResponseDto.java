@@ -12,6 +12,7 @@ public record ContentDetailResponseDto(
         LocalDateTime modifiedDate,
         int idx,
         String tittle,
+        String videoDuration,
         ContentType contentType,
         Long curriculumId
 ) {

@@ -8,8 +8,4 @@ import java.util.Optional;
 
 public interface AffiliationRepository extends JpaRepository<Affiliation, Long> {
 
-    Optional<Affiliation> findByUserId(Long userId);
-
-    List<Affiliation> findByCompany_Id(Long id);
-
 }

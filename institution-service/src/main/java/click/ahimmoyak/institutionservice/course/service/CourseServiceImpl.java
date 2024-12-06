@@ -127,7 +127,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<EmployeeCourseListResponseDto> getAllList(String userName) {
 
-        List<Enrollment> enrollments = enrollmentRepository.findByUser_Name(userName);
+        List<Enrollment> enrollments = enrollmentRepository.findByUser_Username(userName);
 
         return enrollments.stream()
                 .filter(Objects::nonNull)
@@ -164,6 +164,7 @@ public class CourseServiceImpl implements CourseService {
                         .title(dto.contentTitle())
                         .type(dto.contentType())
                         .idx(dto.idx())
+                        .videoDuration(dto.videoDuration())
                         .curriculum(curriculum)
                         .s3Url(dto.s3Url())
                         .build();

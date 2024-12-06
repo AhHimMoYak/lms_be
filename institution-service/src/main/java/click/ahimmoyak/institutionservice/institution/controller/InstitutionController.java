@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/institutions")
+@RequestMapping("/v1/institutions")
 public class InstitutionController {
 
     private final InstitutionService institutionService;
@@ -27,7 +27,6 @@ public class InstitutionController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateInstitutionRequestDto requestDto
     ) {
-        //test 2
         return ResponseEntity.ok(institutionService.createInstitution(userDetails, requestDto));
     }
 
@@ -71,7 +70,7 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.getCourseProvideDetailByInstitution(userDetails, courseProvideId));
     }
 
-    @PatchMapping("/{courseProvideId}/registrations")// 수강등록
+    @PatchMapping("/{courseProvideId}/registrations")
     public ResponseEntity<MessageResponseDto> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
                                                                  @PathVariable Long courseProvideId) {
 
