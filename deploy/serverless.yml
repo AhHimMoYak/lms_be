@@ -1,0 +1,38 @@
+service: KHJ-ecs-service-test
+
+provider:
+  name: aws
+  region: ap-northeast-2
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ecs:*
+            - ec2:*
+            - iam:PassRole
+            - elasticloadbalancing:*
+            - logs:*
+            - cloudwatch:*
+          Resource: "*"
+
+resources:
+  - ${file(resources/vpc.yml)}
+  - ${file(resources/security.yml)}
+  - ${file(resources/alb.yml)}
+  - ${file(resources/ecs.yml)}
+  - ${file(resources/apigateway.yml)}
+  - ${file(resources/logs.yml)}
+  - ${file(resources/iam.yml)}
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "ecs"
+    stage: dev
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateArn: arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c
