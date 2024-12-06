@@ -16,16 +16,17 @@ Resources:
       ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
       PathPart: "{proxy+}"
 
-  # API Gateway 메서드
-  ApiGatewayMethod:
+  # OPTIONS 메서드
+  # OPTIONS 요청을 ECS(Spring Boot)로 전달
+  ApiGatewayMethodOptions:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref ApiGatewayRestApi
       ResourceId: !Ref ApiGatewayResource
-      HttpMethod: ANY
+      HttpMethod: OPTIONS
       AuthorizationType: NONE
       Integration:
-        IntegrationHttpMethod: ANY
+        IntegrationHttpMethod: OPTIONS
         Type: HTTP_PROXY
         Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
         PassthroughBehavior: WHEN_NO_MATCH
@@ -33,18 +34,92 @@ Resources:
           "integration.request.path.proxy": "method.request.path.proxy"
       RequestParameters:
         "method.request.path.proxy": true
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-            method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  # GET 메서드
+  ApiGatewayMethodGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: GET
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: GET
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # POST 메서드
+  ApiGatewayMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: POST
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # PUT 메서드
+  ApiGatewayMethodPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: PUT
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: PUT
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # DELETE 메서드
+  ApiGatewayMethodDelete:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: DELETE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: DELETE
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
 
   # API Gateway 배포 설정
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
-      - ApiGatewayMethod
+      - ApiGatewayMethodOptions
+      - ApiGatewayMethodGet
+      - ApiGatewayMethodPost
+      - ApiGatewayMethodPut
+      - ApiGatewayMethodDelete
     Properties:
       RestApiId: !Ref ApiGatewayRestApi
 
