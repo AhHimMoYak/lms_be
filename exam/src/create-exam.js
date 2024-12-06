@@ -30,9 +30,14 @@ export const handler = async (event) => {
                 courseId: courseId,       // DynamoDB Partition Key
                 examId: examId,           // 자동 생성된 시험 ID
                 examName: examName,       // 시험 이름
-                quizzes: [],              // 초기 문제 리스트 (빈 배열)
-                answers: [],              // 초기 정답 리스트 (빈 배열)
-                explanations: [],         // 초기 해설 리스트 (빈 배열)
+                quizzes: [
+                    {
+                        question: "",         // 문제 내용
+                        options: ["", "", "", ""], // 선택지 4개 (빈 값)
+                        correctAnswer: "",    // 정답 (빈 값)
+                        explanation: "",      // 해설 (빈 값)
+                    },
+                ], // 초기 상태에서는 빈 문제 리스트
             },
         };
 
