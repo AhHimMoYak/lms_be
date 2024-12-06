@@ -21,7 +21,7 @@ public interface CourseService {
      List<CourseListResponseDto> getAllList(CourseCategory category);
      Page<CourseListResponseDto> getAllList(Pageable pageable, CourseCategory category);
      List<EmployeeCourseListResponseDto> getAllList(String userName);
-     ContentDetailResponseDto getContentDetail(Long contentId);
-     MessageResponseDto createContentHistory(UserDetailsImpl userDetails, Long contentId);
+     ContentDetailResponseDto getContentDetail(String contentId);
+     MessageResponseDto createContentHistory(UserDetailsImpl userDetails, String contentId);
      List<CourseListResponseDto> getCourseList(UserDetailsImpl userDetails);
 }

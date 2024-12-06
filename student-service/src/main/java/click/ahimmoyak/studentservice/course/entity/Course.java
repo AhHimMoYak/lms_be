@@ -1,6 +1,5 @@
 package click.ahimmoyak.studentservice.course.entity;
 
-import click.ahimmoyak.studentservice.course.dto.CourseCreateRequestDto;
 import click.ahimmoyak.studentservice.course.common.CourseCategory;
 import click.ahimmoyak.studentservice.course.common.CourseState;
 import click.ahimmoyak.studentservice.global.entity.Timestamped;
@@ -51,13 +50,6 @@ public class Course extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "image_id")
     private Image image;
-
-    public Course patch(CourseCreateRequestDto requestDto) {
-        this.title = requestDto.title();
-        this.introduction = requestDto.introduction();
-        this.category = requestDto.category();
-        return this;
-    }
 
     public Course setState(CourseState state) {
         this.state = state;

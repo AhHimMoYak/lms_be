@@ -44,10 +44,6 @@ public class InstitutionServiceImpl implements InstitutionService {
 
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지않는 user 입니다"));
 
-        if ((user.getRole().equals(UserRole.MANAGER))){
-            throw new IllegalArgumentException("이미 교육기관에 소속되어있습니다.");
-        }
-
         if (institutionRepository.existsByBusinessNumber(requestDto.businessNumber())) {
             throw new IllegalArgumentException("이미 존재하는 법인번호 입니다");
         }
@@ -71,7 +67,6 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .institution(institution)
                 .build();
 
-        user.patch();
         managerRepository.save(manager);
 
         return MessageResponseDto.builder().message("회사 생성 성공").build();
@@ -81,9 +76,6 @@ public class InstitutionServiceImpl implements InstitutionService {
     public MessageResponseDto updateInstitution(UserDetailsImpl userDetails, UpdateInstitutionRequestDto requestDto, Long institutionId) {
 
         Manager manager = managerRepository.findByUser(userDetails.getUser());
-        if (!userDetails.getUser().getRole().equals(UserRole.MANAGER)) {
-            throw new IllegalArgumentException("권한이 없습니다.");
-        }
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교육기관입니다."));
         institution.patch(requestDto);
@@ -172,11 +164,7 @@ public class InstitutionServiceImpl implements InstitutionService {
         List<Enrollment> enrollments = enrollmentRepository.findAllByCourseProvide_Id(courseProvideId);
         CourseProvide courseProvide = courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new IllegalArgumentException("계약 아이디가 없습니다."));
         List<EnrollmentInfoDto> enrollmentInfoDto = enrollments.stream().map(enrollment -> EnrollmentInfoDto.builder()
-                        .enrollmentId(enrollment.getId())
                         .username(enrollment.getUser().getUsername())
-                        .name(enrollment.getUser().getName())
-                        .email(enrollment.getUser().getEmail())
-                        .birth(enrollment.getUser().getBirth())
                         .state(enrollment.getState())
                         .build())
                 .collect(Collectors.toList());
@@ -201,7 +189,7 @@ public class InstitutionServiceImpl implements InstitutionService {
 
         List<Enrollment> enrollments = courseProvide.getEnrollments();
         for (Enrollment enrollment : enrollments) {
-            enrollment.setState();  // 원하는 상태로 변경
+            enrollment.setState();
         }
 
         courseProvideRepository.save(courseProvide);

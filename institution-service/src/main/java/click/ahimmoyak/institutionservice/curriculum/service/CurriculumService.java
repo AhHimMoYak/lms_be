@@ -12,6 +12,5 @@ public interface CurriculumService {
     CurriculumCreateResponseDto add(UserDetails userDetails, long courseId, CurriculumCreateRequestDto requestDto);
     MessageResponseDto update(UserDetails userDetails, long curriculumId, String curriculumTitle);
     MessageResponseDto delete(UserDetails userDetails, long curriculumId);
-
     List<CurriculumListByInstitutionResponseDto> get(UserDetails userDetails, Long courseId);
 }

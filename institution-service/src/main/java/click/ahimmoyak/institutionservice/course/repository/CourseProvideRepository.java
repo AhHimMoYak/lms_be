@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface CourseProvideRepository extends JpaRepository<CourseProvide, Long> {
-    List<CourseProvide> findByCompany_Id(Long id);
 
     List<CourseProvide> findAllByInstitution(Institution institution);
 

@@ -9,8 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-    @Query("select m from Manager m where m.user = ?1")
-    Manager findByUser(User user);
-
-
 }

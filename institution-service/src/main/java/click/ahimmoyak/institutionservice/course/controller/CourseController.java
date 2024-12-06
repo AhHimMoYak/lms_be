@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/courses")
+@RequestMapping("/v1/institutions/courses")
 public class CourseController {
     private final CourseService courseService;
 
@@ -47,7 +47,7 @@ public class CourseController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long courseId
     ) {
-        return courseService.delete(userDetails, courseId) ? ResponseEntity.ok("코스 삭제 성고") : ResponseEntity.badRequest().body("코스 삭제 실패");
+        return courseService.delete(userDetails, courseId) ? ResponseEntity.ok("코스 삭제 성공") : ResponseEntity.badRequest().body("코스 삭제 실패");
     }
 
     @GetMapping

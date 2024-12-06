@@ -14,9 +14,4 @@ public record UpdateInstitutionRequestDto(
     String email,
     String phone
 ){
-    public static UpdateInstitutionRequestDto from(Institution institution){
-        return UpdateInstitutionRequestDto.builder()
-                .build();
-    }
-
 }
