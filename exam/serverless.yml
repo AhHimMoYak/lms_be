@@ -7,8 +7,8 @@ provider:
   runtime: nodejs20.x
   region: ap-northeast-2
   environment:
-    DYNAMODB_TABLE: ${self:service}
-    EXAM_SUBMIT_TABLE: exam-submit-api
+    DYNAMODB_TABLE: ${self:service}-exam-table # 명확한 테이블 이름으로 변경
+    PROVIDE_TABLE: ${self:service}-provide-table # 제공 테이블 이름
     REGION: ${aws:region}
   iam:
     role:
@@ -23,13 +23,15 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.EXAM_SUBMIT_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.PROVIDE_TABLE}"
+            - "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.PROVIDE_TABLE}/index/*" # GSI에 대한 권한 추가
         - Effect: Allow
           Action:
             - logs:PutLogEvents
             - logs:CreateLogGroup
             - logs:CreateLogStream
           Resource: "*"
+
 functions:
   getExamList:
     handler: src/get-exam-list.handler
@@ -46,6 +48,21 @@ functions:
         - src/**
         - node_modules/**
 
+  getProvideExamList:
+    handler: src/get-provide-exam-list.handler
+    events:
+      - http:
+          path: /v1/provide/{provideId}
+          method: GET
+          cors: true
+    package:
+      include:
+        - src/get-provide-exam-list.js
+        - node_modules/aws-sdk/**
+      exclude:
+        - src/**
+        - node_modules/**
+
   createExam:
     handler: src/create-exam.handler
     events:
@@ -56,81 +73,6 @@ functions:
     package:
       include:
         - src/create-exam.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  manageExam:
-    handler: src/manage-exam.handler
-    events:
-      - http:
-          path: /v1/{courseId}/{examId}/edit
-          method: PUT
-          cors: true
-    package:
-      include:
-        - src/manage-exam.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  deleteExam:
-    handler: src/delete-exam.handler
-    events:
-      - http:
-          path: /v1/{courseId}/{examId}/delete
-          method: DELETE
-          cors: true
-    package:
-      include:
-        - src/delete-exam.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  deleteQuiz:
-    handler: src/delete-quiz.handler
-    events:
-      - http:
-          path: /v1/{courseId}/{examId}/{quizId}/delete
-          method: DELETE
-          cors: true
-    package:
-      include:
-        - src/delete-quiz.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  checkExam:
-    handler: src/check-exam.handler
-    events:
-      - http:
-          path: /v1/{courseId}/{examId}/check
-          method: GET
-          cors: true
-    package:
-      include:
-        - src/check-exam.js
-        - node_modules/aws-sdk/**
-      exclude:
-        - src/**
-        - node_modules/**
-
-  submitExam:
-    handler: src/submit-exam.handler
-    events:
-      - http:
-          path: /v1/{courseId}/submit
-          method: POST
-          cors: true
-    package:
-      include:
-        - src/get-exam-list.js
         - node_modules/aws-sdk/**
       exclude:
         - src/**
@@ -154,21 +96,26 @@ resources:
           - AttributeName: examId
             KeyType: RANGE
 
-    ExamSubmitTable:
+    ProvideTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.EXAM_SUBMIT_TABLE}
+        TableName: ${self:provider.environment.PROVIDE_TABLE}
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
-          - AttributeName: examId
+          - AttributeName: provideId
             AttributeType: S
-          - AttributeName: username
+          - AttributeName: courseId
             AttributeType: S
         KeySchema:
-          - AttributeName: examId
+          - AttributeName: provideId
             KeyType: HASH
-          - AttributeName: username
-            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: NewProvideIndex # 새 GSI 이름
+            KeySchema:
+              - AttributeName: courseId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
 plugins:
   - serverless-domain-manager
