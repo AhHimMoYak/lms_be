@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 
 export const handler = async (event) => {
     try {
-        // 환경 변수 가져오기
         const DYNAMODB_TABLE = process.env.DYNAMODB_TABLE;
 
         if (!DYNAMODB_TABLE) {
@@ -41,28 +40,11 @@ export const handler = async (event) => {
             ? JSON.parse(Buffer.from(event.body, "base64").toString())
             : JSON.parse(event.body);
 
-        // 요청 데이터 검증
-        if (!body.title || !body.quizzes || !Array.isArray(body.quizzes)) {
-            return {
-                statusCode: 400,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                },
-                body: JSON.stringify({
-                    error: "필수 필드(title, quizzes)가 누락되었거나 형식이 잘못되었습니다.",
-                }),
-            };
-        }
-
         // 기존 시험 데이터 가져오기
         const existingExam = await docClient.send(
             new GetCommand({
                 TableName: DYNAMODB_TABLE,
-                Key: {
-                    courseId: courseId,
-                    examId: examId,
-                },
+                Key: { courseId, examId },
             })
         );
 
@@ -77,22 +59,53 @@ export const handler = async (event) => {
             };
         }
 
+        // 시험 이름 수정
+        const updatedExamName = body.examName || existingExam.Item.examName;
+
+        // 퀴즈 추가 또는 수정
+        const existingQuizzes = existingExam.Item.quizzes || [];
+        let updatedQuizzes = [...existingQuizzes];
+
+        if (body.quiz) {
+            if (!body.quiz.id) {
+                // 새 퀴즈 추가 (quizId 자동 생성)
+                updatedQuizzes.push({
+                    id: `quiz_${uuidv4()}`, // quizId 자동 생성
+                    question: body.quiz.question,
+                    options: body.quiz.options || ["", "", "", ""],
+                    correctAnswer: body.quiz.correctAnswer, // 인덱스 번호로 정답 저장
+                    explanation: body.quiz.explanation || "",
+                });
+            } else {
+                // 기존 퀴즈 수정
+                const quizIndex = updatedQuizzes.findIndex((q) => q.id === body.quiz.id);
+
+                if (quizIndex >= 0) {
+                    updatedQuizzes[quizIndex] = {
+                        ...updatedQuizzes[quizIndex],
+                        ...body.quiz,
+                        correctAnswer: body.quiz.correctAnswer,
+                    };
+                } else {
+                    return {
+                        statusCode: 404,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Access-Control-Allow-Origin": "*",
+                        },
+                        body: JSON.stringify({ error: "수정할 퀴즈를 찾을 수 없습니다." }),
+                    };
+                }
+            }
+        }
+
         // 데이터 업데이트
         const updatedExam = {
-            examId: examId, // 기존 examId 사용
-            courseId: courseId,
-            title: body.title,
-            description: body.description || existingExam.Item.description,
-            quizzes: body.quizzes.map((quiz) => ({
-                id: quiz.id || `quiz_${uuidv4()}`, // 기존 퀴즈 ID가 있으면 그대로 사용
-                question: quiz.question,
-                choices: quiz.choices || ["", "", "", ""],
-                correctAnswer: quiz.correctAnswer,
-                explanation: quiz.explanation || "",
-            })),
+            ...existingExam.Item,
+            examName: updatedExamName,
+            quizzes: updatedQuizzes,
         };
 
-        // DynamoDB에 데이터 업데이트
         await docClient.send(
             new PutCommand({
                 TableName: DYNAMODB_TABLE,
