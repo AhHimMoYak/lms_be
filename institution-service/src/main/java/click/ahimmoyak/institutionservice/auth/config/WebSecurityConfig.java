@@ -44,7 +44,7 @@ public class WebSecurityConfig {
                 .csrf((csrf) -> csrf
                         .csrfTokenRequestHandler(requestHandler)
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/h2-console/**", "/api/v1/**")
+                        .ignoringRequestMatchers("/h2-console/**", "/v1/**")
                 )
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
@@ -52,9 +52,17 @@ public class WebSecurityConfig {
                         CorsConfiguration config = new CorsConfiguration();
                         config.setAllowedOrigins(Arrays.asList(
                                 "http://localhost:5173",
-                                "http://localhost:5174"
+                                "http://localhost:5174",
+                                "https://local.ahimmoyak.click",
+                                "https://institution.local.ahimmoyak.click",
+                                "https://company.local.ahimmoyak.click",
+                                "https://lms.local.ahimmoyak.click",
+                                "https://ahimmoyak.click",
+                                "https://institution.ahimmoyak.click",
+                                "https://company.ahimmoyak.click",
+                                "https://lms.ahimmoyak.click"
                         ));
-//                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+//                        config.setAllowedOrigins(Collections.singletonList("*"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
@@ -67,7 +75,7 @@ public class WebSecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
+//                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->

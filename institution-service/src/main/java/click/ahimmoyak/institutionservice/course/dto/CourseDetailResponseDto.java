@@ -2,8 +2,10 @@ package click.ahimmoyak.institutionservice.course.dto;
 
 
 import click.ahimmoyak.institutionservice.course.common.CourseCategory;
+import click.ahimmoyak.institutionservice.course.common.CourseProvideState;
 import click.ahimmoyak.institutionservice.course.common.CourseState;
 import click.ahimmoyak.institutionservice.course.entity.Course;
+import click.ahimmoyak.institutionservice.course.entity.CourseProvide;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -14,14 +16,16 @@ public record CourseDetailResponseDto(
         String title,
         String introduction,
         String instructor,
+        int period,
         LocalDate beginDate,
         LocalDate endDate,
         CourseState state,
         CourseCategory category,
         Long institutionId,
-        List<CurriculumListResponseDto> curriculumList
+        List<CurriculumListResponseDto> curriculumList,
+        List<CourseProvideListDto> courseProvides
 ){
-    public static CourseDetailResponseDto from(Course course, List<CurriculumListResponseDto> curriculumList) {
+    public static CourseDetailResponseDto from(Course course, List<CurriculumListResponseDto> curriculumList, List<CourseProvideListDto> courseProvides) {
         return CourseDetailResponseDto.builder()
                 .title(course.getTitle())
                 .introduction(course.getIntroduction())
@@ -33,6 +37,8 @@ public record CourseDetailResponseDto(
                 .state(course.getState())
                 .category(course.getCategory())
                 .curriculumList(curriculumList)
+                .courseProvides(courseProvides)
                 .build();
     }
+
 }

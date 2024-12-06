@@ -12,9 +12,9 @@ import java.util.List;
 public interface CourseService {
      CourseDetailResponseDto getDetail(long id);
      Long create(UserDetails userDetails, CourseCreateRequestDto requestDto);
-     boolean update(UserDetails userDetails, long id, CourseCreateRequestDto requestDto);
+     boolean update(long id, CourseUpdateRequestDto requestDto);
      boolean delete(UserDetails userDetails, long id);
-     List<CourseListResponseDto> getListByInstitution(UserDetails userDetails);
+     List<CourseListResponseDto> getListByInstitution(Long userId);
      List<CourseListResponseDto> getAllList();
      Page<CourseListResponseDto> getAllList(Pageable pageable);
      List<CourseListResponseDto> getAllList(CourseCategory category);

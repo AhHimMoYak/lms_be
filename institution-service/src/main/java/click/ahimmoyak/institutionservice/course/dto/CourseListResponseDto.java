@@ -11,6 +11,7 @@ public record CourseListResponseDto(
    String title,
    String introduction,
    String instructor,
+   int period,
    CourseState state,
    CourseCategory category
 ) {

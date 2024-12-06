@@ -1,6 +1,7 @@
 package click.ahimmoyak.institutionservice.course.service;
 
 import click.ahimmoyak.institutionservice.auth.entity.User;
+import click.ahimmoyak.institutionservice.auth.repository.UserRepository;
 import click.ahimmoyak.institutionservice.auth.service.UserService;
 import click.ahimmoyak.institutionservice.course.common.CourseCategory;
 import click.ahimmoyak.institutionservice.course.common.CourseState;
@@ -14,9 +15,11 @@ import click.ahimmoyak.institutionservice.course.repository.CourseRepository;
 import click.ahimmoyak.institutionservice.course.repository.CurriculumRepository;
 import click.ahimmoyak.institutionservice.course.repository.EnrollmentRepository;
 import click.ahimmoyak.institutionservice.global.dto.MessageResponseDto;
+import click.ahimmoyak.institutionservice.global.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private final EnrollmentRepository enrollmentRepository;
     private final ContentsRepository contentsRepository;
     private final CurriculumRepository curriculumRepository;
+    private final UserRepository userRepository;
 
     @Override
     public CourseDetailResponseDto getDetail(long id) {
@@ -43,25 +47,23 @@ public class CourseServiceImpl implements CourseService {
                                 .map(curriculum -> CurriculumListResponseDto
                                         .from(curriculum, curriculum.getContentsList().stream()
                                                 .map(ContentListResponseDto::from
-                                                ).toList())
-                                ).toList())).orElse(null);
+                                                ).toList())).toList(),
+                                course.getCourseProvides().stream()
+                                        .map(CourseProvideListDto::from).toList())).orElse(null);
     }
 
     @Override
     @Transactional
-    // Todo 코스 생성시 교육기관 정보도 들어가도록 수정필요 -> 수정 완료
     public Long create(UserDetails userDetails, CourseCreateRequestDto requestDto) {
-        return courseRepository.save(requestDto.toEntity()).getId();
+        //return courseRepository.save(requestDto.toEntity()).getId();
+        // TODO 코스 생성 Institution 문제로 잠시 비활성화
+        return null;
     }
 
     @Override
     @Transactional
-    public boolean update(UserDetails userDetails, long id, CourseCreateRequestDto requestDto) {
-        Course course = courseRepository.findById(id).orElse(null);
-        // Todo 코스 업데이트시 교육기관 매니저만 수정가능하도록 권한 확인 해야함 (아래 주석 참고) -> 수정 완료
-        if (course == null || !course.getInstitution().getId().equals(userService.getAuth(userDetails).getId())) {
-            return false;
-        }
+    public boolean update(long id, CourseUpdateRequestDto requestDto) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new ApiException(HttpStatus.NO_CONTENT, "없는 코스입니다."));
         courseRepository.save(course.patch(requestDto));
         return true;
     }
@@ -80,8 +82,8 @@ public class CourseServiceImpl implements CourseService {
 
     // 교육기관 매니저가 교육기관 코스들의 목록 조회
     @Override
-    public List<CourseListResponseDto> getListByInstitution(UserDetails userDetails) {
-        User user = userService.getAuth(userDetails);
+    public List<CourseListResponseDto> getListByInstitution(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->new ApiException(HttpStatus.UNAUTHORIZED, "유저 없음"));
         Long institutionId = user.getManager().getInstitution().getId();
 
         List<Course> courseList = courseRepository.findByInstitution_Id(institutionId);
@@ -93,6 +95,7 @@ public class CourseServiceImpl implements CourseService {
                         course.getTitle(),
                         course.getIntroduction(),
                         course.getInstructor(),
+                        course.getPeriod(),
                         course.getState(),
                         course.getCategory()
                 )).collect(Collectors.toList());

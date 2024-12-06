@@ -22,6 +22,7 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -43,13 +44,25 @@ public class WebSecurityConfig {
                 .csrf((csrf) -> csrf
                         .csrfTokenRequestHandler(requestHandler)
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/h2-console/**", "/api/v1/**")
+                        .ignoringRequestMatchers("/h2-console/**", "/v1/**")
                 )
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        config.setAllowedOrigins(Arrays.asList(
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://local.ahimmoyak.click",
+                                "https://institution.local.ahimmoyak.click",
+                                "https://company.local.ahimmoyak.click",
+                                "https://lms.local.ahimmoyak.click",
+                                "https://ahimmoyak.click",
+                                "https://institution.ahimmoyak.click",
+                                "https://company.ahimmoyak.click",
+                                "https://lms.ahimmoyak.click"
+                        ));
+//                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
@@ -62,7 +75,7 @@ public class WebSecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
+//                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->

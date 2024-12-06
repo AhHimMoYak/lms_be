@@ -8,9 +8,9 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: KHJ
+          Value: KHJKDW
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   # 인터넷 게이트웨이 생성
   MyInternetGateway:
@@ -18,9 +18,9 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: KHJ
+          Value: KHJKDW
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   # VPC 에 인터넷 게이트웨이 연결
   AttachGateway:
@@ -36,9 +36,9 @@ Resources:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: KHJ
+          Value: KHJKDW
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   # 인터넷을 위한 기본 라우트 추가
   MyRoute:
@@ -58,9 +58,9 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: KHJ-Subnet1
+          Value: KHJKDW-Subnet1
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -71,9 +71,9 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: KHJ-Subnet2
+          Value: KHJKDW-Subnet2
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   # 라우트 테이블과 퍼블릭 서브넷 연결
   PublicSubnet1RouteTableAssociation:

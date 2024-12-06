@@ -1,4 +1,4 @@
-service: KHJ-ecs-service-test
+service: KHJKDW-ecs-service-test
 
 provider:
   name: aws
@@ -15,6 +15,11 @@ provider:
             - logs:*
             - cloudwatch:*
           Resource: "*"
+  environment:
+    ACCESS_CONTROL_ALLOW_ORIGIN: https://local.ahimmoyak.click
+    ACCESS_CONTROL_ALLOW_ORIGIN_1: https://lms.local.ahimmoyak.click
+    ACCESS_CONTROL_ALLOW_ORIGIN_2: https://company.local.ahimmoyak.click
+    ACCESS_CONTROL_ALLOW_ORIGIN_3: https://institution.local.ahimmoyak.click
 
 resources:
   - ${file(resources/vpc.yml)}
@@ -24,6 +29,7 @@ resources:
   - ${file(resources/apigateway.yml)}
   - ${file(resources/logs.yml)}
   - ${file(resources/iam.yml)}
+  - ${file(resources/authorizer.yml)}
 
 plugins:
   - serverless-domain-manager
@@ -31,7 +37,7 @@ plugins:
 custom:
   customDomain:
     domainName: api.ahimmoyak.click
-    basePath: "ecs"
+    basePath: ""
     stage: dev
     createRoute53Record: true
     endpointType: REGIONAL
