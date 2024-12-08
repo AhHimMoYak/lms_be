@@ -11,5 +11,4 @@ class InstitutionServiceApplicationTest {
     @Test
     void contextLoads() {
     }
-
 }
