@@ -1,11 +1,39 @@
-import {v4 as uuidv4} from "uuid";
-import {PutCommand} from "@aws-sdk/lib-dynamodb";
-import {docClient} from "../aws-clients.mjs";
+import { v4 as uuidv4 } from "uuid";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { docClient } from "../aws-clients.mjs";
+
+const allowedOrigins = [
+    process.env.ACCESS_CONTROL_ALLOW_ORIGIN_1,
+    process.env.ACCESS_CONTROL_ALLOW_ORIGIN_3,
+];
 
 export const handler = async (event) => {
+    const origin = event.headers.origin;
+    const responseHeaders = {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+    };
+
+    if (allowedOrigins.includes(origin)) {
+        responseHeaders["Access-Control-Allow-Origin"] = origin;
+    } else {
+        responseHeaders["Access-Control-Allow-Origin"] = process.env.ACCESS_CONTROL_ALLOW_ORIGIN;
+    }
+
+    if (event.httpMethod === "OPTIONS") {
+        return {
+            statusCode: 200,
+            headers: responseHeaders,
+            body: null, // OPTIONS 요청은 응답 본문이 필요 없음
+        };
+    }
+
     try {
+        console.log("이건 뭐d? " , origin);
         const body = JSON.parse(event.body);
         const now = new Date().toISOString();
+        const username = event.requestContext.authorizer.username;
 
         // 새 게시글 객체 생성
         const post = {
@@ -16,10 +44,9 @@ export const handler = async (event) => {
             content: body.content,
             commentCount: 0,
             institutionComment: 0,
-            userName: body.userName,
+            view: 0,
+            userName: username,
             courseId: Number(body.courseId),
-            institutionId: Number(body.institutionId),
-            course: body.course,
             type: body.type,
         };
 
@@ -30,20 +57,14 @@ export const handler = async (event) => {
 
         return {
             statusCode: 201,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            headers: responseHeaders,
             body: JSON.stringify(post)
         };
     } catch (error) {
         console.error('게시글 생성 실패:', error);
         return {
             statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
+            headers: responseHeaders,
             body: JSON.stringify({ message: '게시글 생성에 실패했습니다.' })
         };
     }
