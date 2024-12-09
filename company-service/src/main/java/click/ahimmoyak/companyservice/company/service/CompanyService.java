@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface CompanyService {
 
-    CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails);
+    CompanyDetailResponseDto getCompany(Long userId);
 
-    MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto);
+    MessageResponseDto updateCompany( Long companyId, UpdateCompanyRequestDto requestDto);
 
     MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
 
@@ -20,7 +20,7 @@ public interface CompanyService {
 
     MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto);
 
-    List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails);
+    List<CourseProvideListResponseDto> getCourseProvideList(Long userId);
 
-    MessageResponseDto submitEmployeeListForEnrollment (UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto);
+    MessageResponseDto submitEmployeeListForEnrollment (Long userId, submitEmployeeListRequestDto requestDto);
 }
