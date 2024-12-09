@@ -4,11 +4,11 @@ Resources:
     DependsOn:
       - ApiGatewayRestApi
     Properties:
-      Name: AuthorizerJWT
+      Name: LambdaAuthorizer
       Type: TOKEN
       IdentitySource: method.request.header.Cookie
-      RestApiId:
-        Ref: ApiGatewayRestApi
+      RestApiId: !Ref ApiGatewayRestApi
+
       AuthorizerUri:
         Fn::Join:
           - ""

@@ -16,15 +16,92 @@ Resources:
       ParentId: !GetAtt ApiGatewayRestApi1.RootResourceId
       PathPart: "{proxy+}"
 
-  ApiGatewayMethod1:
+
+  ApiGatewayMethodOptions:
     Type: AWS::ApiGateway::Method
     Properties:
-      RestApiId: !Ref ApiGatewayRestApi1
-      ResourceId: !Ref ApiGatewayResource1
-      HttpMethod: ANY
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: OPTIONS
       AuthorizationType: NONE
       Integration:
-        IntegrationHttpMethod: ANY
+        IntegrationHttpMethod: OPTIONS
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # GET 메서드
+  ApiGatewayMethodGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: GET
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: GET
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # POST 메서드
+  ApiGatewayMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: POST
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # PUT 메서드
+  ApiGatewayMethodPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: PUT
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: PUT
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+
+  # DELETE 메서드
+  ApiGatewayMethodDelete:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: DELETE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: DELETE
         Type: HTTP_PROXY
         Uri: !Sub "http://${MyALB.DNSName}/{proxy}"  # ALB 통합
         PassthroughBehavior: WHEN_NO_MATCH
@@ -32,17 +109,15 @@ Resources:
           "integration.request.path.proxy": "method.request.path.proxy"
       RequestParameters:
         "method.request.path.proxy": true
-      MethodResponses:
-        - StatusCode: 200
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-            method.response.header.Access-Control-Allow-Origin: "'*'"
 
   ApiGatewayDeployment1:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
-      - ApiGatewayMethod1
+      - ApiGatewayMethodOptions
+      - ApiGatewayMethodGet
+      - ApiGatewayMethodPost
+      - ApiGatewayMethodPut
+      - ApiGatewayMethodDelete
     Properties:
       RestApiId: !Ref ApiGatewayRestApi1
 

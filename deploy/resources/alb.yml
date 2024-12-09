@@ -3,7 +3,7 @@ Resources:
   MyALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: KHJKDW-alb
+      Name: ALB-do
       Subnets:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2

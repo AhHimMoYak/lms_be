@@ -1,4 +1,6 @@
-service: KHJKDW-ecs-service-test
+
+service: ecs-service-test-do
+
 
 provider:
   name: aws
@@ -16,10 +18,11 @@ provider:
             - cloudwatch:*
           Resource: "*"
   environment:
-    ACCESS_CONTROL_ALLOW_ORIGIN: https://local.ahimmoyak.click
-    ACCESS_CONTROL_ALLOW_ORIGIN_1: https://lms.local.ahimmoyak.click
-    ACCESS_CONTROL_ALLOW_ORIGIN_2: https://company.local.ahimmoyak.click
-    ACCESS_CONTROL_ALLOW_ORIGIN_3: https://institution.local.ahimmoyak.click
+    ACCESS_CONTROL_ALLOW_ORIGIN: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+    ACCESS_CONTROL_ALLOW_ORIGIN_1: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+    ACCESS_CONTROL_ALLOW_ORIGIN_2: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_2}
+    ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+
 
 resources:
   - ${file(resources/vpc.yml)}
@@ -33,6 +36,7 @@ resources:
 
 plugins:
   - serverless-domain-manager
+  - serverless-plugin-dotenv
 
 custom:
   customDomain:
