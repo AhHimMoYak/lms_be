@@ -15,6 +15,7 @@ public record CourseProvideListResponseDto(
         String title,
         String companyName,
         String institutionName,
+        LocalDate creationDate,
         LocalDate beginDate,
         LocalDate endDate,
         CourseProvideState state,
@@ -29,6 +30,7 @@ public record CourseProvideListResponseDto(
                 .title(courseProvide.getCourse().getTitle())
                 .companyName(company.getName())
                 .institutionName(institution.getName())
+                .creationDate(courseProvide.getCreatedAt().toLocalDate())
                 .beginDate(courseProvide.getBeginDate())
                 .endDate(courseProvide.getEndDate())
                 .state(courseProvide.getState())
