@@ -1,13 +1,16 @@
 service: board
-
 provider:
   name: aws
   runtime: nodejs20.x
   region: ap-northeast-2
+  stage: dev
   environment:
     BOARD_TABLE: "course-board"
     COMMENT_TABLE: "comment"
     REGION: ${aws:region}
+    ACCESS_CONTROL_ALLOW_ORIGIN: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+    ACCESS_CONTROL_ALLOW_ORIGIN_1: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+    ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
   tags:
     Name: ahim
   iam:
@@ -34,96 +37,281 @@ provider:
           Resource: "*"
 
 functions:
-  createBoard:
+  create-board:
     handler: lambda/board/create-board.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/courses
           method: POST
           cors: true
-
-  getBoard:
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/courses
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+  get-board:
     handler: lambda/board/get-board.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/{boardId}
           method: GET
           cors: true
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
 
-  getBoardsByUser:
+  get-user-boards:
     handler: lambda/board/get-user-boards.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/user-name/{userName}
           method: GET
-          cors: true
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
 
-  getBoardsByCourse:
+  get-course-boards:
     handler: lambda/board/get-course-boards.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/courses/{courseId}/{type}
           method: GET
           cors: true
-
-  getBoardsByInstitution:
-    handler: lambda/board/get-institution-boards.handler
-    events:
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
       - http:
-          path: /v1/institutions/{institutionId}/{type}
-          method: GET
-          cors: true
+          path: /v1/courses/{courseId}/{type}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
 
-  updateBoard:
+  update-board:
     handler: lambda/board/update-board.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/{boardId}
           method: PATCH
-          cors: true
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
 
-  deleteBoard:
+  delete-board:
     handler: lambda/board/delete-board.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/{boardId}
           method: DELETE
-          cors: true
-
-  createComment:
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+  create-comment:
     handler: lambda/comment/create-comment.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/{boardId}/comments
           method: POST
-          cors: true
-
-  getComments:
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}/comments
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+  get-comments:
     handler: lambda/comment/get-comments.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/{boardId}/comments
           method: GET
-          cors: true
-
-  updateComment:
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}/comments
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+  update-comment:
     handler: lambda/comment/update-comment.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
     events:
       - http:
           path: /v1/comments/{commentId}
           method: PATCH
-          cors: true
-
-  deleteComment:
-    handler: lambda/comment/delete-comment.handler
-    events:
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
       - http:
           path: /v1/comments/{commentId}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+  delete-comment:
+    handler: lambda/comment/delete-comment.handler
+    dependsOn:
+      - CourseBoardTable
+      - CommentsTable
+    events:
+      - http:
+          path: /v1/{boardId}/{commentId}
           method: DELETE
-          cors: true
-
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/{boardId}/{commentId}
+          method: options
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
 resources:
   Resources:
+    AuthorizerJWTApiGateway:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: AuthorizerJWT
+        Type: TOKEN
+        IdentitySource: method.request.header.Cookie
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizerUri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: AWS::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - "arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT"
+              - "/invocations"
+        AuthorizerResultTtlInSeconds: 1
+    LambdaInvokePermissionForApiGateway:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: "arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT"
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+        SourceArn:
+          Fn::Join:
+            - ""
+            - - "arn:aws:execute-api:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":"
+              - Ref: ApiGatewayRestApi
+              - "/*"
     CourseBoardTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -136,8 +324,6 @@ resources:
           - AttributeName: userName
             AttributeType: S
           - AttributeName: courseId
-            AttributeType: N
-          - AttributeName: institutionId
             AttributeType: N
         KeySchema:
           - AttributeName: id
@@ -160,15 +346,6 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-          - IndexName: InstitutionIndex
-            KeySchema:
-              - AttributeName: institutionId
-                KeyType: HASH
-              - AttributeName: createdAt
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-
     CommentsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -202,7 +379,6 @@ resources:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
 
-
 package:
   patterns:
     - "!node_modules/.bin/**"
@@ -213,7 +389,10 @@ package:
 
 plugins:
   - serverless-domain-manager
+  - serverless-plugin-dotenv
 custom:
+  dotenv:
+    path: .env.${self:provider.stage}
   customDomain:
     domainName: api.ahimmoyak.click
     basePath: "board"
