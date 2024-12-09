@@ -59,6 +59,10 @@ public class CourseProvide extends Timestamped {
     private List<Enrollment> enrollments = new ArrayList<>();
 
 
+    public LocalDate getProvisionPeriod() {
+        return beginDate.plusDays(course.getPeriod());
+    }
+
     public void updateCourseProvideState(CourseProvideState state) {
         if (state != null) {
             this.state = state;
@@ -86,5 +90,9 @@ public class CourseProvide extends Timestamped {
 
     public void setState() {
         this.state = CourseProvideState.NOT_STARTED;
+    }
+
+    public boolean deny() {
+        return false;
     }
 }

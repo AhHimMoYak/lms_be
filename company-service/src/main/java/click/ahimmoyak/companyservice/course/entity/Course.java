@@ -36,6 +36,9 @@ public class Course extends Timestamped {
     private String instructor;
 
     @Column
+    private int period;
+
+    @Column
     @Enumerated(value = EnumType.STRING)
     private CourseState state;
 

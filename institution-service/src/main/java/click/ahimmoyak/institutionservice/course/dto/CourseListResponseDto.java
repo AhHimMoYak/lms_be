@@ -11,8 +11,10 @@ public record CourseListResponseDto(
    String title,
    String introduction,
    String instructor,
+   int period,
    CourseState state,
-   CourseCategory category
+   CourseCategory category,
+   String categoryTitle
 ) {
     public static CourseListResponseDto from(Course course) {
         return CourseListResponseDto.builder()
@@ -25,6 +27,7 @@ public record CourseListResponseDto(
 //                .endDate(course.getEndDate())
                 .state(course.getState())
                 .category(course.getCategory())
+                .categoryTitle(course.getCategory().getTitle())
                 .build();
     }
 }
