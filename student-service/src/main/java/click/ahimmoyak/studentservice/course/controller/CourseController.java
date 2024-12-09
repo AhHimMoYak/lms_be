@@ -1,10 +1,7 @@
 package click.ahimmoyak.studentservice.course.controller;
 
 import click.ahimmoyak.studentservice.auth.config.security.UserDetailsImpl;
-import click.ahimmoyak.studentservice.course.dto.ContentDetailResponseDto;
-import click.ahimmoyak.studentservice.course.dto.CourseDetailResponseDto;
-import click.ahimmoyak.studentservice.course.dto.CourseListResponseDto;
-import click.ahimmoyak.studentservice.course.dto.EmployeeCourseListResponseDto;
+import click.ahimmoyak.studentservice.course.dto.*;
 import click.ahimmoyak.studentservice.course.service.CourseService;
 import click.ahimmoyak.studentservice.course.common.CourseCategory;
 import click.ahimmoyak.studentservice.global.dto.MessageResponseDto;
@@ -70,4 +67,8 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getCourseList(userDetails));
     }
 
+    @GetMapping("/enrollments/{courseProvideId}")
+    public ResponseEntity<List<ContentsHistoryResponseDto>> getContentsHistory(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long courseProvideId){
+        return ResponseEntity.ok(courseService.getContentHistory(userDetails,courseProvideId));
+    }
 }

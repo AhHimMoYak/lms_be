@@ -210,4 +210,10 @@ public class CourseServiceImpl implements CourseService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ContentsHistoryResponseDto> getContentHistory(UserDetailsImpl userDetails,Long courseProvideId) {
+        List<ContentsHistory> contentsHistories = contentsHistoryRepository.findContentsHistoriesByEnrollment_UserAndEnrollment_CourseProvide_Id(userDetails.getUser(), courseProvideId);
+        return contentsHistories.stream().map(ContentsHistoryResponseDto::from).toList();
+    }
 }
