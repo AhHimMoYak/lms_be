@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CompanyDetailResponseDto(
+        Long id,
         String companyName,
         String ownerName,
         String businessNumber,
@@ -13,6 +14,7 @@ public record CompanyDetailResponseDto(
 ) {
     public CompanyDetailResponseDto of(Company company) {
         return CompanyDetailResponseDto.builder()
+                .id(company.getId())
                 .companyName(company.getName())
                 .ownerName(company.getOwnerName())
                 .businessNumber(company.getBusinessNumber())
