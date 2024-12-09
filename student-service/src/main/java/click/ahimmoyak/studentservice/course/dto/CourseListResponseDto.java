@@ -12,6 +12,8 @@ public record CourseListResponseDto(
    String title,
    String introduction,
    String instructor,
+   long totalContentCount,
+   long completedContentCount,
    CourseProvideState state,
    CourseCategory category
 ) {

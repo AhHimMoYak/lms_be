@@ -20,13 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CurriculumServiceImpl implements CurriculumService {
 
-    private final UserService userService;
     private final CourseRepository courseRepository;
     private final CurriculumRepository curriculumRepository;
 
     @Override
     @Transactional
-    public CurriculumCreateResponseDto add(UserDetails userDetails, long courseId, CurriculumCreateRequestDto requestDto) {
+    public CurriculumCreateResponseDto add(long courseId, CurriculumCreateRequestDto requestDto) {
         Course course = courseRepository.findById(courseId).orElse(null);
         long count = curriculumRepository.countByCourse(course);
 

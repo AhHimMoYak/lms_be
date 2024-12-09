@@ -11,7 +11,10 @@ public record GetInstitutionDetailRequestDto(
         String businessNumber,
         String certifiedNumber,
         String email,
-        String phone
+        String phone,
+        String address,
+        String description,
+        String webSite
 ) {
 
 }

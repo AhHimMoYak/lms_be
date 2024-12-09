@@ -7,16 +7,11 @@ import lombok.Builder;
 @Builder
 public record UpdateInstitutionRequestDto(
 
-    String name,
-    String ownerName,
-    String businessNumber,
-    String certifiedNumber,
+    String InstitutionName,
+    String address,
+    String webSite,
+    String description,
     String email,
     String phone
 ){
-    public static UpdateInstitutionRequestDto from(Institution institution){
-        return UpdateInstitutionRequestDto.builder()
-                .build();
-    }
-
 }

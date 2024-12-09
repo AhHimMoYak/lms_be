@@ -11,8 +11,6 @@ import java.util.List;
 public interface CourseProvideRepository extends JpaRepository<CourseProvide, Long> {
     List<CourseProvide> findByCompany_Id(Long id);
 
-    List<CourseProvide> findAllByInstitution(Institution institution);
-
     List<CourseProvide> findAllByBeginDateAndState(LocalDate beginDate, CourseProvideState state);
 
     List<CourseProvide> findAllByEndDateAndState(LocalDate endDate, CourseProvideState state);

@@ -1,6 +1,5 @@
 package click.ahimmoyak.studentservice.company.service;
 
-import click.ahimmoyak.studentservice.auth.common.UserRole;
 import click.ahimmoyak.studentservice.auth.config.security.UserDetailsImpl;
 import click.ahimmoyak.studentservice.auth.entity.User;
 import click.ahimmoyak.studentservice.auth.repository.UserRepository;
@@ -14,8 +13,6 @@ import click.ahimmoyak.studentservice.company.entity.Company;
 import click.ahimmoyak.studentservice.company.repository.AffiliationRepository;
 import click.ahimmoyak.studentservice.company.repository.CompanyRepository;
 import click.ahimmoyak.studentservice.course.entity.Enrollment;
-import click.ahimmoyak.studentservice.course.repository.CourseProvideRepository;
-import click.ahimmoyak.studentservice.course.repository.CourseRepository;
 import click.ahimmoyak.studentservice.course.repository.EnrollmentRepository;
 import click.ahimmoyak.studentservice.global.dto.MessageResponseDto;
 import click.ahimmoyak.studentservice.global.exception.ApiException;
@@ -37,15 +34,13 @@ public class CompanyServiceImpl implements CompanyService {
     private final AffiliationRepository affiliationRepository;
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
-    private final CourseRepository courseRepository;
-    private final CourseProvideRepository courseProvideRepository;
 
     @Override
     @Transactional
     public MessageResponseDto createCompany(UserDetailsImpl userDetails, CreateCompanyRequestDto requestDto) {
         User user = userService.getAuth(userDetails);
 
-        if (user.getAffiliation()!= null) {
+        if (user.getAffiliation() != null) {
             String company = user.getAffiliation().getCompany().getName();
             throw new ApiException(HttpStatus.CONFLICT, "이미 소속된 회사가 존재합니다 : " + company);
         }
@@ -59,11 +54,9 @@ public class CompanyServiceImpl implements CompanyService {
         Affiliation affiliation = Affiliation.builder()
                 .company(company)
                 .user(user)
-                .isSupervisor(true)
                 .build();
         affiliationRepository.save(affiliation);
 
-        user.updateRole(UserRole.SUPERVISOR);
         userRepository.save(user);
 
         return MessageResponseDto.builder()
@@ -90,7 +83,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails) {
         User user = userService.getAuth(userDetails);
         Company company = companyRepository.findById(user.getAffiliation().getCompany().getId()).orElseThrow(
-                ()-> new ApiException(HttpStatus.NOT_FOUND,"유저의 회사를 찾을수 없습니다."));
+                () -> new ApiException(HttpStatus.NOT_FOUND, "유저의 회사를 찾을수 없습니다."));
 
         return CompanyDetailResponseDto.builder().build().of(company);
     }
@@ -134,11 +127,9 @@ public class CompanyServiceImpl implements CompanyService {
                         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 회사를 찾을수 없습니다.")))
                 .user(userRepository.findById(user.getId())
                         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당하는 userId 를 찾을수 없습니다.")))
-                .isSupervisor(false)
                 .build();
         affiliationRepository.save(affiliation);
 
-        user.updateRole(UserRole.EMPLOYEE);
         userRepository.save(user);
 
         return MessageResponseDto.builder()
@@ -155,56 +146,18 @@ public class CompanyServiceImpl implements CompanyService {
             throw new ApiException(HttpStatus.CONFLICT, "Affiliation 이 존재하지 않습니다.");
         }
 
-        if(enrollmentRepository.existsById(user.getId())) {
-            Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
-            if(enrollment.getCourseProvide().getCompany().getId().equals(user.getAffiliation().getCompany().getId())) {
-                enrollmentRepository.delete(enrollment);
-            }
-        }
-        affiliationRepository.delete(user.getAffiliation());
-
-        user.updateRole(UserRole.NORMAL);
-        userRepository.save(user);
-
-        return MessageResponseDto.builder()
-                .message("회사 탈퇴 완료")
-                .build();
-    }
-
-    @Override
-    @Transactional
-    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username) {
-        User supervisor = userService.getAuth(userDetails);
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
-        );
-
-        if (supervisor.getRole() != UserRole.SUPERVISOR) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 사원을 삭제할 권한이 없습니다.");
-        }
-
-        Affiliation affiliation = affiliationRepository.findByUserId(user.getId()).orElseThrow(
-                () -> new ApiException(HttpStatus.NOT_FOUND, "해당 계약이 존재하지 않습니다.")
-        );
-
         if (enrollmentRepository.existsById(user.getId())) {
             Enrollment enrollment = enrollmentRepository.findById(user.getId()).orElseThrow(null);
             if (enrollment.getCourseProvide().getCompany().getId().equals(user.getAffiliation().getCompany().getId())) {
                 enrollmentRepository.delete(enrollment);
             }
         }
+        affiliationRepository.delete(user.getAffiliation());
 
-        if (supervisor.getAffiliation().getCompany() != user.getAffiliation().getCompany()) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
-        }
-
-
-        affiliationRepository.delete(affiliation);
-
-        user.updateRole(UserRole.NORMAL);
+        userRepository.save(user);
 
         return MessageResponseDto.builder()
-                .message("사원 삭제 완료")
+                .message("회사 탈퇴 완료")
                 .build();
     }
 

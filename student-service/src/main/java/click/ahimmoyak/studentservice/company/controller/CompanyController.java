@@ -17,12 +17,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/v1/students")
 public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/companies")
+    @PostMapping("/visitor/companies/")
     public ResponseEntity<MessageResponseDto> createCompany(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CreateCompanyRequestDto requestDto
@@ -30,7 +30,7 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCompany(userDetails, requestDto));
     }
 
-    @GetMapping("/companies")
+    @GetMapping("/visitor/companies")
     public ResponseEntity<List<SearchCompanyResponseDto>> searchCompany(
             @RequestParam String name
     ) {
@@ -44,7 +44,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.getCompany(userDetails));
     }
 
-    @GetMapping("/companies/emails/check")
+    @GetMapping("/visitor/companies/emails/check")
     public ResponseEntity<CheckCompanyResponseDto> CheckCompanyEmail(
             @RequestParam String companyEmail,
             @RequestParam String userEmail
@@ -52,7 +52,7 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.checkCompanyEmail(companyEmail, userEmail));
     }
 
-    @GetMapping("/companies/affiliations")
+    @GetMapping("/visitor/companies/affiliations")
     public ResponseEntity<MessageResponseDto> addAffiliation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String companyName
@@ -67,15 +67,5 @@ public class CompanyController {
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(companyService.disconnectCompany(userDetails));
     }
-
-    // supervisor 가 해당 유저를 회사에서 탈퇴
-    @DeleteMapping("/companies/employees")
-    public ResponseEntity<MessageResponseDto> deleteAffiliation(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String username
-    ) {
-        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
-    }
-
 
 }

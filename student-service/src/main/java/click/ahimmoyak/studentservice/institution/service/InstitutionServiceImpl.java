@@ -23,17 +23,12 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final UserRepository userRepository;
     private final InstitutionRepository institutionRepository;
     private final ManagerRepository managerRepository;
-    private final CourseProvideRepository courseProvideRepository;
-    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public MessageResponseDto createInstitution(UserDetailsImpl userDetails, CreateInstitutionRequestDto requestDto) {
 
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지않는 user 입니다"));
 
-        if ((user.getRole().equals(UserRole.MANAGER))){
-            throw new IllegalArgumentException("이미 교육기관에 소속되어있습니다.");
-        }
 
         if (institutionRepository.existsByBusinessNumber(requestDto.businessNumber())) {
             throw new IllegalArgumentException("이미 존재하는 법인번호 입니다");
@@ -58,7 +53,6 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .institution(institution)
                 .build();
 
-        user.patch();
         managerRepository.save(manager);
 
         return MessageResponseDto.builder().message("회사 생성 성공").build();

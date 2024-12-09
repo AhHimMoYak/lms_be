@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/courses")
+@RequestMapping("/v1/students/courses")
 public class CourseController {
     private final CourseService courseService;
 
@@ -55,13 +55,9 @@ public class CourseController {
     }
 
     @GetMapping("/curriculums/contents/{contentId}")// 콘텐츠 디테일 보기
-    public ResponseEntity<ContentDetailResponseDto> getContentDetail(@PathVariable Long contentId) {
+    public ResponseEntity<ContentDetailResponseDto> getContentDetail(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String contentId) {
+        courseService.createContentHistory(userDetails, contentId);
         return ResponseEntity.ok(courseService.getContentDetail(contentId));
-    }
-
-    @GetMapping("/curriculums/contents/{contentId}/history") // 콘텐츠를 볼때 히스토리 생성
-    public ResponseEntity<MessageResponseDto> createContentHistory(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentId) {
-        return ResponseEntity.ok(courseService.createContentHistory(userDetails, contentId));
     }
 
     @GetMapping("/{courseProvideId}/detail") // courseProvideId로 수강된 코스 보기

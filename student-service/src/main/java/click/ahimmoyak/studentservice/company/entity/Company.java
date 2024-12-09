@@ -1,6 +1,5 @@
 package click.ahimmoyak.studentservice.company.entity;
 
-import click.ahimmoyak.studentservice.company.dto.UpdateCompanyRequestDto;
 import click.ahimmoyak.studentservice.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,16 +36,5 @@ public class Company extends Timestamped {
 
     @Column(length = 20, nullable = false)
     private String phone;
-
-    public void patch(UpdateCompanyRequestDto requestDto) {
-        if (!Objects.equals(this.name,requestDto.name()))
-            this.name = requestDto.name();
-        if (!Objects.equals(this.ownerName, requestDto.ownerName()))
-            this.ownerName = requestDto.ownerName();
-        if (!Objects.equals(this.email, requestDto.email()))
-            this.email = requestDto.email();
-        if (!Objects.equals(this.phone, requestDto.phone()))
-            this.phone = requestDto.phone();
-    }
 
 }
