@@ -16,7 +16,7 @@ Resources:
   InstitutionTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: institution-target-group-KHJ
+      Name: institution-target-group-KHJKDW
       Protocol: HTTP
       Port: 8080
       VpcId: !Ref MyVPC
@@ -30,7 +30,7 @@ Resources:
   StudentTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: student-target-group-KHJ
+      Name: student-target-group-KHJKDW
       Protocol: HTTP
       Port: 8080
       VpcId: !Ref MyVPC
@@ -44,7 +44,7 @@ Resources:
   CompanyTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: company-target-group-KHJ
+      Name: company-target-group-KHJKDW
       Protocol: HTTP
       Port: 8080
       VpcId: !Ref MyVPC

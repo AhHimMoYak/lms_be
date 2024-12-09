@@ -5,6 +5,7 @@ import click.ahimmoyak.institutionservice.course.dto.*;
 import click.ahimmoyak.institutionservice.course.service.CourseService;
 import click.ahimmoyak.institutionservice.global.dto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/institutions/courses")
@@ -26,20 +29,20 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCourse(
-            @AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<CourseCreateResponseDto> createCourse(
+            @RequestParam Long userId,
             @RequestBody CourseCreateRequestDto requestDto
     ) {
-        return ResponseEntity.ok(courseService.create(userDetails, requestDto));
+        return ResponseEntity.ok(courseService.create(userId, requestDto));
     }
 
     @PatchMapping("/{courseId}")
     public ResponseEntity<String> updateCourse(
-            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long courseId,
-            @RequestBody CourseCreateRequestDto requestDto
+            @RequestBody CourseUpdateRequestDto requestDto
     ) {
-        return courseService.update(userDetails, courseId, requestDto) ? ResponseEntity.ok("코스 수정 성공") : ResponseEntity.badRequest().body("코스 수정 실패");
+        log.info("코스 업데이트" + requestDto);
+        return courseService.update(courseId, requestDto) ? ResponseEntity.ok("코스 수정 성공") : ResponseEntity.badRequest().body("코스 수정 실패");
     }
 
     @DeleteMapping("/{courseId}")
@@ -51,8 +54,8 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseListResponseDto>> getCoursesListByInstitution(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(courseService.getListByInstitution(userDetails));
+    public ResponseEntity<List<CourseListResponseDto>> getCoursesListByInstitution(@RequestParam Long userId) {
+        return ResponseEntity.ok(courseService.getListByInstitution(userId));
     }
 
     @GetMapping("/all")
@@ -85,6 +88,12 @@ public class CourseController {
                                                            @PathVariable Long curriculumId,
                                                            @RequestBody List<GetContentsRequestDto> requestDtos) {
         return ResponseEntity.ok(courseService.saveContents(curriculumId, requestDtos));
+    }
+
+
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryResponseDto>> getCategoryList() {
+        return ResponseEntity.ok(Arrays.stream(CourseCategory.values()).map(CategoryResponseDto::from).toList());
     }
 
 }

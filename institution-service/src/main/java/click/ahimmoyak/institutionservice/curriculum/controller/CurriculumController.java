@@ -31,11 +31,10 @@ public class CurriculumController {
 
     @PostMapping("/curriculums")
     public ResponseEntity<CurriculumCreateResponseDto> addCurriculum(
-            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("courseId") long courseId,
             @RequestBody CurriculumCreateRequestDto requestDto
     ) {
-        return ResponseEntity.ok(curriculumService.add(userDetails, courseId, requestDto));
+        return ResponseEntity.ok(curriculumService.add(courseId, requestDto));
     }
 
     @PatchMapping("/curriculums/{curriculumId}")

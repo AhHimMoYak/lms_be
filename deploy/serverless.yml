@@ -1,4 +1,6 @@
+
 service: ecs-service-test-do
+
 
 provider:
   name: aws
@@ -21,6 +23,7 @@ provider:
     ACCESS_CONTROL_ALLOW_ORIGIN_2: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_2}
     ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
 
+
 resources:
   - ${file(resources/vpc.yml)}
   - ${file(resources/security.yml)}
@@ -38,7 +41,7 @@ plugins:
 custom:
   customDomain:
     domainName: api.ahimmoyak.click
-    basePath: "ecs"
+    basePath: ""
     stage: dev
     createRoute53Record: true
     endpointType: REGIONAL

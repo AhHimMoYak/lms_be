@@ -3,12 +3,12 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: KHJ-ECS-Cluster
+      ClusterName: KHJKDW-ECS-Cluster
   # ECS 태스크 정의 (컨테이너 3개 각각의 태스크로 분리)
   InstitutionTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: institution-task-family-KHJ
+      Family: institution-task-family-KHJKDW
       NetworkMode: awsvpc
       Cpu: "256"
       Memory: "512"
@@ -17,21 +17,21 @@ Resources:
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
       ContainerDefinitions:
-        - Name: institution-service-container-KHJ
+        - Name: institution-service-container-KHJKDW
           Image: 503561434552.dkr.ecr.ap-northeast-2.amazonaws.com/institution-service:latest
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: /ecs/KHJ-task
+              awslogs-group: /ecs/KHJKDW-task
               awslogs-region: ap-northeast-2
               awslogs-stream-prefix: ecs
 
   StudentTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: student-task-family-KHJ
+      Family: student-task-family-KHJKDW
       NetworkMode: awsvpc
       Cpu: "256"
       Memory: "512"
@@ -40,21 +40,21 @@ Resources:
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
       ContainerDefinitions:
-        - Name: student-service-container-KHJ
+        - Name: student-service-container-KHJKDW
           Image: 503561434552.dkr.ecr.ap-northeast-2.amazonaws.com/student-service:latest
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: /ecs/KHJ-task
+              awslogs-group: /ecs/KHJKDW-task
               awslogs-region: ap-northeast-2
               awslogs-stream-prefix: ecs
 
   CompanyTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: company-task-family-KHJ
+      Family: company-task-family-KHJKDW
       NetworkMode: awsvpc
       Cpu: "256"
       Memory: "512"
@@ -63,14 +63,14 @@ Resources:
       ExecutionRoleArn: !GetAtt ExecutionRole.Arn
       TaskRoleArn: !GetAtt TaskRole.Arn
       ContainerDefinitions:
-        - Name: company-service-container-KHJ
+        - Name: company-service-container-KHJKDW
           Image: 503561434552.dkr.ecr.ap-northeast-2.amazonaws.com/company-service:latest
           PortMappings:
             - ContainerPort: 8080
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: /ecs/KHJ-task
+              awslogs-group: /ecs/KHJKDW-task
               awslogs-region: ap-northeast-2
               awslogs-stream-prefix: ecs
 
@@ -96,7 +96,7 @@ Resources:
           AssignPublicIp: ENABLED
       LoadBalancers:
         - TargetGroupArn: !Ref StudentTargetGroup
-          ContainerName: student-service-container-KHJ
+          ContainerName: student-service-container-KHJKDW
           ContainerPort: 8080
 
   InstitutionECSService:
@@ -120,7 +120,7 @@ Resources:
           AssignPublicIp: ENABLED
       LoadBalancers:
         - TargetGroupArn: !Ref InstitutionTargetGroup
-          ContainerName: institution-service-container-KHJ
+          ContainerName: institution-service-container-KHJKDW
           ContainerPort: 8080
 
   CompanyECSService:
@@ -144,5 +144,5 @@ Resources:
           AssignPublicIp: ENABLED
       LoadBalancers:
         - TargetGroupArn: !Ref CompanyTargetGroup
-          ContainerName: company-service-container-KHJ
+          ContainerName: company-service-container-KHJKDW
           ContainerPort: 8080

@@ -16,9 +16,9 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: MyALBSecurityGroup-KHJ
+          Value: MyALBSecurityGroup-KHJKDW
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS
 
   # ECS 보안 그룹 생성
   MyECSSecurityGroup:
@@ -37,6 +37,6 @@ Resources:
           SourceSecurityGroupId: !Ref MyALBSecurityGroup
       Tags:
         - Key: Name
-          Value: MyECSSecurityGroup-KHJ
+          Value: MyECSSecurityGroup-KHJKDW
         - Key: Project
-          Value: KHJ-ECS
+          Value: KHJKDW-ECS

@@ -8,6 +8,7 @@ Resources:
       Type: TOKEN
       IdentitySource: method.request.header.Cookie
       RestApiId: !Ref ApiGatewayRestApi
+
       AuthorizerUri:
         Fn::Join:
           - ""
@@ -16,7 +17,6 @@ Resources:
             - ":lambda:path/2015-03-31/functions/"
             - "arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT"
             - "/invocations"
-
   LambdaInvokePermissionForApiGateway:
     Type: AWS::Lambda::Permission
     Properties:

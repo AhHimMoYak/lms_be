@@ -1,23 +1,22 @@
 Resources:
-  # API Gateway REST API
-  ApiGatewayRestApi:
+  Resources:
+  # 첫 번째 API Gateway 설정
+  ApiGatewayRestApi1:
     Type: AWS::ApiGateway::RestApi
     Properties:
-      Name: RestApi-do
+      Name: RestApi-1
       EndpointConfiguration:
         Types:
           - REGIONAL
 
-  # API Gateway 리소스
-  ApiGatewayResource:
+  ApiGatewayResource1:
     Type: AWS::ApiGateway::Resource
     Properties:
-      RestApiId: !Ref ApiGatewayRestApi
-      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      RestApiId: !Ref ApiGatewayRestApi1
+      ParentId: !GetAtt ApiGatewayRestApi1.RootResourceId
       PathPart: "{proxy+}"
 
-  # OPTIONS 메서드
-  # OPTIONS 요청을 ECS(Spring Boot)로 전달
+
   ApiGatewayMethodOptions:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -104,15 +103,14 @@ Resources:
       Integration:
         IntegrationHttpMethod: DELETE
         Type: HTTP_PROXY
-        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"  # ALB 통합
         PassthroughBehavior: WHEN_NO_MATCH
         RequestParameters:
           "integration.request.path.proxy": "method.request.path.proxy"
       RequestParameters:
         "method.request.path.proxy": true
 
-  # API Gateway 배포 설정
-  ApiGatewayDeployment:
+  ApiGatewayDeployment1:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
       - ApiGatewayMethodOptions
@@ -121,12 +119,170 @@ Resources:
       - ApiGatewayMethodPut
       - ApiGatewayMethodDelete
     Properties:
-      RestApiId: !Ref ApiGatewayRestApi
+      RestApiId: !Ref ApiGatewayRestApi1
 
-  # API Gateway 스테이지 설정
-  ApiGatewayStage:
+  ApiGatewayStage1:
     Type: AWS::ApiGateway::Stage
     Properties:
-      RestApiId: !Ref ApiGatewayRestApi
-      DeploymentId: !Ref ApiGatewayDeployment
+      RestApiId: !Ref ApiGatewayRestApi1
+      DeploymentId: !Ref ApiGatewayDeployment1
+      StageName: dev
+
+  # 두 번째 API Gateway 설정
+  ApiGatewayRestApi2:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: RestApi-2
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiGatewayResource2:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+      PathPart: "{proxy+}"
+
+  ApiGatewayMethod2:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      ResourceId: !Ref ApiGatewayResource2
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"  # ALB 통합
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  ApiGatewayDeployment2:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod2
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+
+  ApiGatewayStage2:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      DeploymentId: !Ref ApiGatewayDeployment2
+      StageName: dev
+
+  # 세 번째 API Gateway 설정
+  ApiGatewayRestApi3:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: RestApi-3
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiGatewayResource3:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      ParentId: !GetAtt ApiGatewayRestApi3.RootResourceId
+      PathPart: "{proxy+}"
+
+  ApiGatewayMethod3:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      ResourceId: !Ref ApiGatewayResource3
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"  # ALB 통합
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  ApiGatewayDeployment3:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod3
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+
+  ApiGatewayStage3:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      DeploymentId: !Ref ApiGatewayDeployment3
+      StageName: dev
+
+  # 네 번째 API Gateway 설정
+  ApiGatewayRestApi4:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: RestApi-4
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiGatewayResource4:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi4
+      ParentId: !GetAtt ApiGatewayRestApi4.RootResourceId
+      PathPart: "{proxy+}"
+
+  ApiGatewayMethod4:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi4
+      ResourceId: !Ref ApiGatewayResource4
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub "http://${MyALB.DNSName}/{proxy}"  # ALB 통합
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          "integration.request.path.proxy": "method.request.path.proxy"
+      RequestParameters:
+        "method.request.path.proxy": true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  ApiGatewayDeployment4:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod4
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi4
+
+  ApiGatewayStage4:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi4
+      DeploymentId: !Ref ApiGatewayDeployment4
       StageName: dev

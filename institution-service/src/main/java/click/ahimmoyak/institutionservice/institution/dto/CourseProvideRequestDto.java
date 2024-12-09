@@ -5,6 +5,9 @@ import lombok.Builder;
 
 @Builder
 public record CourseProvideRequestDto(
-        CourseProvideState state
+        String action
 ) {
+
+
+
 }
