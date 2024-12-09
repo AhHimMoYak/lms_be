@@ -11,8 +11,8 @@ public record CourseUpdateRequestDto(
         String title,
         String introduction,
         String instructor,
-        int period
-        //CourseCategory category
+        int period,
+        CourseCategory category
 ) {
     public Course toEntity() {
         return Course.builder()

@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -28,11 +29,11 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCourse(
-            @AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<CourseCreateResponseDto> createCourse(
+            @RequestParam Long userId,
             @RequestBody CourseCreateRequestDto requestDto
     ) {
-        return ResponseEntity.ok(courseService.create(userDetails, requestDto));
+        return ResponseEntity.ok(courseService.create(userId, requestDto));
     }
 
     @PatchMapping("/{courseId}")
@@ -87,6 +88,12 @@ public class CourseController {
                                                            @PathVariable Long curriculumId,
                                                            @RequestBody List<GetContentsRequestDto> requestDtos) {
         return ResponseEntity.ok(courseService.saveContents(curriculumId, requestDtos));
+    }
+
+
+    @GetMapping("/category")
+    public ResponseEntity<List<CategoryResponseDto>> getCategoryList() {
+        return ResponseEntity.ok(Arrays.stream(CourseCategory.values()).map(CategoryResponseDto::from).toList());
     }
 
 }

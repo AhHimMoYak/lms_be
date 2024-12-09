@@ -68,6 +68,7 @@ public class Course extends Timestamped {
         this.introduction = requestDto.introduction();
         this.instructor = requestDto.instructor();
         this.period = requestDto.period();
+        this.category = requestDto.category();
         return this;
     }
 

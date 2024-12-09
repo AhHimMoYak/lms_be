@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CourseService {
      CourseDetailResponseDto getDetail(long id);
-     Long create(UserDetails userDetails, CourseCreateRequestDto requestDto);
+     CourseCreateResponseDto create(Long userId, CourseCreateRequestDto requestDto);
      boolean update(long id, CourseUpdateRequestDto requestDto);
      boolean delete(UserDetails userDetails, long id);
      List<CourseListResponseDto> getListByInstitution(Long userId);

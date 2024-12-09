@@ -21,6 +21,7 @@ public record CourseDetailResponseDto(
         LocalDate endDate,
         CourseState state,
         CourseCategory category,
+        String categoryTitle,
         Long institutionId,
         List<CurriculumListResponseDto> curriculumList,
         List<CourseProvideListDto> courseProvides
@@ -31,11 +32,10 @@ public record CourseDetailResponseDto(
                 .introduction(course.getIntroduction())
                 .instructor(course.getInstructor())
                 .institutionId(course.getInstitution().getId())
-                // Todo 코스디테일 반환시 CourseProvide 의 beginDate, endDate 함께 반환하도록 Dto 수정
-//                .beginDate(course.getBeginDate())
-//                .endDate(course.getEndDate())
+                .period(course.getPeriod())
                 .state(course.getState())
                 .category(course.getCategory())
+                .categoryTitle(course.getCategory().getTitle())
                 .curriculumList(curriculumList)
                 .courseProvides(courseProvides)
                 .build();

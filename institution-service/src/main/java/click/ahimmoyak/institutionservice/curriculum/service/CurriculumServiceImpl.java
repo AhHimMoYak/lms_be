@@ -25,7 +25,7 @@ public class CurriculumServiceImpl implements CurriculumService {
 
     @Override
     @Transactional
-    public CurriculumCreateResponseDto add(UserDetails userDetails, long courseId, CurriculumCreateRequestDto requestDto) {
+    public CurriculumCreateResponseDto add(long courseId, CurriculumCreateRequestDto requestDto) {
         Course course = courseRepository.findById(courseId).orElse(null);
         long count = curriculumRepository.countByCourse(course);
 

@@ -30,6 +30,9 @@ public class Enrollment extends Timestamped {
     @Column
     private LocalDateTime certificateDate;
 
+    @Column
+    private Long progress;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

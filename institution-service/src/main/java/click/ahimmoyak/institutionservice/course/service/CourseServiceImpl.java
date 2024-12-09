@@ -16,9 +16,11 @@ import click.ahimmoyak.institutionservice.course.repository.CurriculumRepository
 import click.ahimmoyak.institutionservice.course.repository.EnrollmentRepository;
 import click.ahimmoyak.institutionservice.global.dto.MessageResponseDto;
 import click.ahimmoyak.institutionservice.global.exception.ApiException;
+import click.ahimmoyak.institutionservice.institution.entity.Institution;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,20 +46,31 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(id)
                 .map(course -> CourseDetailResponseDto
                         .from(course, course.getCurriculumList().stream()
-                                .map(curriculum -> CurriculumListResponseDto
-                                        .from(curriculum, curriculum.getContentsList().stream()
-                                                .map(ContentListResponseDto::from
-                                                ).toList())).toList(),
+                                        .map(curriculum -> CurriculumListResponseDto
+                                                .from(curriculum, curriculum.getContentsList().stream()
+                                                        .map(ContentListResponseDto::from
+                                                        ).toList())).toList(),
                                 course.getCourseProvides().stream()
                                         .map(CourseProvideListDto::from).toList())).orElse(null);
     }
 
     @Override
     @Transactional
-    public Long create(UserDetails userDetails, CourseCreateRequestDto requestDto) {
-        //return courseRepository.save(requestDto.toEntity()).getId();
-        // TODO 코스 생성 Institution 문제로 잠시 비활성화
-        return null;
+    public CourseCreateResponseDto create(Long userId, CourseCreateRequestDto requestDto) {
+        Institution institution = userRepository.findById(userId).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "유저가 없습니다. ")).getManager().getInstitution();
+
+        Course course = Course.builder()
+                .title(requestDto.title())
+                .instructor(requestDto.instructor())
+                .period(requestDto.period())
+                .introduction(requestDto.introduction())
+                .category(requestDto.category())
+                .institution(institution)
+                .state(CourseState.AVAILABLE)
+                .build();
+        Course saved = courseRepository.save(course);
+
+        return CourseCreateResponseDto.from(saved.getId());
     }
 
     @Override
@@ -83,22 +96,14 @@ public class CourseServiceImpl implements CourseService {
     // 교육기관 매니저가 교육기관 코스들의 목록 조회
     @Override
     public List<CourseListResponseDto> getListByInstitution(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->new ApiException(HttpStatus.UNAUTHORIZED, "유저 없음"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "유저 없음"));
         Long institutionId = user.getManager().getInstitution().getId();
 
         List<Course> courseList = courseRepository.findByInstitution_Id(institutionId);
 
 
         return courseList.stream()
-                .map(course -> new CourseListResponseDto(
-                        course.getId(),
-                        course.getTitle(),
-                        course.getIntroduction(),
-                        course.getInstructor(),
-                        course.getPeriod(),
-                        course.getState(),
-                        course.getCategory()
-                )).collect(Collectors.toList());
+                .map(CourseListResponseDto::from).collect(Collectors.toList());
     }
 
     @Override

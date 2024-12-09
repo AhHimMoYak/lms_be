@@ -2,6 +2,7 @@ package click.ahimmoyak.institutionservice.course.repository;
 
 import click.ahimmoyak.institutionservice.course.common.CourseCategory;
 import click.ahimmoyak.institutionservice.course.entity.Course;
+import click.ahimmoyak.institutionservice.institution.entity.Institution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,4 +39,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findAllOrderByState(Pageable pageable);
 
     List<Course> findByInstitution_Id(Long id);
+
+    long countByInstitution(Institution institution);
+    List<Course> findByInstitution(Institution institution);
 }

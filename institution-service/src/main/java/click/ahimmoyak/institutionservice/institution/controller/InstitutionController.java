@@ -3,12 +3,10 @@ package click.ahimmoyak.institutionservice.institution.controller;
 import click.ahimmoyak.institutionservice.auth.config.security.UserDetailsImpl;
 import click.ahimmoyak.institutionservice.course.dto.CourseProvideDetailResponseDto;
 import click.ahimmoyak.institutionservice.course.dto.CourseProvidesResponseDto;
+import click.ahimmoyak.institutionservice.course.dto.EnrollmentRequestDto;
 import click.ahimmoyak.institutionservice.global.dto.MessageResponseDto;
+import click.ahimmoyak.institutionservice.institution.dto.*;
 import click.ahimmoyak.institutionservice.institution.service.InstitutionService;
-import click.ahimmoyak.institutionservice.institution.dto.CourseProvideRequestDto;
-import click.ahimmoyak.institutionservice.institution.dto.CreateInstitutionRequestDto;
-import click.ahimmoyak.institutionservice.institution.dto.GetInstitutionDetailRequestDto;
-import click.ahimmoyak.institutionservice.institution.dto.UpdateInstitutionRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,9 +29,9 @@ public class InstitutionController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(institutionService.getInstitutionDetail(userDetails));
+    public ResponseEntity<GetInstitutionDetailRequestDto> getInstitutionDetail(@RequestParam Long userId
+    ){
+        return ResponseEntity.ok(institutionService.getInstitutionDetail(userId));
     }
 
     @GetMapping("/{institutionId}/details")
@@ -43,38 +41,52 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.getInstitutionDetail(userDetails, institutionId));
     }
 
-    @PatchMapping("/{institutionId}")
+
+    @PatchMapping
     public ResponseEntity<MessageResponseDto> updateInstitution(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody UpdateInstitutionRequestDto requestDto,
-            @PathVariable Long institutionId) {
-        return ResponseEntity.ok(institutionService.updateInstitution(userDetails, requestDto, institutionId));
+            @RequestParam Long userId,
+            @RequestBody UpdateInstitutionRequestDto requestDto) {
+        return ResponseEntity.ok(institutionService.updateInstitution(userId, requestDto));
     }
 
     @GetMapping
-    public ResponseEntity<CourseProvidesResponseDto> getCourseProvideListByInstitution(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CourseProvidesResponseDto> getCourseProvideListByInstitution(@RequestParam Long userId) {
 
-        return ResponseEntity.ok(institutionService.getCourseProvideListByInstitution(userDetails));
+        return ResponseEntity.ok(institutionService.getCourseProvideListByInstitution(userId));
+    }
+
+    @GetMapping("/{courseProvideId}/startCourseProvideDetails")
+    public ResponseEntity<StartCourseProvideDetailResponseDto> getStartCourseProvideDetailByInstitution(@RequestParam Long userId, @PathVariable Long courseProvideId) {
+
+        return ResponseEntity.ok(institutionService.getStartCourseProvideDetailByInstitution(userId, courseProvideId));
     }
 
     @PatchMapping("/{courseProvideId}/response")
-    public ResponseEntity<MessageResponseDto> courseProvideResponse(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<MessageResponseDto> courseProvideResponse(@RequestParam Long userId,
                                                                     @PathVariable Long courseProvideId,
                                                                     @RequestBody CourseProvideRequestDto requestDto) {
 
-        return ResponseEntity.ok(institutionService.courseProvideResponse(userDetails, courseProvideId, requestDto));
+        return ResponseEntity.ok(institutionService.courseProvideResponse(userId, courseProvideId, requestDto));
     }
 
     @GetMapping("/{courseProvideId}/courseProvideDetails")
-    public ResponseEntity<CourseProvideDetailResponseDto> getCourseProvideDetailByInstitution(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long courseProvideId) {
-        return ResponseEntity.ok(institutionService.getCourseProvideDetailByInstitution(userDetails, courseProvideId));
+    public ResponseEntity<CourseProvideDetailResponseDto> getCourseProvideDetailByInstitution(@RequestParam Long userId, @PathVariable Long courseProvideId) {
+        return ResponseEntity.ok(institutionService.getCourseProvideDetailByInstitution(userId, courseProvideId));
     }
 
     @PatchMapping("/{courseProvideId}/registrations")
-    public ResponseEntity<MessageResponseDto> confirmEnrollments(@AuthenticationPrincipal UserDetails userDetails,
-                                                                 @PathVariable Long courseProvideId) {
+    public ResponseEntity<MessageResponseDto> confirmEnrollments(@RequestParam Long userId,
+                                                                 @PathVariable Long courseProvideId,
+                                                                 @RequestBody EnrollmentRequestDto requestDto) {
 
-        return ResponseEntity.ok(institutionService.confirmEnrollments(userDetails, courseProvideId));
+        return ResponseEntity.ok(institutionService.confirmEnrollments(userId, courseProvideId, requestDto));
     }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<GetDashboardResponseDto> getDashboard(@RequestParam Long userId){
+        return ResponseEntity.ok(institutionService.getDashboard(userId));
+    }
+
+
 
 }
