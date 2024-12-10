@@ -34,8 +34,8 @@ plugins:
 custom:
   customDomain:
     domainName: api.ahimmoyak.click
-    basePath: ""
+    basePath: "ecs"
     stage: dev
     createRoute53Record: true
     endpointType: REGIONAL
-    certificateArn: arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c
+    certificateArn: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"
