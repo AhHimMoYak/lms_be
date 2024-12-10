@@ -6,12 +6,15 @@ Resources:
       EndpointConfiguration:
         Types:
           - REGIONAL
+
   ApiGatewayResource:
     Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi
     Properties:
       RestApiId: !Ref ApiGatewayRestApi
       ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
       PathPart: "{proxy+}"
+
   ApiGatewayMethodOptions:
     Type: AWS::ApiGateway::Method
     Properties:
@@ -96,6 +99,7 @@ Resources:
           integration.request.path.proxy: method.request.path.proxy
       RequestParameters:
         method.request.path.proxy: true
+
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     DependsOn:
@@ -122,6 +126,7 @@ Resources:
           - REGIONAL
   ApiGatewayResource1:
     Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi1
     Properties:
       RestApiId: !Ref ApiGatewayRestApi1
       ParentId: !GetAtt ApiGatewayRestApi1.RootResourceId
@@ -145,9 +150,8 @@ Resources:
       MethodResponses:
         - StatusCode: 200
           ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,\
-              Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
             method.response.header.Access-Control-Allow-Origin: "'*'"
   ApiGatewayDeployment1:
     Type: AWS::ApiGateway::Deployment
@@ -171,6 +175,7 @@ Resources:
           - REGIONAL
   ApiGatewayResource2:
     Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi2
     Properties:
       RestApiId: !Ref ApiGatewayRestApi2
       ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
@@ -194,9 +199,8 @@ Resources:
       MethodResponses:
         - StatusCode: 200
           ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,\
-              Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
             method.response.header.Access-Control-Allow-Origin: "'*'"
   ApiGatewayDeployment2:
     Type: AWS::ApiGateway::Deployment
@@ -220,6 +224,7 @@ Resources:
           - REGIONAL
   ApiGatewayResource3:
     Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi3
     Properties:
       RestApiId: !Ref ApiGatewayRestApi3
       ParentId: !GetAtt ApiGatewayRestApi3.RootResourceId
@@ -243,9 +248,8 @@ Resources:
       MethodResponses:
         - StatusCode: 200
           ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,\
-              Authorization,X-Api-Key,X-Amz-Security-Token'"
-            method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
             method.response.header.Access-Control-Allow-Origin: "'*'"
   ApiGatewayDeployment3:
     Type: AWS::ApiGateway::Deployment
