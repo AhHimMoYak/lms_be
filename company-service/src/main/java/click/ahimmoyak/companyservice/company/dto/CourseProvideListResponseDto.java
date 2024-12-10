@@ -20,6 +20,7 @@ public record CourseProvideListResponseDto(
         LocalDate endDate,
         CourseProvideState state,
         String instructor,
+        String category,
         long attendeeCount,
         long deposit
 ) {
@@ -37,6 +38,7 @@ public record CourseProvideListResponseDto(
                 .attendeeCount(courseProvide.getAttendeeCount())
                 .deposit(courseProvide.getDeposit())
                 .instructor(courseProvide.getCourse().getInstructor())
+                .category(courseProvide.getCourse().getCategory().getTitle())
                 .build();
     }
 }
