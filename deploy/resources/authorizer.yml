@@ -8,19 +8,18 @@ Resources:
       Type: TOKEN
       IdentitySource: method.request.header.Cookie
       RestApiId: !Ref ApiGatewayRestApi
-
       AuthorizerUri:
         Fn::Join:
           - ""
           - - "arn:aws:apigateway:"
             - Ref: AWS::Region
-            - ":lambda:path/2015-03-31/functions/"
-            - "arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT"
-            - "/invocations"
+            - :lambda:path/2015-03-31/functions/
+            - arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT
+            - /invocations
   LambdaInvokePermissionForApiGateway:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: "arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT"
+      FunctionName: arn:aws:lambda:ap-northeast-2:503561434552:function:lambda-authorizer-service-prod-AuthorizerJWT
       Action: lambda:InvokeFunction
       Principal: apigateway.amazonaws.com
       SourceArn:
@@ -32,4 +31,4 @@ Resources:
             - Ref: AWS::AccountId
             - ":"
             - Ref: ApiGatewayRestApi
-            - "/*"
+            - /*
