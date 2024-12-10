@@ -1,0 +1,126 @@
+Resources:
+  # ALB 생성
+  MyALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: ALB-do
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !Ref MyALBSecurityGroup
+      Scheme: internet-facing
+      Type: application
+
+  # ALB 대상 그룹 생성 (컨테이너별로 분리)
+  InstitutionTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: institution-target-group-KHJKDW
+      Protocol: HTTP
+      Port: 8080
+      VpcId: !Ref MyVPC
+      TargetType: ip
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: "8080"
+      HealthCheckPath: "/institutions/actuator/health"
+      Matcher:
+        HttpCode: "200"
+
+  StudentTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: student-target-group-KHJKDW
+      Protocol: HTTP
+      Port: 8080
+      VpcId: !Ref MyVPC
+      TargetType: ip
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: "8080"
+      HealthCheckPath: "/students/actuator/health"
+      Matcher:
+        HttpCode: "200"
+
+  CompanyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: company-target-group-KHJKDW
+      Protocol: HTTP
+      Port: 8080
+      VpcId: !Ref MyVPC
+      TargetType: ip
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: "8080"
+      HealthCheckPath: "/companies/actuator/health"
+      Matcher:
+        HttpCode: "200"
+
+  # ALB 리스너 정의 (기본 동작 및 경로 기반 규칙 추가)
+  MyALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyALB
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref StudentTargetGroup
+
+  # ALB HTTPS 리스너
+  MyALBListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - MyALB
+      - StudentTargetGroup
+    Properties:
+      LoadBalancerArn: !Ref MyALB
+      Protocol: HTTPS
+      Port: 443
+      Certificates:
+        - CertificateArn: ${self:custom.customDomain.certificateArn}
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref StudentTargetGroup
+
+  # ALB 리스너 규칙 정의 (경로 기반 라우팅)
+  InstitutionPathRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref MyALBListener
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /v1/institutions/*
+            - /institutions/actuator/*
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref InstitutionTargetGroup
+
+  StudentPathRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref MyALBListener
+      Priority: 2
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /v1/students/*
+            - /students/actuator/*
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref StudentTargetGroup
+
+  CompanyPathRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref MyALBListener
+      Priority: 3
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /v1/companies/*
+            - /companies/actuator/*
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref CompanyTargetGroup

@@ -6,7 +6,7 @@ import click.ahimmoyak.studentservice.institution.dto.CreateInstitutionRequestDt
 import click.ahimmoyak.studentservice.institution.dto.GetInstitutionDetailRequestDto;
 
 public interface InstitutionService {
-    MessageResponseDto createInstitution(UserDetailsImpl userDetails, CreateInstitutionRequestDto requestDto);
+    MessageResponseDto createInstitution(Long userId, CreateInstitutionRequestDto requestDto);
 
     GetInstitutionDetailRequestDto getInstitutionDetail(UserDetailsImpl userDetails);
 

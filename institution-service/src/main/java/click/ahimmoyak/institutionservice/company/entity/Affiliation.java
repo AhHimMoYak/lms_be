@@ -21,9 +21,6 @@ public class Affiliation extends Timestamped {
     @Column(nullable = false)
     private Long id;
 
-    @Column(name = "is_supervisor", nullable = false)
-    private boolean isSupervisor;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

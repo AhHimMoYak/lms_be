@@ -3,10 +3,10 @@ package click.ahimmoyak.studentservice.course.entity;
 import click.ahimmoyak.studentservice.course.common.ContentType;
 import click.ahimmoyak.studentservice.global.entity.Timestamped;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -33,8 +33,19 @@ public class Contents extends Timestamped {
     @Column(length = 255)
     private String s3Url;
 
+    @Column(length = 255, name = "video_duration")
+    private String videoDuration;
+
     @ManyToOne
     @JoinColumn(name = "curriculum_id")
     private Curriculum curriculum;
 
+    @Builder.Default
+    @Setter
+    @OneToMany(mappedBy = "contents")
+    private List<ContentsHistory> contentsHistoryArrayList = new ArrayList<>();
+
+
 }
+
+

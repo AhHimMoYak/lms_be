@@ -8,19 +8,19 @@ import lombok.Builder;
 
 @Builder
 public record CourseCreateRequestDto(
-   String title,
-   String introduction,
-   String instructor,
-   Institution institution,
-   CourseCategory category
+        String title,
+        String introduction,
+        String instructor,
+        int period,
+        CourseCategory category
 ) {
-    // Todo 코스 생성시 교육기관 정보가 들어가도록 수정해야함
-    public Course toEntity() {
+    public Course toEntity(Institution institution) {
         return Course.builder()
                 .title(this.title)
                 .introduction(this.introduction)
                 .category(this.category)
-                .institution(this.institution)
+                .period(this.period)
+                .institution(institution)
                 .state(CourseState.AVAILABLE)
                 .instructor(this.instructor)
                 .build();

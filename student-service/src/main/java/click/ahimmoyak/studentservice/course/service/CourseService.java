@@ -1,10 +1,7 @@
 package click.ahimmoyak.studentservice.course.service;
 
 import click.ahimmoyak.studentservice.auth.config.security.UserDetailsImpl;
-import click.ahimmoyak.studentservice.course.dto.ContentDetailResponseDto;
-import click.ahimmoyak.studentservice.course.dto.CourseDetailResponseDto;
-import click.ahimmoyak.studentservice.course.dto.CourseListResponseDto;
-import click.ahimmoyak.studentservice.course.dto.EmployeeCourseListResponseDto;
+import click.ahimmoyak.studentservice.course.dto.*;
 import click.ahimmoyak.studentservice.course.common.CourseCategory;
 import click.ahimmoyak.studentservice.global.dto.MessageResponseDto;
 import org.springframework.data.domain.Page;
@@ -15,13 +12,14 @@ import java.util.List;
 
 public interface CourseService {
      CourseDetailResponseDto getDetail(long id);
-     CourseDetailResponseDto getDetail(long id, UserDetails userDetails);
+     CourseDetailResponseDto getDetail(Long userId,Long courseProvideId);
      List<CourseListResponseDto> getAllList();
      Page<CourseListResponseDto> getAllList(Pageable pageable);
      List<CourseListResponseDto> getAllList(CourseCategory category);
      Page<CourseListResponseDto> getAllList(Pageable pageable, CourseCategory category);
      List<EmployeeCourseListResponseDto> getAllList(String userName);
-     ContentDetailResponseDto getContentDetail(Long contentId);
-     MessageResponseDto createContentHistory(UserDetailsImpl userDetails, Long contentId);
-     List<CourseListResponseDto> getCourseList(UserDetailsImpl userDetails);
+     ContentDetailResponseDto getContentDetail(String contentId);
+     MessageResponseDto createContentHistory(UserDetailsImpl userDetails, String contentId);
+     List<CourseListResponseDto> getCourseList(Long userId);
+     CourseIdDto getCourseId(Long courseProvideId);
 }

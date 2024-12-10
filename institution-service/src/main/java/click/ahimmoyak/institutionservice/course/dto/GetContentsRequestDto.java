@@ -9,6 +9,7 @@ public record GetContentsRequestDto(
         String contentTitle,
         Integer idx,
         ContentType contentType,
-        String s3Url
+        String s3Url,
+        String videoDuration
 ) {
 }
