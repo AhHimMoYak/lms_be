@@ -183,6 +183,7 @@ public class InstitutionServiceImpl implements InstitutionService {
                 .createdDate(courseProvide.getCreatedAt())
                 .endDate(courseProvide.getEndDate())
                 .attendeeCount(courseProvide.getAttendeeCount())
+                .deposit(courseProvide.getDeposit())
                 .state(courseProvide.getState())
                 .learnerList(enrollmentInfoDto)
                 .build();

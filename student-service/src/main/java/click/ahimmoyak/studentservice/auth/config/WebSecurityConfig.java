@@ -4,6 +4,7 @@ import click.ahimmoyak.studentservice.auth.config.handler.CustomAccessDeniedHand
 import click.ahimmoyak.studentservice.auth.repository.UserRepository;
 import click.ahimmoyak.studentservice.auth.jwt.JwtAuthFilter;
 import click.ahimmoyak.studentservice.auth.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -96,6 +97,7 @@ public class WebSecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:5174",
                 "https://local.ahimmoyak.click",
+                "https://ahimmoyak.click",
                 "https://institution.local.ahimmoyak.click",
                 "https://company.local.ahimmoyak.click",
                 "https://lms.local.ahimmoyak.click"
