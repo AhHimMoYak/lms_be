@@ -7,6 +7,7 @@ import click.ahimmoyak.studentservice.auth.repository.UserRepository;
 import click.ahimmoyak.studentservice.course.repository.CourseProvideRepository;
 import click.ahimmoyak.studentservice.course.repository.EnrollmentRepository;
 import click.ahimmoyak.studentservice.global.dto.MessageResponseDto;
+import click.ahimmoyak.studentservice.global.exception.ApiException;
 import click.ahimmoyak.studentservice.institution.entity.Institution;
 import click.ahimmoyak.studentservice.institution.entity.Manager;
 import click.ahimmoyak.studentservice.institution.dto.CreateInstitutionRequestDto;
@@ -14,6 +15,7 @@ import click.ahimmoyak.studentservice.institution.dto.GetInstitutionDetailReques
 import click.ahimmoyak.studentservice.institution.repository.InstitutionRepository;
 import click.ahimmoyak.studentservice.institution.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,9 +27,9 @@ public class InstitutionServiceImpl implements InstitutionService {
     private final ManagerRepository managerRepository;
 
     @Override
-    public MessageResponseDto createInstitution(UserDetailsImpl userDetails, CreateInstitutionRequestDto requestDto) {
+    public MessageResponseDto createInstitution(Long userId, CreateInstitutionRequestDto requestDto) {
 
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("존재하지않는 user 입니다"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new ApiException(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다."));
 
 
         if (institutionRepository.existsByBusinessNumber(requestDto.businessNumber())) {

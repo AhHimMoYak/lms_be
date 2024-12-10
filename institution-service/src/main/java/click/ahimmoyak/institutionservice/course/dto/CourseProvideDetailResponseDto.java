@@ -23,6 +23,7 @@ public record CourseProvideDetailResponseDto(
         LocalDate beginDate,
         LocalDate endDate,
         long attendeeCount,
+        long deposit,
         CourseProvideState state,
         List<EnrollmentInfoDto> learnerList
 ) {
