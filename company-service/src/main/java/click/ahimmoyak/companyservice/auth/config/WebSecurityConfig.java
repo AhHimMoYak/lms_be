@@ -65,7 +65,6 @@ public class WebSecurityConfig {
                                 "https://company.ahimmoyak.click",
                                 "https://lms.ahimmoyak.click"
                         ));
-//                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
@@ -78,7 +77,6 @@ public class WebSecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->
@@ -101,7 +99,7 @@ public class WebSecurityConfig {
                 "https://lms.local.ahimmoyak.click"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true); // 인증 정보 포함
+        configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("refresh");
