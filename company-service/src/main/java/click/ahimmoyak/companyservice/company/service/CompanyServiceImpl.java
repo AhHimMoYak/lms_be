@@ -139,14 +139,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto createCourseProvider(Long userId, Long courseId, CreateCourseProvideRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow();
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 Course 가 존재하지 않습니다.")
         );
 
         CourseProvide courseProvide = CourseProvide.builder()
-                .company(supervisor.getAffiliation().getCompany())
+                .company(user.getAffiliation().getCompany())
                 .beginDate(requestDto.beginDate())
                 .endDate(requestDto.endDate())
                 .state(CourseProvideState.PENDING)

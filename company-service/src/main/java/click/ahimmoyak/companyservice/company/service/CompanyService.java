@@ -18,7 +18,7 @@ public interface CompanyService {
 
 //    List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
 
-    MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto);
+    MessageResponseDto createCourseProvider(Long userId, Long courseId, CreateCourseProvideRequestDto requestDto);
 
     List<CourseProvideListResponseDto> getCourseProvideList(Long userId);
 

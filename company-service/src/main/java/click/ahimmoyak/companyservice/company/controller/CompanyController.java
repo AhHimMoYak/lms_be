@@ -61,11 +61,11 @@ public class CompanyController {
 
     @PostMapping("/companies/courseProvides")
     public ResponseEntity<MessageResponseDto> CreateCourseProvide(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId,
             @RequestParam Long courseId,
             @RequestBody CreateCourseProvideRequestDto requestDto
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails,courseId,requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userId,courseId,requestDto));
     }
 
     @GetMapping("/companies/courseProvides/list")
