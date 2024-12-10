@@ -37,27 +37,25 @@ public class CompanyController {
     // 내가 회사 탈퇴
     @DeleteMapping("/companies/affiliations")
     public ResponseEntity<MessageResponseDto> detachCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam Long userId
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(companyService.disconnectCompany(userDetails));
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.disconnectCompany(userId));
     }
 
     // supervisor 가 해당 유저를 회사에서 탈퇴
     @DeleteMapping("/companies/employees")
     public ResponseEntity<MessageResponseDto> deleteAffiliation(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam String username
     ) {
-        return ResponseEntity.ok(companyService.deleteAffiliation(userDetails, username));
+        return ResponseEntity.ok(companyService.deleteAffiliation(username));
     }
 
-    // 소정이가 람다로 만들거임.
-//    @GetMapping("/companies/employees")
-//    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
-//    ) {
-//        return ResponseEntity.ok(companyService.getEmployeeList(userDetails));
-//    }
+    @GetMapping("/companies/employees")
+    public ResponseEntity<List<GetEmployeeListResponseDto>> getEmployeeList(
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(companyService.getEmployeeList(userId));
+    }
 
     @PostMapping("/companies/courseProvides")
     public ResponseEntity<MessageResponseDto> CreateCourseProvide(
@@ -81,6 +79,13 @@ public class CompanyController {
             @RequestBody submitEmployeeListRequestDto requestDto
     ) {
         return ResponseEntity.ok(companyService.submitEmployeeListForEnrollment(userId,requestDto));
+    }
+
+    @GetMapping("/companies/dashboard/info")
+    public ResponseEntity<CompanyDashboardResponseDto> companyinfo(
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(companyService.companyDashboard(userId));
     }
 
 }

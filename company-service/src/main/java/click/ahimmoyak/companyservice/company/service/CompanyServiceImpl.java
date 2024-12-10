@@ -1,7 +1,5 @@
 package click.ahimmoyak.companyservice.company.service;
 
-import click.ahimmoyak.companyservice.auth.common.UserRole;
-import click.ahimmoyak.companyservice.auth.config.security.UserDetailsImpl;
 import click.ahimmoyak.companyservice.auth.entity.User;
 import click.ahimmoyak.companyservice.auth.repository.UserRepository;
 import click.ahimmoyak.companyservice.auth.service.UserService;
@@ -29,6 +27,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static click.ahimmoyak.companyservice.course.common.CourseProvideState.ONGOING;
+import static click.ahimmoyak.companyservice.course.common.CourseProvideState.PENDING;
 
 
 @Service
@@ -67,8 +68,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto disconnectCompany(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public MessageResponseDto disconnectCompany(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
 
         if (user.getAffiliation() == null) {
             throw new ApiException(HttpStatus.CONFLICT, "Affiliation 이 존재하지 않습니다.");
@@ -91,8 +92,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto deleteAffiliation(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
         );
@@ -108,11 +108,6 @@ public class CompanyServiceImpl implements CompanyService {
             }
         }
 
-        if (supervisor.getAffiliation().getCompany() != user.getAffiliation().getCompany()) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
-        }
-
-
         affiliationRepository.delete(affiliation);
 
         return MessageResponseDto.builder()
@@ -120,22 +115,22 @@ public class CompanyServiceImpl implements CompanyService {
                 .build();
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails) {
-//        User supervisor = userService.getAuth(userDetails);
-//        Long companyId = supervisor.getAffiliation().getCompany().getId();
-//
-//        if(companyId == null) {
-//            throw new ApiException(HttpStatus.NOT_FOUND, "해당 supervisor 의 companyId가 존재하지 않습니다");
-//        }
-//
-//        List<Affiliation> employees = affiliationRepository.findByCompany_Id(companyId);
-//
-//        return employees.stream()
-//                .map(GetEmployeeListResponseDto::from)
-//                .toList();
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetEmployeeListResponseDto> getEmployeeList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Long companyId = user.getAffiliation().getCompany().getId();
+
+        if(companyId == null) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "해당 user 의 companyId가 존재하지 않습니다");
+        }
+
+        List<Affiliation> employees = affiliationRepository.findByCompany_Id(companyId);
+
+        return employees.stream()
+                .map(GetEmployeeListResponseDto::from)
+                .toList();
+    }
 
     @Override
     @Transactional
@@ -149,7 +144,7 @@ public class CompanyServiceImpl implements CompanyService {
                 .company(user.getAffiliation().getCompany())
                 .beginDate(requestDto.beginDate())
                 .endDate(requestDto.endDate())
-                .state(CourseProvideState.PENDING)
+                .state(PENDING)
                 .attendeeCount(requestDto.attendeeCount())
                 .deposit(requestDto.deposit())
                 .institution(course.getInstitution())
@@ -216,6 +211,24 @@ public class CompanyServiceImpl implements CompanyService {
 
         return MessageResponseDto.builder()
                 .message("선택한 사원들을 교육기관에 넘기기 완료")
+                .build();
+    }
+
+    @Override
+    public CompanyDashboardResponseDto companyDashboard(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Company company = user.getAffiliation().getCompany();
+
+        int employeeCount = affiliationRepository.countByCompany_Id(company.getId());
+
+        int ongoingCount = courseProvideRepository.countByCompany_IdAndState(company.getId(), ONGOING);
+        int pendingCount = courseProvideRepository.countByCompany_IdAndState(company.getId(), PENDING);
+
+
+        return CompanyDashboardResponseDto.builder()
+                .employeeCount(employeeCount)
+                .ongoingCount(ongoingCount)
+                .pendingCount(pendingCount)
                 .build();
     }
 
