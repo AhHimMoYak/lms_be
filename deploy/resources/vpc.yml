@@ -1,5 +1,4 @@
 Resources:
-  # VPC 생성
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -8,47 +7,39 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: KHJKDW
-        - Key: Project
-          Value: KHJKDW-ECS
+          Value: VPC-ahim
 
-  # 인터넷 게이트웨이 생성
   MyInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: KHJKDW
-        - Key: Project
-          Value: KHJKDW-ECS
+          Value: IG-ahim
 
-  # VPC 에 인터넷 게이트웨이 연결
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref MyVPC
       InternetGatewayId: !Ref MyInternetGateway
 
-  # 퍼블릭 라우트 테이블 생성
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref MyVPC
       Tags:
         - Key: Name
-          Value: KHJKDW
-        - Key: Project
-          Value: KHJKDW-ECS
+          Value: RT-ahim
 
-  # 인터넷을 위한 기본 라우트 추가
   MyRoute:
     Type: AWS::EC2::Route
+    DependsOn:
+      - AttachGateway
+      - MyRouteTable
     Properties:
       RouteTableId: !Ref MyRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref MyInternetGateway
 
-  # 퍼블릭 서브넷 생성 (2개)
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -58,9 +49,9 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: KHJKDW-Subnet1
+          Value: Subnet1-ahim
         - Key: Project
-          Value: KHJKDW-ECS
+          Value: ahim-ECS
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -71,11 +62,10 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: KHJKDW-Subnet2
+          Value: Subnet2-ahim
         - Key: Project
-          Value: KHJKDW-ECS
+          Value: ahim-ECS
 
-  # 라우트 테이블과 퍼블릭 서브넷 연결
   PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
