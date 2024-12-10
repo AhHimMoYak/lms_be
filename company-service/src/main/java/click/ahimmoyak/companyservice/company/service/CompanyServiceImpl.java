@@ -45,8 +45,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public CompanyDetailResponseDto getCompany(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
         Company company = companyRepository.findById(user.getAffiliation().getCompany().getId()).orElseThrow(
                 ()-> new ApiException(HttpStatus.NOT_FOUND,"유저의 회사를 찾을수 없습니다."));
 
@@ -55,13 +55,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto) {
-        User user = userService.getAuth(userDetails);
-        Company company = companyRepository.findByName(name).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
-        Company usercompany = user.getAffiliation().getCompany();
-        if (company != usercompany) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
-        }
+    public MessageResponseDto updateCompany(Long companyId, UpdateCompanyRequestDto requestDto) {
+        Company company = companyRepository.findById(companyId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
         company.patch(requestDto);
         companyRepository.save(company);
 
@@ -144,14 +139,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto createCourseProvider(Long userId, Long courseId, CreateCourseProvideRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow();
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 Course 가 존재하지 않습니다.")
         );
 
         CourseProvide courseProvide = CourseProvide.builder()
-                .company(supervisor.getAffiliation().getCompany())
+                .company(user.getAffiliation().getCompany())
                 .beginDate(requestDto.beginDate())
                 .endDate(requestDto.endDate())
                 .state(CourseProvideState.PENDING)
@@ -171,8 +166,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public List<CourseProvideListResponseDto> getCourseProvideList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
         List<CourseProvide> courseProvideList = courseProvideRepository.findByCompany_Id(user.getAffiliation().getCompany().getId());
 
 
@@ -183,8 +178,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto submitEmployeeListForEnrollment(UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto submitEmployeeListForEnrollment(Long userId, submitEmployeeListRequestDto requestDto) {
 
         List<User> userList = userRepository.findAllByUsernameIn(requestDto.employeeUserName());
 

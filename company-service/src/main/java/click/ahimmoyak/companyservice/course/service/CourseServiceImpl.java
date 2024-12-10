@@ -27,11 +27,12 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(id)
                 .map(course -> CourseDetailResponseDto
                         .from(course, course.getCurriculumList().stream()
-                                .map(curriculum -> CurriculumListResponseDto
-                                        .from(curriculum, curriculum.getContentsList().stream()
-                                                .map(ContentListResponseDto::from
-                                                ).toList())
-                                ).toList())).orElse(null);
+                                        .map(curriculum -> CurriculumListResponseDto
+                                                .from(curriculum, curriculum.getContentsList().stream()
+                                                        .map(ContentListResponseDto::from
+                                                        ).toList())).toList(),
+                                course.getCourseProvides().stream()
+                                        .map(CourseProvideListDto::from).toList())).orElse(null);
     }
 
     @Override

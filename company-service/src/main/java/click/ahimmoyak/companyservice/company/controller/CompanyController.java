@@ -21,18 +21,17 @@ public class CompanyController {
 
     @GetMapping("/companies/info")
     public ResponseEntity<CompanyDetailResponseDto> getCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam Long userId
     ) {
-        return ResponseEntity.ok(companyService.getCompany(userDetails));
+        return ResponseEntity.ok(companyService.getCompany(userId));
     }
 
     @PatchMapping("/companies")
     public ResponseEntity<MessageResponseDto> updateCompany(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam String name,
+            @RequestParam Long companyId,
             @RequestBody UpdateCompanyRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyService.updateCompany(userDetails, name, requestDto));
+        return ResponseEntity.ok(companyService.updateCompany( companyId, requestDto));
     }
 
     // 내가 회사 탈퇴
@@ -62,26 +61,26 @@ public class CompanyController {
 
     @PostMapping("/companies/courseProvides")
     public ResponseEntity<MessageResponseDto> CreateCourseProvide(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId,
             @RequestParam Long courseId,
             @RequestBody CreateCourseProvideRequestDto requestDto
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userDetails,courseId,requestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.createCourseProvider(userId,courseId,requestDto));
     }
 
     @GetMapping("/companies/courseProvides/list")
     public ResponseEntity<List<CourseProvideListResponseDto>> getCourseProvideList(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam Long userId
     ) {
-        return ResponseEntity.ok(companyService.getCourseProvideList(userDetails));
+        return ResponseEntity.ok(companyService.getCourseProvideList(userId));
     }
 
     @PostMapping("/companies/courseProvides/employees")
     public ResponseEntity<MessageResponseDto> submitEmployeeListForEnrollment(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId,
             @RequestBody submitEmployeeListRequestDto requestDto
     ) {
-        return ResponseEntity.ok(companyService.submitEmployeeListForEnrollment(userDetails,requestDto));
+        return ResponseEntity.ok(companyService.submitEmployeeListForEnrollment(userId,requestDto));
     }
 
 }
