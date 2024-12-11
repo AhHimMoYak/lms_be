@@ -71,9 +71,4 @@ public class CourseController {
     public ResponseEntity<CourseIdDto> getCourseIdByCourseProvideId(@PathVariable Long courseProvideId) {
         return ResponseEntity.ok(courseService.getCourseId(courseProvideId));
     }
-
-    @GetMapping("/enrollments/{courseProvideId}")
-    public ResponseEntity<List<ContentsHistoryResponseDto>> getContentsHistory(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long courseProvideId){
-        return ResponseEntity.ok(courseService.getContentHistory(userDetails,courseProvideId));
-    }
 }

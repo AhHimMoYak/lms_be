@@ -221,9 +221,5 @@ public class CourseServiceImpl implements CourseService {
         return CourseIdDto.valueOf(courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "코스제공 찾을수 없음")).getCourse().getId());
     }
 
-    @Override
-    public List<ContentsHistoryResponseDto> getContentHistory(UserDetailsImpl userDetails,Long courseProvideId) {
-        List<ContentsHistory> contentsHistories = contentsHistoryRepository.findContentsHistoriesByEnrollment_UserAndEnrollment_CourseProvide_Id(userDetails.getUser(), courseProvideId);
-        return contentsHistories.stream().map(ContentsHistoryResponseDto::from).toList();
-    }
+
 }

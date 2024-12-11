@@ -4,6 +4,7 @@ import click.ahimmoyak.companyservice.auth.repository.UserRepository;
 import click.ahimmoyak.companyservice.auth.config.handler.CustomAccessDeniedHandler;
 import click.ahimmoyak.companyservice.auth.jwt.JwtAuthFilter;
 import click.ahimmoyak.companyservice.auth.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

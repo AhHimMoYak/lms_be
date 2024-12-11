@@ -22,6 +22,4 @@ public interface CourseService {
      MessageResponseDto createContentHistory(UserDetailsImpl userDetails, String contentId);
      List<CourseListResponseDto> getCourseList(Long userId);
      CourseIdDto getCourseId(Long courseProvideId);
-     List<CourseListResponseDto> getCourseList(UserDetailsImpl userDetails);
-     List<ContentsHistoryResponseDto> getContentHistory(UserDetailsImpl userDetails,Long courseProvideId);
 }
