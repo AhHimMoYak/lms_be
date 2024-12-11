@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CourseService {
      CourseDetailResponseDto getDetail(long id);
-     CourseDetailResponseDto getDetail(long id, UserDetails userDetails);
+     CourseDetailResponseDto getDetail(Long userId,Long courseProvideId);
      List<CourseListResponseDto> getAllList();
      Page<CourseListResponseDto> getAllList(Pageable pageable);
      List<CourseListResponseDto> getAllList(CourseCategory category);
@@ -20,6 +20,8 @@ public interface CourseService {
      List<EmployeeCourseListResponseDto> getAllList(String userName);
      ContentDetailResponseDto getContentDetail(String contentId);
      MessageResponseDto createContentHistory(UserDetailsImpl userDetails, String contentId);
+     List<CourseListResponseDto> getCourseList(Long userId);
+     CourseIdDto getCourseId(Long courseProvideId);
      List<CourseListResponseDto> getCourseList(UserDetailsImpl userDetails);
      List<ContentsHistoryResponseDto> getContentHistory(UserDetailsImpl userDetails,Long courseProvideId);
 }

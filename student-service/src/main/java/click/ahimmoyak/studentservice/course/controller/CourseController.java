@@ -58,13 +58,18 @@ public class CourseController {
     }
 
     @GetMapping("/{courseProvideId}/detail") // courseProvideId로 수강된 코스 보기
-    public ResponseEntity<CourseDetailResponseDto> getDetail(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long courseProvideId) {
-        return ResponseEntity.ok(courseService.getDetail(courseProvideId, userDetails));
+    public ResponseEntity<CourseDetailResponseDto> getDetail(@RequestParam Long userId, @PathVariable Long courseProvideId) {
+        return ResponseEntity.ok(courseService.getDetail(userId, courseProvideId));
     }
 
     @GetMapping("/courseList") // 수강생의 courseList 조회
-    public ResponseEntity<List<CourseListResponseDto>> getAllCourseList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(courseService.getCourseList(userDetails));
+    public ResponseEntity<List<CourseListResponseDto>> getAllCourseList(@RequestParam Long userId) {
+        return ResponseEntity.ok(courseService.getCourseList(userId));
+    }
+
+    @GetMapping("/{courseProvideId}/courseId")
+    public ResponseEntity<CourseIdDto> getCourseIdByCourseProvideId(@PathVariable Long courseProvideId) {
+        return ResponseEntity.ok(courseService.getCourseId(courseProvideId));
     }
 
     @GetMapping("/enrollments/{courseProvideId}")
