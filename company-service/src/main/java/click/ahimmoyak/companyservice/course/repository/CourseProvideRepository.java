@@ -14,5 +14,8 @@ public interface CourseProvideRepository extends JpaRepository<CourseProvide, Lo
     List<CourseProvide> findAllByBeginDateAndState(LocalDate beginDate, CourseProvideState state);
 
     List<CourseProvide> findAllByEndDateAndState(LocalDate endDate, CourseProvideState state);
+
+    int countByCompany_IdAndState(Long id, CourseProvideState state);
+
 }
 

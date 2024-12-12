@@ -8,13 +8,12 @@ import java.time.LocalDate;
 
 @Builder
 public record EnrollmentInfoDto(
-        String username,
-        EnrollmentState state
+        Long enrollmentId,
+        String username
 ) {
     public static EnrollmentInfoDto from(Enrollment enrollment) {
         return EnrollmentInfoDto.builder()
                 .username(enrollment.getUser().getUsername())
-                .state(enrollment.getState())
                 .build();
     }
 }

@@ -32,7 +32,6 @@ Resources:
                   - application-autoscaling:*
                   - ecs:UpdateService
                 Resource: "*"
-
   TaskRole:
     Type: AWS::IAM::Role
     Properties:

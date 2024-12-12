@@ -19,10 +19,10 @@ public class InstitutionController {
 
     @PostMapping("/visitor/institutions")
     public ResponseEntity<MessageResponseDto> createInstitution(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long userId,
             @RequestBody CreateInstitutionRequestDto requestDto
     ) {
-        return ResponseEntity.ok(institutionService.createInstitution(userDetails, requestDto));
+        return ResponseEntity.ok(institutionService.createInstitution(userId, requestDto));
     }
 
     @GetMapping("/institutions/details")

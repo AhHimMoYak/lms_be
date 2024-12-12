@@ -7,6 +7,7 @@ import click.ahimmoyak.companyservice.institution.entity.Institution;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -36,6 +37,9 @@ public class Course extends Timestamped {
     private String instructor;
 
     @Column
+    private int period;
+
+    @Column
     @Enumerated(value = EnumType.STRING)
     private CourseState state;
 
@@ -50,6 +54,11 @@ public class Course extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "image_id")
     private Image image;
+
+    @Setter
+    @Builder.Default
+    @OneToMany(mappedBy = "course", orphanRemoval = true)
+    private List<CourseProvide> courseProvides = new ArrayList<>();
 
     public Course setState(CourseState state) {
         this.state = state;

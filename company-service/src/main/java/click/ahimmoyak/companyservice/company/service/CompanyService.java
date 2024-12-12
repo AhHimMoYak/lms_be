@@ -8,19 +8,21 @@ import java.util.List;
 
 public interface CompanyService {
 
-    CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails);
+    CompanyDetailResponseDto getCompany(Long userId);
 
-    MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto);
+    MessageResponseDto updateCompany( Long companyId, UpdateCompanyRequestDto requestDto);
 
-    MessageResponseDto disconnectCompany(UserDetailsImpl userDetails);
+    MessageResponseDto disconnectCompany(Long userId);
 
-    MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username);
+    MessageResponseDto deleteAffiliation( String username);
 
-//    List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails);
+    List<GetEmployeeListResponseDto> getEmployeeList(Long userId);
 
-    MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto);
+    MessageResponseDto createCourseProvider(Long userId, Long courseId, CreateCourseProvideRequestDto requestDto);
 
-    List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails);
+    List<CourseProvideListResponseDto> getCourseProvideList(Long userId);
 
-    MessageResponseDto submitEmployeeListForEnrollment (UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto);
+    MessageResponseDto submitEmployeeListForEnrollment (Long userId, submitEmployeeListRequestDto requestDto);
+
+    CompanyDashboardResponseDto companyDashboard(Long userId);
 }

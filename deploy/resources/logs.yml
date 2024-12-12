@@ -2,5 +2,5 @@ Resources:
   MyLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /ecs/KHJ-task
+      LogGroupName: /ecs/LG-task
       RetentionInDays: 7

@@ -15,10 +15,12 @@ public record CourseProvideListResponseDto(
         String title,
         String companyName,
         String institutionName,
+        LocalDate creationDate,
         LocalDate beginDate,
         LocalDate endDate,
         CourseProvideState state,
         String instructor,
+        String category,
         long attendeeCount,
         long deposit
 ) {
@@ -29,12 +31,14 @@ public record CourseProvideListResponseDto(
                 .title(courseProvide.getCourse().getTitle())
                 .companyName(company.getName())
                 .institutionName(institution.getName())
+                .creationDate(courseProvide.getCreatedAt().toLocalDate())
                 .beginDate(courseProvide.getBeginDate())
                 .endDate(courseProvide.getEndDate())
                 .state(courseProvide.getState())
                 .attendeeCount(courseProvide.getAttendeeCount())
                 .deposit(courseProvide.getDeposit())
                 .instructor(courseProvide.getCourse().getInstructor())
+                .category(courseProvide.getCourse().getCategory().getTitle())
                 .build();
     }
 }

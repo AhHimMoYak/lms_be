@@ -5,6 +5,7 @@ export const handler = async (event) => {
     try {
         const { userName } = event.pathParameters;
         const decodedUserName = decodeURIComponent(userName);
+        const username = event.requestContext.authorizer.username;
         const limit = event.queryStringParameters?.limit
             ? parseInt(event.queryStringParameters.limit)
             : 10;
@@ -18,7 +19,7 @@ export const handler = async (event) => {
             IndexName: 'UserIndex',
             KeyConditionExpression: 'userName = :userName',
             ExpressionAttributeValues: {
-                ':userName': decodedUserName
+                ':userName': username
             },
             Limit: limit,
             ScanIndexForward: false,
@@ -29,8 +30,10 @@ export const handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': process.env.ACCESS_CONTROL_ALLOW_ORIGIN_1,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
             },
             body: JSON.stringify({
                 items: response.Items || [],
@@ -42,8 +45,10 @@ export const handler = async (event) => {
         return {
             statusCode: 500,
             headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': process.env.ACCESS_CONTROL_ALLOW_ORIGIN_1,
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
             },
             body: JSON.stringify({ message: '작성자별 게시글 조회에 실패했습니다.' })
         };

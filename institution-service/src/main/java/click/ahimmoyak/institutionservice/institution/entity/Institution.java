@@ -43,6 +43,15 @@ public class Institution extends Timestamped {
     @Column(length = 20)
     private String phone;
 
+    @Column
+    private String description;
+
+    @Column
+    private String address;
+
+    @Column
+    private String webSite;
+
     @Builder.Default
     @OneToMany(mappedBy = "institution")
     private List<Manager> managers = new ArrayList<>();
@@ -52,23 +61,23 @@ public class Institution extends Timestamped {
     private List<CourseProvide> courseProvide = new ArrayList<>();
 
     public Institution patch(UpdateInstitutionRequestDto requestDTO) {
-        if (requestDTO.name() != null) {
-            this.name = requestDTO.name();
+        if (requestDTO.InstitutionName() != null) {
+            this.name = requestDTO.InstitutionName();
         }
-        if (requestDTO.ownerName() != null) {
-            this.ownerName = requestDTO.ownerName();
-        }
-        if (requestDTO.businessNumber() != null) {
-            this.ownerName = requestDTO.businessNumber();
-        }
-        if (requestDTO.certifiedNumber() != null) {
-            this.ownerName = requestDTO.certifiedNumber();
+        if (requestDTO.address() != null) {
+            this.address = requestDTO.address();
         }
         if (requestDTO.email() != null) {
             this.email = requestDTO.email();
         }
         if (requestDTO.phone() != null) {
             this.phone = requestDTO.phone();
+        }
+        if (requestDTO.webSite() != null) {
+            this.webSite = requestDTO.webSite();
+        }
+        if (requestDTO.description() != null) {
+            this.description = requestDTO.description();
         }
         return this;
     }
