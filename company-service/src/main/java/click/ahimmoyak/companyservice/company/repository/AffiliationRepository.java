@@ -10,4 +10,7 @@ public interface AffiliationRepository extends JpaRepository<Affiliation, Long> 
 
     Optional<Affiliation> findByUserId(Long userId);
 
+    List<Affiliation> findByCompany_Id(Long companyId);
+
+    int countByCompany_Id(Long id);
 }

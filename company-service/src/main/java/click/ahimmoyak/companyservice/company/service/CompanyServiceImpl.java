@@ -1,7 +1,5 @@
 package click.ahimmoyak.companyservice.company.service;
 
-import click.ahimmoyak.companyservice.auth.common.UserRole;
-import click.ahimmoyak.companyservice.auth.config.security.UserDetailsImpl;
 import click.ahimmoyak.companyservice.auth.entity.User;
 import click.ahimmoyak.companyservice.auth.repository.UserRepository;
 import click.ahimmoyak.companyservice.auth.service.UserService;
@@ -30,6 +28,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static click.ahimmoyak.companyservice.course.common.CourseProvideState.ONGOING;
+import static click.ahimmoyak.companyservice.course.common.CourseProvideState.PENDING;
+
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompanyDetailResponseDto getCompany(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public CompanyDetailResponseDto getCompany(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
         Company company = companyRepository.findById(user.getAffiliation().getCompany().getId()).orElseThrow(
                 ()-> new ApiException(HttpStatus.NOT_FOUND,"유저의 회사를 찾을수 없습니다."));
 
@@ -55,13 +56,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto updateCompany(UserDetailsImpl userDetails, String name, UpdateCompanyRequestDto requestDto) {
-        User user = userService.getAuth(userDetails);
-        Company company = companyRepository.findByName(name).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
-        Company usercompany = user.getAffiliation().getCompany();
-        if (company != usercompany) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
-        }
+    public MessageResponseDto updateCompany(Long companyId, UpdateCompanyRequestDto requestDto) {
+        Company company = companyRepository.findById(companyId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "해당 회사를 찾을 수 없습니다."));
         company.patch(requestDto);
         companyRepository.save(company);
 
@@ -72,8 +68,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto disconnectCompany(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public MessageResponseDto disconnectCompany(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
 
         if (user.getAffiliation() == null) {
             throw new ApiException(HttpStatus.CONFLICT, "Affiliation 이 존재하지 않습니다.");
@@ -96,8 +92,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto deleteAffiliation(UserDetailsImpl userDetails, String username) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto deleteAffiliation(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 사원이 존재하지 않습니다.")
         );
@@ -113,11 +108,6 @@ public class CompanyServiceImpl implements CompanyService {
             }
         }
 
-        if (supervisor.getAffiliation().getCompany() != user.getAffiliation().getCompany()) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "해당 회사의 SUPERVISOR 가 아닙니다.");
-        }
-
-
         affiliationRepository.delete(affiliation);
 
         return MessageResponseDto.builder()
@@ -125,36 +115,36 @@ public class CompanyServiceImpl implements CompanyService {
                 .build();
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<GetEmployeeListResponseDto> getEmployeeList(UserDetailsImpl userDetails) {
-//        User supervisor = userService.getAuth(userDetails);
-//        Long companyId = supervisor.getAffiliation().getCompany().getId();
-//
-//        if(companyId == null) {
-//            throw new ApiException(HttpStatus.NOT_FOUND, "해당 supervisor 의 companyId가 존재하지 않습니다");
-//        }
-//
-//        List<Affiliation> employees = affiliationRepository.findByCompany_Id(companyId);
-//
-//        return employees.stream()
-//                .map(GetEmployeeListResponseDto::from)
-//                .toList();
-//    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetEmployeeListResponseDto> getEmployeeList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Long companyId = user.getAffiliation().getCompany().getId();
+
+        if(companyId == null) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "해당 user 의 companyId가 존재하지 않습니다");
+        }
+
+        List<Affiliation> employees = affiliationRepository.findByCompany_Id(companyId);
+
+        return employees.stream()
+                .map(GetEmployeeListResponseDto::from)
+                .toList();
+    }
 
     @Override
     @Transactional
-    public MessageResponseDto createCourseProvider(UserDetailsImpl userDetails, Long courseId, CreateCourseProvideRequestDto requestDto) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto createCourseProvider(Long userId, Long courseId, CreateCourseProvideRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow();
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new ApiException(HttpStatus.NOT_FOUND, "해당 Course 가 존재하지 않습니다.")
         );
 
         CourseProvide courseProvide = CourseProvide.builder()
-                .company(supervisor.getAffiliation().getCompany())
+                .company(user.getAffiliation().getCompany())
                 .beginDate(requestDto.beginDate())
                 .endDate(requestDto.endDate())
-                .state(CourseProvideState.PENDING)
+                .state(PENDING)
                 .attendeeCount(requestDto.attendeeCount())
                 .deposit(requestDto.deposit())
                 .institution(course.getInstitution())
@@ -171,8 +161,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CourseProvideListResponseDto> getCourseProvideList(UserDetailsImpl userDetails) {
-        User user = userService.getAuth(userDetails);
+    public List<CourseProvideListResponseDto> getCourseProvideList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
         List<CourseProvide> courseProvideList = courseProvideRepository.findByCompany_Id(user.getAffiliation().getCompany().getId());
 
 
@@ -183,8 +173,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public MessageResponseDto submitEmployeeListForEnrollment(UserDetailsImpl userDetails, submitEmployeeListRequestDto requestDto) {
-        User supervisor = userService.getAuth(userDetails);
+    public MessageResponseDto submitEmployeeListForEnrollment(Long userId, submitEmployeeListRequestDto requestDto) {
 
         List<User> userList = userRepository.findAllByUsernameIn(requestDto.employeeUserName());
 
@@ -222,6 +211,24 @@ public class CompanyServiceImpl implements CompanyService {
 
         return MessageResponseDto.builder()
                 .message("선택한 사원들을 교육기관에 넘기기 완료")
+                .build();
+    }
+
+    @Override
+    public CompanyDashboardResponseDto companyDashboard(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Company company = user.getAffiliation().getCompany();
+
+        int employeeCount = affiliationRepository.countByCompany_Id(company.getId());
+
+        int ongoingCount = courseProvideRepository.countByCompany_IdAndState(company.getId(), ONGOING);
+        int pendingCount = courseProvideRepository.countByCompany_IdAndState(company.getId(), PENDING);
+
+
+        return CompanyDashboardResponseDto.builder()
+                .employeeCount(employeeCount)
+                .ongoingCount(ongoingCount)
+                .pendingCount(pendingCount)
                 .build();
     }
 
