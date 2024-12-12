@@ -4,10 +4,10 @@ import click.ahimmoyak.companyservice.auth.repository.UserRepository;
 import click.ahimmoyak.companyservice.auth.config.handler.CustomAccessDeniedHandler;
 import click.ahimmoyak.companyservice.auth.jwt.JwtAuthFilter;
 import click.ahimmoyak.companyservice.auth.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -65,7 +65,6 @@ public class WebSecurityConfig {
                                 "https://company.ahimmoyak.click",
                                 "https://lms.ahimmoyak.click"
                         ));
-//                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
@@ -78,7 +77,6 @@ public class WebSecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("api/v1/manager/test").hasRole("MANAGER")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exceptionHandling ->
@@ -101,7 +99,7 @@ public class WebSecurityConfig {
                 "https://lms.local.ahimmoyak.click"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true); // 인증 정보 포함
+        configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("refresh");
