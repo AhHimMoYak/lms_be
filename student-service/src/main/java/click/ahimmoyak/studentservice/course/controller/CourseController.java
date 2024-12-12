@@ -71,5 +71,4 @@ public class CourseController {
     public ResponseEntity<CourseIdDto> getCourseIdByCourseProvideId(@PathVariable Long courseProvideId) {
         return ResponseEntity.ok(courseService.getCourseId(courseProvideId));
     }
-
 }

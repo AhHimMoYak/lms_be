@@ -220,4 +220,6 @@ public class CourseServiceImpl implements CourseService {
     public CourseIdDto getCourseId(Long courseProvideId) {
         return CourseIdDto.valueOf(courseProvideRepository.findById(courseProvideId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "코스제공 찾을수 없음")).getCourse().getId());
     }
+
+
 }
