@@ -86,14 +86,14 @@ functions:
               - X-Requested-With
             allowCredentials: true
 
-  get-user-boards:
+  get-student-boards:
     handler: lambda/board/get-user-boards.handler
     dependsOn:
       - CourseBoardTable
       - CommentsTable
     events:
       - http:
-          path: /v1/user-name/{userName}
+          path: /v1/student/{userName}
           method: GET
           cors:
             origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
