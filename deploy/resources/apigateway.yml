@@ -1,0 +1,265 @@
+Resources:
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: AG-RestApi
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiGatewayResource:
+    Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: "{proxy+}"
+
+  ApiGatewayMethodOptions:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: OPTIONS
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+  ApiGatewayMethodGet:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: GET
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: GET
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+  ApiGatewayMethodPost:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: POST
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+  ApiGatewayMethodPut:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: PUT
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: PUT
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+  ApiGatewayMethodDelete:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ApiGatewayResource
+      HttpMethod: DELETE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref AuthorizerJWTApiGateway
+      Integration:
+        IntegrationHttpMethod: DELETE
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethodOptions
+      - ApiGatewayMethodGet
+      - ApiGatewayMethodPost
+      - ApiGatewayMethodPut
+      - ApiGatewayMethodDelete
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      DeploymentId: !Ref ApiGatewayDeployment
+      StageName: dev
+
+  ApiGatewayRestApi1:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: AG-RestApi-1
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGatewayResource1:
+    Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi1
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi1
+      ParentId: !GetAtt ApiGatewayRestApi1.RootResourceId
+      PathPart: "{proxy+}"
+  ApiGatewayMethod1:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi1
+      ResourceId: !Ref ApiGatewayResource1
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+  ApiGatewayDeployment1:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod1
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi1
+  ApiGatewayStage1:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi1
+      DeploymentId: !Ref ApiGatewayDeployment1
+      StageName: dev
+
+  ApiGatewayRestApi2:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: AG-RestApi-2
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGatewayResource2:
+    Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi2
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      ParentId: !GetAtt ApiGatewayRestApi2.RootResourceId
+      PathPart: "{proxy+}"
+  ApiGatewayMethod2:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      ResourceId: !Ref ApiGatewayResource2
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+  ApiGatewayDeployment2:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod2
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+  ApiGatewayStage2:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi2
+      DeploymentId: !Ref ApiGatewayDeployment2
+      StageName: dev
+
+  ApiGatewayRestApi3:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: AG-RestApi-3
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  ApiGatewayResource3:
+    Type: AWS::ApiGateway::Resource
+    DependsOn: ApiGatewayRestApi3
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      ParentId: !GetAtt ApiGatewayRestApi3.RootResourceId
+      PathPart: "{proxy+}"
+  ApiGatewayMethod3:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      ResourceId: !Ref ApiGatewayResource3
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: ANY
+        Type: HTTP_PROXY
+        Uri: !Sub http://${MyALB.DNSName}/{proxy}
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+      RequestParameters:
+        method.request.path.proxy: true
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+  ApiGatewayDeployment3:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiGatewayMethod3
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+  ApiGatewayStage3:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi3
+      DeploymentId: !Ref ApiGatewayDeployment3
+      StageName: dev

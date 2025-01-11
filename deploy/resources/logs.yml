@@ -1,0 +1,6 @@
+Resources:
+  MyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/LG-task
+      RetentionInDays: 7

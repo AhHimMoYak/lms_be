@@ -1,0 +1,41 @@
+service: ECS-Ahimmoyak
+provider:
+  name: aws
+  region: ap-northeast-2
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ecs:*
+            - ec2:*
+            - iam:PassRole
+            - elasticloadbalancing:*
+            - logs:*
+            - cloudwatch:*
+          Resource: "*"
+  environment:
+    ACCESS_CONTROL_ALLOW_ORIGIN: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+    ACCESS_CONTROL_ALLOW_ORIGIN_1: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+    ACCESS_CONTROL_ALLOW_ORIGIN_2: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_2}
+    ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+resources:
+  - ${file(resources/vpc.yml)}
+  - ${file(resources/security.yml)}
+  - ${file(resources/alb.yml)}
+  - ${file(resources/ecs.yml)}
+  - ${file(resources/apigateway.yml)}
+  - ${file(resources/logs.yml)}
+  - ${file(resources/iam.yml)}
+  - ${file(resources/authorizer.yml)}
+plugins:
+  - serverless-domain-manager
+  - serverless-plugin-dotenv
+custom:
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "ecs"
+    stage: dev
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateArn: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"
