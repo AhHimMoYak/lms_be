@@ -1,75 +1,22 @@
-# 기업대상 직무교육 LMS, CMS 플랫폼
+# 기업대상 직무교육 LMS, CMS 플랫폼 Backend
 
-메가존클라우드 교육과정에서 배운 클라우드네이티브 기술을 활용하여 AWS 기반으로 기업 대상 직무교육 LMS, CMS 플랫폼을 구현하는 것을 목표로 하였습니다.
+### 🎯 프로젝트 목표
 
-<details>
-  <summary>
-    ${\normalsize{\color{#6580DD}클라우드\ 네이티브\ 기술의\ 이점}}$
-  </summary>
-  <br />
-  
-  클라우드 네이티브 기술을 활용하면 기업의 교육 플랫폼이 보다 효율적이고 확장 가능한 구조를 가질 수 있습니다.
-  
-  <br />
+> - **`SpringBoot`** 애플리케이션을 **`ECS`** 로 배포하고, 기능을 하나씩 **`serverless`** 환경으로 분리하여 **`이벤트 기반의 MSA`** 실현
+> - MSA의 코드, 인프라 관리가 어려운 단점을 보완하기 위해 **“One Time One Set(한번에 세팅)”** 을 위한 **`IaC(Infrastructure as Code)`** 작성
+> - 전문 개발인력을 두기 어려운 ‘훈련기관’을 고려하여 ‘비개발’인력도 손쉽게 교육 과정을 구성
+> - ‘집체 교육’을 대신하는 수강생들의 집중력 향상을 위한, 실시간 강의와 실시간 퀴즈 도입
+> (타사 서비스와의 차별점)
 
-  >
-  > <br />
-  > 
-  > - **애플리케이션의 효율적인 확장** <br /><br />
-  > 클라우드 환경에서 애플리케이션을 필요에 맞게 자동으로 확장하거나 축소할 수 있어, 수요 변화에 빠르게 대응할 수 있습니다.
-  >
-  > <br />
-  >
+<br />
 
-  >
-  > <br />
-  > 
-  > - **탄력적인 자원 관리** <br /><br />
-  > 클라우드 인프라를 통해 리소스를 필요에 따라 최적화하여 운영할 수 있으며, 비용 효율적인 자원 관리를 할 수 있습니다.
-  >
-  > <br />
-  >
+> [Frontend repository 링크](https://github.com/AhHimMoYak/lms_fe)
 
-  >
-  > <br />
-  > 
-  > - **고가용성 및 내구성** <br /><br />
-  > 클라우드 환경에서는 여러 지역에 분산된 인프라를 활용할 수 있어, 시스템의 고가용성 및 장애 복구 능력이 향상됩니다.
-  >
-  > <br />
-  >
+<br />
 
-  >
-  > <br />
-  > 
-  > - **CI/CD (지속적 통합/지속적 배포)** <br /><br />
-  > 클라우드 네이티브 아키텍처는 빠른 개발 및 배포 주기를 지원하므로, 교육 플랫폼의 기능 업데이트나 개선 작업을 더 신속하게 수행할 수 있습니다.
-  >
-  > <br />
-  >
+## 🚩 프로젝트 개요
 
-  >
-  > <br />
-  > 
-  > - **서비스 기반 아키텍처 (Microservices)** <br /><br />
-  > 애플리케이션을 독립적인 서비스로 나누어 관리하면, 각 서비스가 독립적으로 배포되고 확장될 수 있어, 플랫폼의 유지 보수와 기능 개선이 용이해집니다.
-  >
-  > <br />
-  >
-
-  >
-  > <br />
-  > 
-  > - **자동화 및 DevOps** <br /><br />
-  > 클라우드 네이티브 기술은 DevOps와의 통합을 통해 자동화된 배포, 모니터링, 관리 시스템을 구축할 수 있어 운영의 효율성을 높일 수 있습니다.
-  >
-  > <br />
-  > 
-</details>
-
-## 프로젝트 개요
-
-### 프로젝트 간략 소개
+### 📌 프로젝트 간략 소개
 
 - **LMS & CMS 솔루션**:  
   기업을 대상으로 하는 학습 관리 시스템(LMS)과 콘텐츠 관리 시스템(CMS)을 통합하여 제공합니다.
@@ -80,24 +27,53 @@
 - **집중력 강화 솔루션**:  
   원격 훈련 환경에서 참여를 유도하고 학습자의 집중력을 높일 수 있는 다양한 기능과 도구를 지원합니다.
 
-### 개발 기간
+<br />
+
+### 🎬 프로젝트 시연 영상
+
+> [기업대상 직무교육 LMS, CMS 플랫폼 시연영상 링크](https://youtu.be/5h6VI5sSYKE)
+
+<br />
+
+### 🗓️ 개발 기간
  2024.10.16 ~ 2024.12.12 (1개월 27일)
 
-### 팀원 소개
-Megazone Cloud Java 기반 SaaS개발자 양성 과정 2조
+<br />
 
-<img width="1420" alt="image" src="https://github.com/user-attachments/assets/baa167f4-6ad2-4738-8784-d09e289b2dba" />
+### 👪 팀원 소개
 
-<img width="1420" alt="image" src="https://github.com/user-attachments/assets/a4b12f67-53fd-4b63-9384-6a2e5cfef499" />
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}Megazone\ Cloud\ Java\ 기반\ SaaS개발자\ 양성\ 과정\ 2조}}$
+  </summary>
 
-## 인프라 아키텍처
-![image](https://github.com/user-attachments/assets/d9dd639b-4f01-4322-98a6-0637f63d50ba)
+<img width="1000" alt="image" src="https://github.com/user-attachments/assets/baa167f4-6ad2-4738-8784-d09e289b2dba" />
+
+<img width="1000" alt="image" src="https://github.com/user-attachments/assets/a4b12f67-53fd-4b63-9384-6a2e5cfef499" />
+
+</details>
+
+<br />
+
+## 🛠️ 인프라 아키텍처
+
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}인프라\ 아키텍처}}$
+  </summary>
+  
+  ![image](https://github.com/user-attachments/assets/d9dd639b-4f01-4322-98a6-0637f63d50ba)
 
 우리 프로젝트는 **"One Time One Set(한 번에 세팅)"** 을 목표로 하였습니다. 이를 실현하기 위하여 **IaC(Infrastructure as Code)** 를 기반으로하는 **`Serverless Framework`** 를 활용해 인프라를 효율적으로 구성하였습니다.
 
 **`Serverless Framework`** 로 부터 작성한 **`IaC`** 는 **`AWS Cloud Formation`** 의 스택으로 단계적으로 인프라가 구성되게 됩니다.
 
  처음에는 **`SpringBoot`** 로 시작하였지만, **MSA** 를 실현하기 위해 **`이벤트기반 아키텍처(EDA, Event - driven Architecture)`** 를 선택하였습니다.
+ 
+ <br />
+ 
+</details>
+
 
  <details>
   <summary>
@@ -313,7 +289,30 @@ custom:
 
  </details>
 
- ## 기술 스택 & Tools
+ <br />
+
+## 💡 서비스 아키텍처
+
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}서비스\ 아키텍처}}$
+  </summary>
+
+![image](https://github.com/user-attachments/assets/04beb06c-81e1-49ae-bc8d-5ddce4b22a88)
+
+**`사용자 관리 서비스`** , **`게시판 서비스`** , **`데이터 시각화`** , **`미디어 서비스`** , **`콘텐츠 업로드`** 등은 **Serverless 환경**
+
+으로 분리하였습니다.
+
+다만, **`훈련기관`** , **`회사`** , **`사원(훈련생)서비스`** 와 같이 엔터티 간 강한 연관관계로 인해 **즉시 분리하기 어려운 기능** 은
+
+**`ECS Fargate`** 를 활용해 배포하였으며, 이를 통해 **One Time One Set** 목표를 실현할 수 있었습니다.
+
+</details>
+
+<br />
+
+ ## ⚙️ 기술 스택 & Tools
 
 **Language**
 <div align="start">
@@ -373,7 +372,7 @@ custom:
 </div>
 <br />
 
-## 기술적 의사결정
+## 🤝 기술적 의사결정
 
 | **주요 선택 기술** | **선택 이유 및 근거** |
 | --- | --- |
@@ -382,15 +381,20 @@ custom:
 | **AWS S3** | <ul> <li> **기술적 이유**: S3는 이론상 무제한에 가까운 저장 용량을 제공하므로, 서비스의 성장에 따라 유연하게 확장할 수 있습니다. </li> <li> **업로드 효율성**: 사전 서명된 URL(Presigned URL)을 활용하면 클라이언트가 서버를 거치지 않고 직접 파일을 업로드할 수 있어, 서버 부하를 줄이는 데 유리합니다. </li> <li> **비용적 이점**: S3는 서울 리전 기준으로 첫 50TB까지 1GB당 33원으로 제공되어, 비용 면에서도 매우 효율적입니다. </li> </ul> |
 | **AWS IVS** | <ul> <li> **기술적 이유**: 실시간 강의와 퀴즈를 구현하기 위해 다양한 기술을 검토한 결과, WEBRTC와 RTMP 방식을 고려했습니다. </li> <li> **실시간 강의 구현**: ‘집체 교육’을 대체하는 실시간 강의를 목표로 했으며, 이를 위해 강사와 수강생 간의 ‘1:n’ 관계를 바탕으로 참여도와 집중도를 유도하고자 했습니다. </li> <li> **비용적 이점**: 실시간 스트리밍에 최적화된 AWS IVS를 활용하여, 높은 품질의 실시간 강의 환경을 제공할 수 있다고 판단했습니다. </li> </ul> |
 
+<br />
 
-## 서비스 핵심기능
+## 📢 서비스 핵심기능
 
-## Endpoint & API 설계 명세
+<br />
+
+## 📃 Endpoint & API 설계 명세
 
 <details>
   <summary>
     $\rm{\normalsize{\color{#6580DD}Endpoint}}$
   </summary>
+
+<br />
 
 | No. | 기능 | Endpoint | User |
 | --- | --- | --- | --- |
@@ -463,9 +467,11 @@ custom:
 
 </details>
 
-<a href="https://docs.google.com/spreadsheets/d/1FbEZzaVYbarLD038AXRxwZf7xKk-NhfY8tzmMPsJt2Y/edit?gid=1512902059#gid=1512902059">API 설계 명세 링크</a>
+> <a href="https://docs.google.com/spreadsheets/d/1FbEZzaVYbarLD038AXRxwZf7xKk-NhfY8tzmMPsJt2Y/edit?gid=1512902059#gid=1512902059">API 설계 명세 링크</a>
 
-## ERD & DynamoDB 테이블 명세
+<br />
+
+## 📃 ERD & DynamoDB 테이블 명세
 <details>
   <summary>
       $\rm{\normalsize{\color{#6580DD}MySQL\ Schema}}$
@@ -694,11 +700,78 @@ ALTER TABLE course_provide
     
   </details>
 
-<a href="https://dbdiagram.io/d/ahmy-devton-6719cb9997a66db9a314d728">ERD 링크(db Diagram.io)</a>
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}DynamoDb 테이블 명세}}$
+  </summary>
+
+<br />
+
+### `CourseBoardTable`
+
+| **필드명** | **키** | **설명** |
+| --- | --- | --- |
+| **id** | **PK (Primary Key)**   | 각 게시물의 고유 식별자. 테이블의 기본 키로 사용.         |
+| **createdAt** | **SK (GSI)**             | 게시물이 생성된 날짜와 시간. 보조 인덱스 정렬 키로 사용됨.  |
+| **userName** | **GSI PK (UserIndex)** | 사용자 이름. UserIndex의 파티션 키로 사용.             |
+| **courseId** | **GSI PK (CourseIndex)** | 강의 ID. CourseIndex의 파티션 키로 사용.               |
 
 
+#### 글로벌 보조 인덱스 (Global Secondary Index, GSI)
 
-## 피드백
+| **인덱스 이름** | **PK (파티션 키)** | **SK (정렬 키)** | **Projection** | **설명** |
+| --- | --- | --- | --- | --- |
+| **UserIndex** | `userName` | `createdAt` | ALL (모든 컬럼 포함) | 사용자 이름으로 데이터를 조회하고 생성일로 정렬. |
+| **CourseIndex** | `courseId` | `createdAt` | ALL (모든 컬럼 포함) | 강의 ID로 데이터를 조회하고 생성일로 정렬.   |
+
+---
+
+### `CommentsTable`
+
+| **필드명** | **키** | **설명** |
+| --- | --- | --- |
+| **id** | **PK (Primary Key)** | 각 댓글의 고유 식별자. 테이블의 기본 키로 사용됩니다. |
+| **boardId** | **GSI PK (BoardIdIndex)** | 게시물 ID. BoardIdIndex의 파티션 키로 사용됩니다. |
+| **createdAt** | **SK (GSI)** | 댓글이 작성된 날짜와 시간. 보조 인덱스의 정렬 키로 사용됩니다. |
+
+
+#### 글로벌 보조 인덱스 (Global Secondary Index, GSI)
+
+| **인덱스 이름**  | **PK (파티션 키)** | **SK (정렬 키)** | **Projection** | **설명** |
+| --- | --- | --- | --- | --- |
+| **BoardIdIndex** | `boardId` | `createdAt` | ALL (모든 컬럼 포함) | 게시물 ID로 댓글을 조회하고 생성일로 정렬. |
+| **IdIndex** | `id` | `createdAt` | ALL (모든 컬럼 포함) | 댓글 ID로 데이터를 조회하고 생성일로 정렬. |
+
+
+---
+
+### `LiveTable`
+
+| **필드명** | **키** | **설명** |
+| --- | --- | --- |
+| **id** | **PK (Primary Key)** | 각 항목의 고유 식별자. 테이블의 기본 키로 사용. |
+| **courseProvideId** | **GSI PK (CourseProvideIndex)** | 강의 제공 ID. CourseProvideIndex의 파티션 키로 사용. |
+| **startTime** | **GSI SK (StartTimeIndex)** | 항목의 시작 시간. StartTimeIndex의 정렬 키로 사용. |
+| **arn** | **GSI PK (ArnIndex)** | ARN (Amazon Resource Name). ArnIndex의 파티션 키로 사용. |
+
+
+#### 글로벌 보조 인덱스 (Global Secondary Index, GSI)
+
+| **인덱스 이름** | **PK (파티션 키)** | **SK (정렬 키)** | **Projection** | **설명** |
+| --- | --- | --- | --- | --- |
+| **CourseProvideIndex** | `courseProvideId` | - | ALL (모든 컬럼 포함) | 강의 제공 ID로 데이터를 조회. |
+| **IdIndex** | `id` | `startTime` | ALL (모든 컬럼 포함) | 항목 ID로 데이터를 조회하고 시작 시간으로 정렬. |
+| **CourseProvideIndex-Sort** | `courseProvideId` | `startTime` | ALL (모든 컬럼 포함) | 강의 제공 ID로 데이터를 조회하고 시작 시간으로 정렬. |
+| **ArnIndex** | `arn` | - | ALL (모든 컬럼 포함) | ARN으로 데이터를 조회. |
+
+
+</details>
+
+> <a href="https://dbdiagram.io/d/ahmy-devton-6719cb9997a66db9a314d728">ERD 링크(db Diagram.io)</a>
+
+<br />
+
+## 🗝️ 피드백
 
 1. 정부와 관련된 서비스는 수익성을 기대하기 어렵기 때문에 BEP(Break - evne Point)를 기대하기 어려움
 2. 통합 LMS의 실시간 강의는 BEP를 기대하기 어렵기 때문에, 단순히 LMS를 만들어서 판매하는 것이 더 이득이 될 것
