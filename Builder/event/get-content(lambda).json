@@ -1,0 +1,6 @@
+{
+  "pathParameters": {
+    "courseId": "123",
+    "curriculumId": "123"
+  }
+}

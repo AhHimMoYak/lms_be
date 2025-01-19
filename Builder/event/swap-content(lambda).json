@@ -1,0 +1,10 @@
+{
+  "pathParameters": {
+    "courseId": "1",
+    "curriculumId": "1"
+  },
+  "body": {
+    "draggedIdx": 3,
+    "droppedIdx": 1
+  }
+}
