@@ -456,6 +456,408 @@ custom:
 
 </details>
 
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}CI/CD와 AWS ECR 설정}}$
+  </summary>
+
+<br />
+
+본 프로젝트는 교육기관, 회사, 그리고 사용자를 대상으로 하는 서비스 플랫폼 개발입니다.
+세 개의 독립적인 서비스를 Spring Boot와 Java를 사용해 개발했으며, CICD 파이프라인을 통해 코드의 확장성과 효율성을 극대화했습니다.
+
+### CICD 플랫폼 중 GithubActions 선택 이유
+
+![image](https://github.com/user-attachments/assets/a902a957-653d-48d7-a3ac-71b6834d1cd2)
+
+> <ol>
+>   <li> 프로젝트 개발 협력 툴인 Github와 완벽한 통합 </li>
+>   <li> GithubActions는 서버리스 기반으로 동작하기 때문에 서버 리소스와 유지 보수가 필요하지 않다는 점.</li>
+>   <li> 초보자도 쉽게 사용이 가능하고 비교적 간단한 설명 </li>
+>   <li> Github와 종속성 </li>
+> </ol>
+
+<br />
+
+### CICD 파이프라인 단계
+
+![image](https://github.com/user-attachments/assets/2844742c-1529-4518-bfa8-a21d0b20aed6)
+
+> 
+> 1. **코드 체크아웃 (Checkout)**
+>    - GitHub Actions에서 `actions/checkout`을 사용하여 최신 코드를 가져옵니다.
+> 2. **환경설정 (Environment Setup)**
+>     - Java 17과 Maven 등의 빌드 도구를 설정합니다.
+>     - 프로젝트별 의존성 설치.
+> 3. **테스트 및 빌드 (Test & Build)**
+>     - `mvn test`를 통해 유닛 테스트를 실행하여 코드 품질 확인.
+>     - 테스트 통과 후 `mvn package`로 JAR 파일 생성.s
+> 4. **도커 이미지 생성 및 태깅 (Docker Build & Tag)**
+>     - 서비스별로 Dockerfile을 작성하여 이미지를 빌드.
+>     - GitHub Actions Workflow에서 최신 커밋 SHA 또는 태그를 기준으로 Docker 이미지를 태깅.
+> 5. **AWS ECR로 이미지 푸쉬 (Push to AWS ECR)**
+>     - AWS CLI를 통해 ECR에 로그인.
+>     - 태깅된 Docker 이미지를 ECR 리포지토리에 푸쉬.
+
+<br />
+
+### AWS ECR 선택 이유
+
+![image](https://github.com/user-attachments/assets/655a9874-0727-4ca9-9f9d-78048e931a63)
+
+
+> 1. **AWS 생태계와의 높은 호환성**
+>     - AWS의 다른 서비스 (ECS, EKS, Lambda 등)와의 통합이 간편.
+> 2. **보안**
+>     - 이미지 스캔과 IAM 권한 관리를 통해 보안 강화.
+> 3. 자동화 지원
+>     - AWS CLI, SDK, Github Actions와 자연스러운 연동
+> 4. **편리한 배포**
+>     - ECR에 저장된 이미지를 기반으로 ECS에서 쉽게 확장 가능.
+> 5. **비용 효율성**
+>     - 사용한 저장 공간과 데이터 전송량에 비례한 과금으로 비용 관리 가능.
+
+> **비교: Docker Hub**
+> 
+> - Docker Hub는 무료 플랜에서의 속도 제한과 제한된 보안 옵션으로 인해 AWS ECR 대비 불리.
+> - ECR은 AWS 계정 내에서 통합 인증을 제공, Docker Hub보다 높은 보안성.
+
+> **비교: Google Container Registry (GCR)**
+> 
+> - GCR 역시 클라우드 네이티브 통합을 제공하나, 프로젝트에서 AWS를 기반으로 한 서비스이므로 AWS ECR이 더 적합.
+
+<br />
+
+## **추가할 점 및 개선 아이디어**
+
+> 1. **다른 서비스로의 확장 가능성**
+>     - 현재는 ECR에 이미지를 푸쉬하지만, 향후 멀티 클라우드 환경에서 GCR 또는 Azure Container Registry와도 통합할 수 있도록 설계 가능.
+> 2. **테스트 단계 고도화**
+>     - 정적 분석 도구 (e.g., SonarQube)를 추가해 코드 품질과 보안 취약점 검토 강화.
+> 3. **자동화 최적화**
+>     - `Matrix Strategy`를 사용해 병렬로 여러 서비스의 빌드를 처리.
+> 4. **모니터링**
+>     - ECR 푸쉬 후 배포된 이미지의 상태를 실시간으로 모니터링하는 기능 추가.
+> 5. **비용 최적화**
+>     - 미사용 이미지 정리 및 ECR 이미지 정책 관리.
+
+### Github Actions
+<details>
+  <summary>
+        $\rm{\normalsize{\color{#6580DD}docker\ 이미지\ 빌드}}$
+  </summary>
+  
+  <br />
+  
+```
+### multi stage build ###
+
+### stage 1 : builder stage ###
+
+# 베이스 이미지
+FROM openjdk:21-jdk-slim AS builder
+
+# 필수 패키지 설치 (xargs 포함)
+RUN apt-get update && apt-get install -y dos2unix findutils
+
+# 프로젝트 파일 복사
+WORKDIR /app
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+
+# application.yml 파일 복사
+COPY src/main/resources/application.yml /app/application.yml
+
+# gradlew 실행 권한 부여 및 줄바꿈 변환
+RUN chmod +x ./gradlew
+RUN dos2unix ./gradlew
+
+# Gradle 캐시를 활용하기 위해 dependencies를 먼저 빌드
+RUN ./gradlew dependencies || true
+
+# 실행 가능한 jar 파일로 패키징
+RUN ./gradlew bootJar --no-daemon
+### stage 2 : executable stage ###
+
+# 두 번째 FROM 에 해당하는 실행 단계
+FROM openjdk:21-jdk-slim
+
+# 컨테이너의 홈 경로 지정
+WORKDIR /app
+
+# stage 1 에서 빌드된 패키지를 컨테이너의 홈 경로로 복사
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
+
+
+# 사용 가능한 port no 지정
+EXPOSE 8080
+
+# spring boot 기반의 application 을 컨테이너가 실행이 될 때 실행이 되도록 설정
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+
+```
+  
+</details>
+
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}institution-deploy}}$
+  </summary>
+
+<br />
+
+```
+name: institution-service deploy
+
+on:
+  pull_request:
+    branches:
+      - microservice
+    types:
+      - closed
+    paths:
+      - 'institution-service/**'
+
+jobs:
+  deploy:
+    if: ${{github.event.pull_request.merged}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK21 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Create necessary directories
+        run: mkdir -p ./institution-service/src/main/resources
+
+      - name: Base64로 인코딩된 application.yml 디코딩 및 생성
+        run: |
+          echo "${{ secrets.INSTITUTION_APPLICATION_PROPERTIES }}" | base64 -d > ./institution-service/src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        working-directory: ./institution-service
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: ECR에 로그인 하기.
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: ECR에 로그인 한 결과 확인
+        run: echo ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Docker 이미지 생성
+        working-directory: ./institution-service
+        run: docker build -t institution-cicd .
+
+      - name: Dokcer 이미지 생성 확인
+        run: |
+          ls
+          pwd
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag institution-cicd ${{ steps.login-ecr.outputs.registry }}/institution-service:latest
+
+      - name: ECR에 docker image push 하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/institution-service:latest
+
+```
+
+<br />
+  
+</details>
+
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}student-deploy}}$
+  </summary>
+
+<br />
+
+```
+name: student-service deploy
+
+on:
+  pull_request:
+    branches:
+      - microservice
+    types:
+      - closed
+    paths:
+      - 'student-service/**'
+
+jobs:
+  deploy:
+    if: ${{github.event.pull_request.merged}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK21 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Create necessary directories
+        run: mkdir -p ./student-service/src/main/resources
+
+      - name: Base64로 인코딩된 application.yml 디코딩 및 생성
+        run: |
+          echo "${{ secrets.STUDENT_APPLICATION_PROPERTIES }}" | base64 -d > ./student-service/src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        working-directory: ./student-service
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: ECR에 로그인 하기.
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: ECR에 로그인 한 결과 확인
+        run: echo ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Docker 이미지 생성
+        working-directory: ./student-service
+        run: docker build -t student-cicd .
+
+      - name: Dokcer 이미지 생성 확인
+        run: |
+          ls
+          pwd
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag student-cicd ${{ steps.login-ecr.outputs.registry }}/student-service:latest
+
+      - name: ECR에 docker image push 하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/student-service:latest
+
+```
+
+<br />
+  
+</details>
+
+<details>
+  <summary>
+    $\rm{\normalsize{\color{#6580DD}company-deploy}}$
+  </summary>
+
+<br />
+
+```
+
+name: company-service deploy
+
+on:
+  pull_request:
+    branches:
+      - microservice
+    types:
+      - closed
+    paths:
+      - 'company-service/**'
+
+jobs:
+  deploy:
+    if: ${{github.event.pull_request.merged}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK21 설치$
+        uses: actions/setup-java@v4
+        with:c
+          distribution: temurin
+          java-version: 21
+
+      - name: Create necessary directories$
+        run: mkdir -p ./company-service/src/main/resources
+
+      - name: Base64로 인코딩된 application.yml 디코딩 및 생성
+        run: |
+          echo "${{ secrets.COMPANY_APPLICATION_PROPERTIES }}" | base64 -d > ./company-service/src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        working-directory: ./company-service
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build
+
+      - name: AWS Resource 에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: ECR에 로그인 하기.
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: ECR에 로그인 한 결과 확인
+        run: echo ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Docker 이미지 생성
+        working-directory: ./company-service
+        run: docker build -t company-cicd .
+
+      - name: Dokcer 이미지 생성 확인
+        run: |
+          ls
+          pwd
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag company-cicd ${{ steps.login-ecr.outputs.registry }}/company-service:latest
+
+      - name: ECR에 docker image push 하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/company-service:latest
+
+```
+
+<br />
+  
+</details>
+
+### **추가 문서 필요 사항**
+
+- **AWS IAM Role 및 권한 설정 가이드**
+- **Troubleshooting 섹션**: ECR 푸쉬 실패 또는 GitHub Actions 에러 처리 방법.
+
+### **향후 계획**
+
+- 성능 모니터링 툴 (e.g., CloudWatch)을 활용한 실시간 상태 추적.
+
+
+</details>
+
 <br />
 
 ## 📃 Endpoint & API 설계 명세
