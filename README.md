@@ -1,7 +1,4 @@
-# 기업대상 직무교육 LMS, CMS 플랫폼 Backend
-
-![image](https://github.com/user-attachments/assets/a0b3613b-a3eb-4201-9d45-61a3c4620433)
-
+# 📍 기업대상 직무교육 LMS, CMS 플랫폼 Backend
 
 ### 🎯 프로젝트 목표
 
@@ -13,7 +10,7 @@
 
 <br />
 
-> [Frontend repository 링크](https://github.com/AhHimMoYak/lms_fe)
+> 🔗 [Frontend repository 링크](https://github.com/AhHimMoYak/lms_fe)
 
 <details>
   <summary>
@@ -47,7 +44,7 @@
 
 ### 🎬 프로젝트 시연 영상
 
-> [기업대상 직무교육 LMS, CMS 플랫폼 시연영상 링크](https://youtu.be/5h6VI5sSYKE)
+> 🔗 [기업대상 직무교육 LMS, CMS 플랫폼 시연영상 링크](https://youtu.be/5h6VI5sSYKE)
 
 <br />
 
@@ -998,7 +995,7 @@ jobs:
 
 </details>
 
-> <a href="https://docs.google.com/spreadsheets/d/1FbEZzaVYbarLD038AXRxwZf7xKk-NhfY8tzmMPsJt2Y/edit?gid=1512902059#gid=1512902059">API 설계 명세 링크</a>
+> 🔗 <a href="https://docs.google.com/spreadsheets/d/1FbEZzaVYbarLD038AXRxwZf7xKk-NhfY8tzmMPsJt2Y/edit?gid=1512902059#gid=1512902059">API 설계 명세 링크</a>
 
 <br />
 
@@ -1298,7 +1295,7 @@ ALTER TABLE course_provide
 
 </details>
 
-> <a href="https://dbdiagram.io/d/ahmy-devton-6719cb9997a66db9a314d728">ERD 링크(db Diagram.io)</a>
+> 🔗 <a href="https://dbdiagram.io/d/ahmy-devton-6719cb9997a66db9a314d728">ERD 링크(db Diagram.io)</a>
 
 <br />
 
