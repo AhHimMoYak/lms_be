@@ -42,16 +42,19 @@
 
 ### 👪 팀원 소개
 
-<details>
-  <summary>
-    $\rm{\normalsize{\color{#6580DD}Megazone\ Cloud\ Java\ 기반\ SaaS개발자\ 양성\ 과정\ 2조}}$
-  </summary>
+<br />
 
-<img width="1000" alt="image" src="https://github.com/user-attachments/assets/baa167f4-6ad2-4738-8784-d09e289b2dba" />
+**Megazone Cloud Java 기반 SaaS개발자 양성 과정 2조**
 
-<img width="1000" alt="image" src="https://github.com/user-attachments/assets/a4b12f67-53fd-4b63-9384-6a2e5cfef499" />
-
-</details>
+| **프로필** | **직책**| **주역할** |
+| --- |:---: | --- |
+| <img width="150" alt="현규" src="https://github.com/user-attachments/assets/dfb727b4-80b4-4b7f-9db3-1d24ae7c9143" /> | 팀장 | <ul> <li> 프로젝트 기획, 설계 </li> <li> 콘텐츠 업로드 서비스 (멀티파트 업로드, Serverless) </li> <li> AWS ECS 배포 </li> </ul> |
+| <img width="150" alt="미루" src="https://github.com/user-attachments/assets/833e8490-825d-464d-ba8d-64b9bb479714" /> | 부팀장 | <ul> <li> 미디어 서비스 (AWS IVS, Serverless) </li> <li> View UI 설계 </li> <li> RDBMS 관리 </li> </ul> |
+| <img width="150" alt="소정" src="https://github.com/user-attachments/assets/6576da79-2fb0-461d-916b-d45fd6f21131" /> | 부팀장 | <ul> <li> 인증인가 서비스 (AWS Cognito) </li> <li> 사용자 관리 서비스 (AWS Congito, Serverless) </li><li> View UI 설계 </li> </ul> |
+| <img width="150" alt="지영" src="https://github.com/user-attachments/assets/444b6103-39fe-43bb-94bb-6b3af8363502" /> | 팀원 | <ul> <li> 데이터 시각화 (Ag Grid, E-Chart, Serverless) </li> <li> 게시판 서비스 (Serverless) </li> </ul> |
+| <img width="150" alt="형진" src="https://github.com/user-attachments/assets/6d69e980-6e1d-464f-85aa-7c5e9871ae39" /> | 팀원 | <ul> <li> 훈련기관 서비스 (Spring boot) </li> <li> CI/CD (Github Actions, AWS ECR) </li> </ul> |
+| <img width="150" alt="도원" src="https://github.com/user-attachments/assets/6c323c2e-2896-45b1-9a79-c66196624767" /> | 팀원 | <ul> <li> 회사 서비스 (Spring boot) </li> <li> AWS ECS 배포 </li> </ul> |
+| <img width="150" alt="동원" src="https://github.com/user-attachments/assets/07d42960-20f2-481d-bd31-1906ab36abe3" /> | 팀원 | <ul> <li> 콘텐츠 업로드 서비스 (멀티파트 업로드, Serverless) </li> </ul> |
 
 <br />
 
@@ -376,14 +379,17 @@ custom:
 
 | **주요 선택 기술** | **선택 이유 및 근거** |
 | --- | --- |
-| **Serverless (이벤트 기반 아키텍처)** | <ul> <li> **기술적 이유**: 다양한 서비스를 독립적인 기능으로 분리하기 위해 AWS API Gateway와 AWS Lambda를 활용한 이벤트 기반 아키텍처를 도입하였습니다. 이를 통해 각 서비스의 독립성을 높이고 유지보수를 용이하게 만들었습니다. </li> <li> **비용적 이점**: AWS의 완전 관리형 서비스를 활용하여 서버 부하에 대한 걱정을 줄였고, 사용량에 따라 비용을 지불하는 온디맨드 서비스 모델을 채택하여 초기 비용을 절감할 수 있었습니다. </li></ul>|
-| **ECS Fargate** | <ul> <li> **기술적 이유**: 분리되지 않은 나머지 기능들은 엔터티 간 강한 연관 관계로 신중한 접근이 필요했기에, IaC(Infrastructure as Code)를 도입하여 효율적으로 관리하고자 했습니다. </li> <li> **배포 및 관리**: AWS ECS Fargate를 활용해 서버리스 환경에서 컨테이너를 효율적으로 운영하고, 자동 확장과 관리가 가능하도록 배포 환경을 구성하였습니다. </li> <li> **비용적 이점**: Fargate는 EC2 인스턴스를 직접 관리하지 않아 서버 인프라를 프로비저닝하거나 관리하는 데 드는 비용과 시간을 절감할 수 있습니다. 또한, **사용한 만큼만 비용을 지불**하는 모델을 적용하여 운영 비용을 최적화할 수 있었습니다. </li> </ul> |
-| **AWS S3** | <ul> <li> **기술적 이유**: S3는 이론상 무제한에 가까운 저장 용량을 제공하므로, 서비스의 성장에 따라 유연하게 확장할 수 있습니다. </li> <li> **업로드 효율성**: 사전 서명된 URL(Presigned URL)을 활용하면 클라이언트가 서버를 거치지 않고 직접 파일을 업로드할 수 있어, 서버 부하를 줄이는 데 유리합니다. </li> <li> **비용적 이점**: S3는 서울 리전 기준으로 첫 50TB까지 1GB당 33원으로 제공되어, 비용 면에서도 매우 효율적입니다. </li> </ul> |
-| **AWS IVS** | <ul> <li> **기술적 이유**: 실시간 강의와 퀴즈를 구현하기 위해 다양한 기술을 검토한 결과, WEBRTC와 RTMP 방식을 고려했습니다. </li> <li> **실시간 강의 구현**: ‘집체 교육’을 대체하는 실시간 강의를 목표로 했으며, 이를 위해 강사와 수강생 간의 ‘1:n’ 관계를 바탕으로 참여도와 집중도를 유도하고자 했습니다. </li> <li> **비용적 이점**: 실시간 스트리밍에 최적화된 AWS IVS를 활용하여, 높은 품질의 실시간 강의 환경을 제공할 수 있다고 판단했습니다. </li> </ul> |
+| **Serverless </br> (이벤트 기반 아키텍처)** | <ul> <li> **기술적 이유** <br /> 다양한 서비스를 독립적인 기능으로 분리하기 위해 AWS API Gateway와 AWS Lambda를 활용한 이벤트 기반 아키텍처를 도입하였습니다. 이를 통해 각 서비스의 독립성을 높이고 유지보수를 용이하게 만들었습니다. </li> <li> **비용적 이점** <br /> AWS의 완전 관리형 서비스를 활용하여 서버 부하에 대한 걱정을 줄였고, 사용량에 따라 비용을 지불하는 온디맨드 서비스 모델을 채택하여 초기 비용을 절감할 수 있었습니다. </li></ul>|
+| **ECS Fargate** | <ul> <li> **기술적 이유** <br /> 분리되지 않은 나머지 기능들은 엔터티 간 강한 연관 관계로 신중한 접근이 필요했기에, IaC(Infrastructure as Code)를 도입하여 효율적으로 관리하고자 했습니다. </li> <li> **배포 및 관리** <br /> AWS ECS Fargate를 활용해 서버리스 환경에서 컨테이너를 효율적으로 운영하고, 자동 확장과 관리가 가능하도록 배포 환경을 구성하였습니다. </li> <li> **비용적 이점** <br /> Fargate는 EC2 인스턴스를 직접 관리하지 않아 서버 인프라를 프로비저닝하거나 관리하는 데 드는 비용과 시간을 절감할 수 있습니다. 또한, **사용한 만큼만 비용을 지불**하는 모델을 적용하여 운영 비용을 최적화할 수 있었습니다. </li> </ul> |
+| **AWS S3** | <ul> <li> **기술적 이유** <br /> S3는 이론상 무제한에 가까운 저장 용량을 제공하므로, 서비스의 성장에 따라 유연하게 확장할 수 있습니다. </li> <li> **업로드 효율성** <br /> 사전 서명된 URL(Presigned URL)을 활용하면 클라이언트가 서버를 거치지 않고 직접 파일을 업로드할 수 있어, 서버 부하를 줄이는 데 유리합니다. </li> <li> **비용적 이점** <br /> S3는 서울 리전 기준으로 첫 50TB까지 1GB당 33원으로 제공되어, 비용 면에서도 매우 효율적입니다. </li> </ul> |
+| **AWS IVS** | <ul> <li> **기술적 이유** <br /> 실시간 강의와 퀴즈를 구현하기 위해 다양한 기술을 검토한 결과, WEBRTC와 RTMP 방식을 고려했습니다. </li> <li> **실시간 강의 구현** <br /> ‘집체 교육’을 대체하는 실시간 강의를 목표로 했으며, 이를 위해 강사와 수강생 간의 ‘1:n’ 관계를 바탕으로 참여도와 집중도를 유도하고자 했습니다. </li> <li> **비용적 이점** <br /> 실시간 스트리밍에 최적화된 AWS IVS를 활용하여, 높은 품질의 실시간 강의 환경을 제공할 수 있다고 판단했습니다. </li> </ul> |
+| **AWS COGNITO** |  <ul> <li> **기술적 이유** <br /> 사용자 인증 및 권한 관리 기능을 효율적으로 제공하기 위해 AWS Cognito를 선택하였습니다. 이 서비스를 활용하여 로그인, 회원가입, 비밀번호 복구 등 인증 관련 기능을 구현하였으며, OAuth 2.0, SAML, OpenID Connect와 같은 표준 프로토콜을 지원하여 다양한 인증 요구 사항을 충족할 수 있었습니다. </li> <li> **확장성** <br /> AWS Cognito는 수백만 사용자를 지원할 수 있는 확장성을 제공하므로, 사용자가 증가하더라도 안정적인 서비스를 유지할 수 있었습니다. </li> <li> **보안 강화** <br /> 멀티팩터 인증(MFA)과 Amazon Web Services WAF(Web Application Firewall) 통합을 통해 보안 수준을 강화하여 사용자 데이터를 안전하게 보호할 수 있었습니다. </li> <li> **비용적 이점** <br /> 인증 요청 수에 따라 비용이 산정되는 모델을 제공하여 초기 운영 비용을 낮출 수 있었고, 서비스 성장에 따른 비용 증가를 효율적으로 관리할 수 있었습니다. </li> </ul> |
 
 <br />
 
 ## 📢 서비스 핵심기능
+
+
 
 <br />
 
