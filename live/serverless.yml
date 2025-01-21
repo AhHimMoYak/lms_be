@@ -1,3 +1,5 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: miruj
 service: ahmy-live
 
 frameworkVersion: "4"
@@ -46,44 +48,50 @@ functions:
   createChannel:
     handler: service/createChannel.handler
     events:
-      - httpApi:
+      - http:
           path: /v1
           method: POST
+          cors: true
 
   getChannel:
     handler: service/getChannel.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/{id}/channel
           method: GET
+          cors: true
 
   getLive:
     handler: service/getLive.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/{id}
           method: GET
+          cors: true
 
   listChannel:
     handler: service/listChannel.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/list/{courseProvideId}
           method: GET
+          cors: true
 
   updateChannel:
     handler: service/updateChannel.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/{id}
           method: PUT
+          cors: true
 
   deleteChannel:
     handler: service/deleteChannel.handler
     events:
-      - httpApi:
+      - http:
           path: /v1/{id}
           method: DELETE
+          cors: true
 
   updateChannelState:
     handler: service/updateChannelState.handler
@@ -161,8 +169,11 @@ package:
   patterns:
     - "!node_modules/.bin/**"
     - "node_modules/**"
-    - "createChannel.mjs"
+    - "service/**"
   individually: false
+
+plugins:
+  - serverless-domain-manager
 
 custom:
   esbuild:
@@ -177,3 +188,9 @@ custom:
     mainFields:
       - module
       - main
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "live"
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateName: "arn:aws:acm:ap-northeast-2:503561434552:certificate/c56e0793-3d74-4357-9d42-bebb8e34511c"

@@ -19,7 +19,7 @@
   "// createChannel Request":
   {
     "title": "제목",
-    "instructor": "교육기관",
+    "instructor": "강사",
     "courseProvideId": "코스제공Id",
     "course": "코스",
     "startTime": "시작시간",
