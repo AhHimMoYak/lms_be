@@ -1,0 +1,37 @@
+service: lambda-authorizer-service
+
+custom:
+    dotenv:
+        path: .env.${self:provider.stage}
+
+provider:
+    name: aws
+    runtime: nodejs20.x
+    stage: ${opt:stage, "prod"}
+    region: ap-northeast-2
+    environment:
+        COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+        COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+        ACCESS_CONTROL_ALLOW_ORIGIN: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+        ACCESS_CONTROL_ALLOW_ORIGIN_1: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+        ACCESS_CONTROL_ALLOW_ORIGIN_2: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_2}
+        ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+
+functions:
+    AuthorizerJWT:
+        handler: src/authorizer/jwt_authorizer.handler
+
+package:
+    exclude:
+        - node_modules/aws-sdk/** # AWS SDK는 기본적으로 제공되므로 제외
+        - .git/** # Git 파일 제외
+        - .vscode/** # VSCode 설정 제외
+        - tests/**
+        - src/handlers/**
+        - src/service/**
+        - src/triggers/**
+        - src/utils/**
+
+plugins:
+    - serverless-plugin-dotenv
+    - serverless-ignore
