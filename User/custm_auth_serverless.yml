@@ -1,0 +1,55 @@
+service: custom-auth-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-northeast-2
+  environment:
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+
+functions:
+  DefineAuthChallenge:
+    handler: src/triggers/define_auth_challenge.handler
+
+  CreateAuthChallenge:
+    handler: src/triggers/create_auth_challenge.handler
+
+  VerifyAuthChallenge:
+    handler: src/triggers/verify_auth_challenge.handler
+
+resources:
+  Resources:
+    DefineAuthChallengePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt DefineAuthChallengeLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceArn: arn:aws:cognito-idp:${self:provider.region}:${aws:accountId}:userpool/${self:provider.environment.COGNITO_USER_POOL_ID}
+      DependsOn: DefineAuthChallengeLambdaFunction
+    CreateAuthChallengePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt CreateAuthChallengeLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceArn: arn:aws:cognito-idp:${self:provider.region}:${aws:accountId}:userpool/${self:provider.environment.COGNITO_USER_POOL_ID}
+      DependsOn: CreateAuthChallengeLambdaFunction
+    VerifyAuthChallengePermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt VerifyAuthChallengeLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceArn: arn:aws:cognito-idp:${self:provider.region}:${aws:accountId}:userpool/${self:provider.environment.COGNITO_USER_POOL_ID}
+      DependsOn: VerifyAuthChallengeLambdaFunction
+
+package:
+  patterns:
+    - "!src/handlers/**"
+    - "!src/service/**"
+  individually: false
+
+plugins:
+  - serverless-plugin-dotenv
+  - serverless-ignore
