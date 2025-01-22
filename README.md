@@ -928,7 +928,8 @@ jobs:
 - 실시간 퀴즈 (TimedMetadata + Lambda)
 
 ### 서비스 아키텍처 ###
->![실시간 스트리밍 서비스 아키텍처 이미지](https://private-user-images.githubusercontent.com/57497671/405370720-59ad2239-ca74-4f5d-b6e9-7f3f4a8ec0e8.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTAzOTksIm5iZiI6MTczNzQ5MDA5OSwicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzA3MjAtNTlhZDIyMzktY2E3NC00ZjVkLWI2ZTktN2YzZjRhOGVjMGU4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMDgxOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQzNDI2YTA5NDc5ZjQ3MDUyMGM1MjI3NDNmNjc4OGMyNTc1ODcxNTFhNjM1ZmE1MzM0ZjNkZWY4M2ZjY2FkM2EmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.ln4jE_xVVtpk0I0jBR0jnMK7sgPpSlWHRWYS5otXiyk)
+>![실시간 스트리밍 서비스 아키텍처 이미지](https://github.com/user-attachments/assets/8560c071-7677-4dc5-b378-b5b8324fd0d9)
+
 
 ### 서비스 구성 ###
 
@@ -968,7 +969,8 @@ IVS Low-Latency Streaming의 경우 Channel 리소스 하나당 하나의 방송
 ### 서비스 구성 및 구현 과정 ###
 AWS 의 IVS 를 사용하기 전 자체적으로 실시간 스트리밍과 채팅, 라이브 퀴즈를 구현한 과정에 대한 간단한 설명입니다.
 #### 기존 서비스 아키텍처 ####
-> ![기존 라이브 스트리밍 서비스 아키텍처 이미지](https://private-user-images.githubusercontent.com/57497671/405376568-8a391eda-ddfd-4507-94ff-74d8b9ae2fd5.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTE3MTcsIm5iZiI6MTczNzQ5MTQxNywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1NjgtOGEzOTFlZGEtZGRmZC00NTA3LTk0ZmYtNzRkOGI5YWUyZmQ1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzAxN1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTZiOTc5ZWE2NmEwMjYxYzM3OTMzNWZiYTJhOGM4NWI4OGIzNzg1NTU2M2Y2M2VjYWRhMzI2YmI2MjYxM2VmZWQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.gfkcEjNSaVrDCumVYhSwsbmBGBE1y7G8kRszwwq6QwU)
+> ![기존 라이브 스트리밍 서비스 아키텍처 이미지](https://github.com/user-attachments/assets/7fa08b64-c0f7-4c46-b83b-7f764892c687)
+
 
 실시간 스트리밍은 NGINX 를 이용하여 RTMP 프로토콜로 영상을 수신받고 FFMPEG 를 이용해 영상을 변환하고 HLS형태로 영상을 송출해주도록 하였습니다. <br/>
 실시간 채팅과 퀴즈의 경우 Spring Boot 를 이용해 WebSocket 통신으로 채팅과 퀴즈를 처리하도록 구현하였습니다.
@@ -987,10 +989,12 @@ AWS 의 IVS 를 사용하기 전 자체적으로 실시간 스트리밍과 채�
 </summary>
 
 #### 송출 화면 ####
-> ![송출화면 이미지](https://private-user-images.githubusercontent.com/57497671/405376588-ba374664-6df5-4950-acd2-9f45fe07ced2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTIwNTcsIm5iZiI6MTczNzQ5MTc1NywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1ODgtYmEzNzQ2NjQtNmRmNS00OTUwLWFjZDItOWY0NWZlMDdjZWQyLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzU1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ3NDk2NDdhMjc0ODdjY2IxYTEyMjliOTA5Yzk0NDJhZmY1NDE0NTI3OGYzNDhjMmEzYzA5Y2Y5MzUzNzJmYjYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.9ghMTMiwoyqeQpAnY7iZIEbnRjOyx_0UtAfp_uFLfgk)
+> ![송출화면 이미지](https://github.com/user-attachments/assets/b75bb5a5-e8f7-4f2f-a889-c9de8ecada5f)
+
 
 #### 시청 화면 ####
-> ![시청화면 이미지](https://private-user-images.githubusercontent.com/57497671/405376596-a3d19141-266b-484b-b6c4-5d710d6b8c85.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTIwNTcsIm5iZiI6MTczNzQ5MTc1NywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1OTYtYTNkMTkxNDEtMjY2Yi00ODRiLWI2YzQtNWQ3MTBkNmI4Yzg1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzU1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE0ZDI3Yzc0YmY3OWJhNjZhMjgwMDg2NjUxN2FjNjA5NmE1YjVkNjEyZjUyN2U0ZTE2N2M1ZDY0M2U4NDI0MDMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.90LDAkTOY1Q0Lp6P8orqsV1EI6cWbyXSibmzmf71ccU)
+> ![시청화면 이미지](https://github.com/user-attachments/assets/e1a7715e-9c68-4730-bd1f-6c4eb0cfd8a7)
+
 
 </details>
 
