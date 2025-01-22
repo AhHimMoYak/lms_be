@@ -1,0 +1,56 @@
+service: user-management
+
+provider:
+    name: aws
+    runtime: nodejs20.x
+    region: ap-northeast-2
+    environment:
+        USERS_TABLE: "Users"
+        REGION: ${aws:region}
+
+resources:
+    Resources:
+        UsersTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: ${self:provider.environment.USERS_TABLE}
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                    - AttributeName: username
+                      AttributeType: S
+                    - AttributeName: group
+                      AttributeType: S
+                    - AttributeName: company_number
+                      AttributeType: N
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+                BillingMode: PAY_PER_REQUEST
+                GlobalSecondaryIndexes:
+                    - IndexName: UsernameIndex
+                      KeySchema:
+                          - AttributeName: username
+                            KeyType: HASH
+                      Projection:
+                          ProjectionType: ALL
+                    - IndexName: GroupIndex
+                      KeySchema:
+                          - AttributeName: group
+                            KeyType: HASH
+                      Projection:
+                          ProjectionType: ALL
+                    - IndexName: CompanyIndex
+                      KeySchema:
+                          - AttributeName: company_number
+                            KeyType: HASH
+                      Projection:
+                          ProjectionType: ALL
+
+package:
+    patterns:
+        - "!node_modules/**"
+        - "node_modules/**"
+        - "!src/**"
+        - "!*.yml"
+    individually: false
