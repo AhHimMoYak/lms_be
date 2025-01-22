@@ -1027,6 +1027,7 @@ AWS 의 IVS 를 사용하기 전 자체적으로 실시간 스트리밍과 채�
 
 </details>
 
+<details>
   <summary>
     $\rm{\normalsize{\color{#6580DD}데이터\ 시각화}}$
   </summary>
