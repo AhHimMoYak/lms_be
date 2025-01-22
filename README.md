@@ -914,6 +914,115 @@ jobs:
 </details>
 
 <details>
+
+<summary>
+  $\rm{\normalsize{\color{#6580DD}실시간 스트리밍 강의 서비스}}$
+</summary>
+
+### 실시간 스트리밍 강의 서비스 도입 배경 ###
+본 프로젝트인 기업대상 직무교육 플랫폼 서비스에선 기본적으로 학습관리 시스템 서비스를 제공하지만 학습자료, 녹화된 강의영상, 시험 및 퀴즈의 형태로만 제공되는 교육방식에선 학생들의 집중도와 참여도를 높이기 어렵다는 한계가 있었고, 이러한 한계를 보완하기 위해서 LMS 서비스와 통합되어 제공될 수 있는 실시간 스트리밍 강의 서비스를 도입하게 되었습니다.
+
+### 기능 ###
+- 실시간 영상 스트리밍 (IVS Low-Latency Streaming)
+- 실시간 채팅 (IVS Chat)
+- 실시간 퀴즈 (TimedMetadata + Lambda)
+
+### 서비스 아키텍처 ###
+>![실시간 스트리밍 서비스 아키텍처 이미지](https://private-user-images.githubusercontent.com/57497671/405370720-59ad2239-ca74-4f5d-b6e9-7f3f4a8ec0e8.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTAzOTksIm5iZiI6MTczNzQ5MDA5OSwicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzA3MjAtNTlhZDIyMzktY2E3NC00ZjVkLWI2ZTktN2YzZjRhOGVjMGU4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMDgxOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWQzNDI2YTA5NDc5ZjQ3MDUyMGM1MjI3NDNmNjc4OGMyNTc1ODcxNTFhNjM1ZmE1MzM0ZjNkZWY4M2ZjY2FkM2EmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.ln4jE_xVVtpk0I0jBR0jnMK7sgPpSlWHRWYS5otXiyk)
+
+### 서비스 구성 ###
+
+#### 1. IVS Low-Latency Streaming ####
+AWS 완전관리형 서비스로서 실시간 스트리밍과 관련된 모든 동작을 담당합니다. <br/>
+실시간 스트리밍은 Channel 이라는 리소스로 구성 및 관리되며 각 Channel 은 다음과 같은 요소를 제공합니다.
+- IngestEndpoint: 스트리머가 방송을 송출하는 URL이며 RTMP프롵토콜을 사용합니다.
+- StreamKey: 방송 송출 시 StreamKey 소유자만 송출을 허용해줍니다.
+- PlaybackUrl: 방송을 시청할 수 있는 URL 입니다. HLS 형식으로 영상을 스트리밍 합니다.
+
+추가로 IVS Low-Latency Streaming 에선 TimedMetadata 라는 기능을 제공합니다. <br/>
+이를 통해 실시간 스트리밍 중 해당 시간 정보가 포함된 텍스트나 JSON 등의 데이터를 추가로 전송할 수 있으며, 실시간 스트리밍 강의 중 실시간 퀴즈를 전송하고 응답하는데 이용할 수 있습니다.
+
+#### 2. IVS Chat ####
+AWS 완전관리형 서비스로서 실시간 채팅에 대한 기능을 제공합니다. <br/>
+채팅은 Room 이라는 리소스로 구성 및 관리됩니다. <br/>
+Room 에서 제공되는 Messaging Endpoint 에 WebSocket 통신을 통하여 채팅을 전송, 수신 받을 수 있습니다. <br/>
+
+#### 3. 실시간 강의 API ####
+IVS Low-Latency Streaming의 경우 Channel 리소스 하나당 하나의 방송만 송출할 수 있기 때문에 Channel 리소스를 동적으로 관리할 방법이 필요합니다. <br/>
+마찬가지의 이유로 IVS Chat 의 Room 리소스도 동적으로 관리하여야 합니다. <br/>
+또한 Channel에 포함된 정보 뿐만아니라 실시간 강의에 필요한 데이터(제목, 강사명, 코스명 등)을 실시간 강의라는 하나의 단위로 관리할 필요가 있습니다.
+
+실시간 강의 API 의 대표적인 동작은 다음과 같습니다.
+- 실시간 강의 생성
+    - 강의자가 실시간 강의를 생성합니다.
+    - 실시간 강의 생성시 Lambda 에서 AWS SDK 를 통해 IVS의 Channel 리소스와 Room 리소스가 자동으로 생성됩니다.
+    - 생성된 리소스의 정보(ARN, Name, StreamKey, IngestEndpoint, PlaybackUrl 등)을 실시간 강의의 정보와 함께 DynamoDB 에 저장합니다.
+- 실시간 강의 목록 조회
+    - 실시간 강의의 목록을 조회합니다.
+    - DynamoDB 에 저장된 실시간 강의 정보 중 검색하고자 하는 코스제공에 해당하는 모든 실시간 강의정보를 불러옵니다.
+- 실시간 강의 채널 조회
+    - 실시간 강의 정보를 자세하게 조회합니다.
+    - 실시간 강의 id 에 맞는 실시간 강의 정보를 DynamoDB 에서 불러옵니다.
+    - 강의자의 경우 IVS Channel 에 방송을 송출 할 수 있도록  StreamKey 와 IngestUrl 정보가 포함되며, 시청자의 경우 방송을 시청할 수 있도록 PlaybackUrl 이 각각 제공됩니다.
+
+### 서비스 구성 및 구현 과정 ###
+AWS 의 IVS 를 사용하기 전 자체적으로 실시간 스트리밍과 채팅, 라이브 퀴즈를 구현한 과정에 대한 간단한 설명입니다.
+#### 기존 서비스 아키텍처 ####
+> ![기존 라이브 스트리밍 서비스 아키텍처 이미지](https://private-user-images.githubusercontent.com/57497671/405376568-8a391eda-ddfd-4507-94ff-74d8b9ae2fd5.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTE3MTcsIm5iZiI6MTczNzQ5MTQxNywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1NjgtOGEzOTFlZGEtZGRmZC00NTA3LTk0ZmYtNzRkOGI5YWUyZmQ1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzAxN1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTZiOTc5ZWE2NmEwMjYxYzM3OTMzNWZiYTJhOGM4NWI4OGIzNzg1NTU2M2Y2M2VjYWRhMzI2YmI2MjYxM2VmZWQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.gfkcEjNSaVrDCumVYhSwsbmBGBE1y7G8kRszwwq6QwU)
+
+실시간 스트리밍은 NGINX 를 이용하여 RTMP 프로토콜로 영상을 수신받고 FFMPEG 를 이용해 영상을 변환하고 HLS형태로 영상을 송출해주도록 하였습니다. <br/>
+실시간 채팅과 퀴즈의 경우 Spring Boot 를 이용해 WebSocket 통신으로 채팅과 퀴즈를 처리하도록 구현하였습니다.
+
+이러한 방법엔 다음과 같은 한계와 문제점들이 있었습니다.
+- 동영상 스트리밍은 부하가 매우 큰 작업임에도 하나의 서버만 실행되기 때문에 부하처리가 힘들고 서버가 자주 다운되는 문제
+- 실행되는 서버를 여러개로 나누었을 경우 특정 방송이 송출중인 서버를 찾지 못해 시청할 수 없는 문제
+- 지연시간이 최소 15초에서 최대 1분까지로 매우 높은 문제
+
+이런 문제들을 직접 해결하기엔 높은 난이도와 많은 시간이 들어가는 것을 고려하여 AWS 에서 제공하는 관리형 서비스를 이용해 구현하기로 하였습니다.
+
+### 추가 자료 ###
+<details>
+<summary>
+  $\rm{\normalsize{\color{#6580DD}실시간 스트리밍 강의 서비스 화면}}$
+</summary>
+
+#### 송출 화면 ####
+> ![송출화면 이미지](https://private-user-images.githubusercontent.com/57497671/405376588-ba374664-6df5-4950-acd2-9f45fe07ced2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTIwNTcsIm5iZiI6MTczNzQ5MTc1NywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1ODgtYmEzNzQ2NjQtNmRmNS00OTUwLWFjZDItOWY0NWZlMDdjZWQyLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzU1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ3NDk2NDdhMjc0ODdjY2IxYTEyMjliOTA5Yzk0NDJhZmY1NDE0NTI3OGYzNDhjMmEzYzA5Y2Y5MzUzNzJmYjYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.9ghMTMiwoyqeQpAnY7iZIEbnRjOyx_0UtAfp_uFLfgk)
+
+#### 시청 화면 ####
+> ![시청화면 이미지](https://private-user-images.githubusercontent.com/57497671/405376596-a3d19141-266b-484b-b6c4-5d710d6b8c85.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc0OTIwNTcsIm5iZiI6MTczNzQ5MTc1NywicGF0aCI6Ii81NzQ5NzY3MS80MDUzNzY1OTYtYTNkMTkxNDEtMjY2Yi00ODRiLWI2YzQtNWQ3MTBkNmI4Yzg1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIxVDIwMzU1N1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE0ZDI3Yzc0YmY3OWJhNjZhMjgwMDg2NjUxN2FjNjA5NmE1YjVkNjEyZjUyN2U0ZTE2N2M1ZDY0M2U4NDI0MDMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.90LDAkTOY1Q0Lp6P8orqsV1EI6cWbyXSibmzmf71ccU)
+
+</details>
+
+<details>
+<summary>
+  $\rm{\normalsize{\color{#6580DD}DynamoDB 스키마}}$
+</summary>
+
+```JSON
+{
+    "id": "id",
+    "createdAt": "생성시간",
+    "updatedAt": "수정시간",
+    "arn": "channel 리소스 arn",
+    "streamKey": "스트림키",
+    "ingestEndpoint": "송출용 엔드포인트",
+    "playbackUrl": "재생 url",
+    "title": "제목",
+    "chatArn": "Room 리소스 arn",
+    "messagingEndpoint": "채팅 메시징 엔드포인트",
+    "instructor": "강사이름",
+    "courseProvideId": "코스제공 id",
+    "course": "코스이름",
+    "startTime": "시작시간",
+    "endTime": "종료시간",
+    "status": "상태 [CREATED | ON | CANCELED | END]"
+  }
+```
+
+
+</details>
+
   <summary>
     $\rm{\normalsize{\color{#6580DD}데이터\ 시각화}}$
   </summary>
@@ -942,6 +1051,7 @@ jobs:
 > - 훈련기관의 답변 완료 시, 상태가 "답변 완료"로 표시.
 > - 질문과 답변 조회수 확인 가능.
 > - CRUD 기능: 공지사항 및 질문/답변 관리 (생성, 조회, 수정, 삭제).
+
 
 </details>
 
