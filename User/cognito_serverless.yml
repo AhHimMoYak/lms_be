@@ -1,0 +1,212 @@
+service: ahimmoyak-auth-service
+
+custom:
+  dotenv:
+    path: .env.${self:provider.stage}
+  customDomain:
+    domainName: api.ahimmoyak.click
+    basePath: "auth"
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: REGIONAL
+    certificateName: "arn:aws:acm:${self:provider.region}:${aws:accountId}:certificate/${env:CERTIFICATEDID}"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ap-northeast-2
+  environment:
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+    GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID}
+    GOOGLE_CLIENT_SECRET: ${env:GOOGLE_CLIENT_SECRET}
+    GOOGLE_REDIRECT_URI: ${env:GOOGLE_REDIRECT_URI}
+    GOOGLE_GROUP_NAME: ${env:GOOGLE_GROUP_NAME}
+    ACCESS_CONTROL_ALLOW_ORIGIN: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+    ACCESS_CONTROL_ALLOW_ORIGIN_1: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_1}
+    ACCESS_CONTROL_ALLOW_ORIGIN_2: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_2}
+    ACCESS_CONTROL_ALLOW_ORIGIN_3: ${env:ACCESS_CONTROL_ALLOW_ORIGIN_3}
+    USER_TABLE: Users
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:*
+      Resource:
+        - arn:aws:cognito-idp:${self:provider.region}:*:userpool/${env:COGNITO_USER_POOL_ID}
+
+functions:
+  signin:
+    handler: src/handlers/auth_management/signin.handler
+    events:
+      - http:
+          path: /v1/signin
+          method: options
+          cors: false
+      - http:
+          path: /v1/signin
+          method: post
+          cors: false
+
+  signup:
+    handler: src/handlers/auth_management/signup.handler
+    events:
+      - http:
+          path: /v1/signup
+          method: options
+          cors: false
+      - http:
+          path: /v1/signup
+          method: post
+          cors: false
+    role: CustomSignupRole
+
+  signout:
+    handler: src/handlers/auth_management/signout.handler
+    events:
+      - http:
+          path: /v1/signout
+          method: get
+          cors: false
+
+  googleAuth:
+    handler: src/handlers/auth_management/googleAuth.handler
+    events:
+      - http:
+          path: /v1/google
+          method: get
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+      - http:
+          path: google/callback
+          method: get
+          cors: true
+
+  confirm:
+    handler: src/handlers/auth_management/confirm.handler
+    events:
+      - http:
+          path: /v1/confirm
+          method: options
+          cors: false
+      - http:
+          path: /v1/confirm
+          method: post
+          cors: false
+
+  resendConfirmCode:
+    handler: src/handlers/auth_management/resendConfirmCode.handler
+    events:
+      - http:
+          path: /v1/resend
+          method: post
+          cors:
+            origin: ${env:ACCESS_CONTROL_ALLOW_ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
+
+  refreshToken:
+    handler: src/handlers/auth_management/reissuer.handler
+    events:
+      - http:
+          path: /refresh
+          method: get
+          cors: false
+
+  getUserInfo:
+    handler: src/handlers/auth_management/getUserInfo.handler
+    events:
+      - http:
+          path: /v1/info
+          method: get
+          cors: false
+          authorizer:
+            type: TOKEN
+            authorizerId:
+              Ref: AuthorizerJWTApiGateway
+      - http:
+          path: /v1/info
+          method: options
+          cors: false
+
+resources:
+  Resources:
+    CustomSignupRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Policies:
+          - PolicyName: CustomSignupPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                    - cognito-idp:AdminAddUserToGroup
+                  Resource:
+                    - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USER_TABLE}"
+                    - "arn:aws:cognito-idp:${self:provider.region}:${aws:accountId}:userpool/${env:COGNITO_USER_POOL_ID}"
+
+    AuthorizerJWTApiGateway:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: AuthorizerJWT
+        Type: TOKEN
+        IdentitySource: method.request.header.Cookie
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizerUri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: AWS::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - "arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:lambda-authorizer-service-prod-AuthorizerJWT"
+              - "/invocations"
+        AuthorizerResultTtlInSeconds: 1
+
+    LambdaInvokePermissionForApiGateway:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: "arn:aws:lambda:${self:provider.region}:${aws:accountId}:function:lambda-authorizer-service-prod-AuthorizerJWT"
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+        SourceArn:
+          Fn::Join:
+            - ""
+            - - "arn:aws:execute-api:"
+              - Ref: AWS::Region
+              - ":"
+              - Ref: AWS::AccountId
+              - ":"
+              - Ref: ApiGatewayRestApi
+              - "/*"
+
+package:
+  patterns:
+    - "src/handlers/**"
+    - "!src/handlers/temp_user"
+    - "!src/handlers/users_management"
+    - "!src/handlers/triggers"
+  individually: false
+
+plugins:
+  - serverless-plugin-dotenv
+  - serverless-offline
+  - serverless-domain-manager
