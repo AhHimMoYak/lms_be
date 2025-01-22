@@ -1,0 +1,192 @@
+service: api-with-cognito
+
+provider:
+    name: aws
+    runtime: nodejs20.x
+    region: ap-northeast-2
+
+resources:
+    Resources:
+        CognitoUserGroupAdmins:
+            Type: AWS::Cognito::UserPoolGroup
+            Properties:
+                GroupName: Admin
+                UserPoolId: ${env:COGNITO_USER_POOL_ID}
+                Description: Admin users with elevated permissions
+                Precedence: 1
+                RoleArn:
+                    Fn::GetAtt:
+                        - AdminRole
+                        - Arn
+
+        AdminRole:
+            Type: AWS::IAM::Role
+            Properties:
+                RoleName: AdminAPIRole
+                AssumeRolePolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        - Effect: Allow
+                          Principal:
+                              Service: apigateway.amazonaws.com
+                          Action: sts:AssumeRole
+                Policies:
+                    - PolicyName: AdminAPIPolicy
+                      PolicyDocument:
+                          Version: "2012-10-17"
+                          Statement:
+                              - Effect: Allow
+                                Action:
+                                    - execute-api:Invoke
+                                Resource:
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_1_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_2_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_4_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_5_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_6_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_7_ID}/*/*
+
+        CognitoUserGroupInstitution:
+            Type: AWS::Cognito::UserPoolGroup
+            Properties:
+                GroupName: Institution
+                UserPoolId: ${env:COGNITO_USER_POOL_ID}
+                Description: Regular Institution with standard permissions
+                Precedence: 2
+                RoleArn:
+                    Fn::GetAtt:
+                        - InstitutionRole
+                        - Arn
+
+        InstitutionRole:
+            Type: AWS::IAM::Role
+            Properties:
+                RoleName: InstitutionAPIRole
+                AssumeRolePolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        - Effect: Allow
+                          Principal:
+                              Service: apigateway.amazonaws.com
+                          Action: sts:AssumeRole
+                Policies:
+                    - PolicyName: InstitutionAPIPolicy
+                      PolicyDocument:
+                          Version: "2012-10-17"
+                          Statement:
+                              - Effect: Allow
+                                Action:
+                                    - execute-api:Invoke
+                                Resource:
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_1_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_2_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_4_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_5_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_6_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_7_ID}/*/*
+
+        CognitoUserGroupCompany:
+            Type: AWS::Cognito::UserPoolGroup
+            Properties:
+                GroupName: Company
+                UserPoolId: ${env:COGNITO_USER_POOL_ID}
+                Description: Regular Company Supervisors with standard permissions
+                Precedence: 3
+                RoleArn:
+                    Fn::GetAtt:
+                        - CompanyRole
+                        - Arn
+
+        CompanyRole:
+            Type: AWS::IAM::Role
+            Properties:
+                RoleName: CompanyAPIRole
+                AssumeRolePolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        - Effect: Allow
+                          Principal:
+                              Service: apigateway.amazonaws.com
+                          Action: sts:AssumeRole
+                Policies:
+                    - PolicyName: CompanyAPIPolicy
+                      PolicyDocument:
+                          Version: "2012-10-17"
+                          Statement:
+                              - Effect: Allow
+                                Action:
+                                    - execute-api:Invoke
+                                Resource:
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_2_ID}/*/*
+
+        CognitoUserGroupStudent:
+            Type: AWS::Cognito::UserPoolGroup
+            Properties:
+                GroupName: Student
+                UserPoolId: ${env:COGNITO_USER_POOL_ID}
+                Description: Regular Student with standard permissions
+                Precedence: 4
+                RoleArn:
+                    Fn::GetAtt:
+                        - StudentRole
+                        - Arn
+
+        StudentRole:
+            Type: AWS::IAM::Role
+            Properties:
+                RoleName: StudentAPIRole
+                AssumeRolePolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        - Effect: Allow
+                          Principal:
+                              Service: apigateway.amazonaws.com
+                          Action: sts:AssumeRole
+                Policies:
+                    - PolicyName: StudentAPIPolicy
+                      PolicyDocument:
+                          Version: "2012-10-17"
+                          Statement:
+                              - Effect: Allow
+                                Action:
+                                    - execute-api:Invoke
+                                Resource:
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_2_ID}/*/*
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_6_ID}/*/*
+
+        CognitoUserGroupVisitor:
+            Type: AWS::Cognito::UserPoolGroup
+            Properties:
+                GroupName: Visitor
+                UserPoolId: ${env:COGNITO_USER_POOL_ID}
+                Description: Regular Visitors with standard permissions
+                Precedence: 5
+                RoleArn:
+                    Fn::GetAtt:
+                        - VisitorRole
+                        - Arn
+
+        VisitorRole:
+            Type: AWS::IAM::Role
+            Properties:
+                RoleName: VisitorAPIRole
+                AssumeRolePolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        - Effect: Allow
+                          Principal:
+                              Service: apigateway.amazonaws.com
+                          Action: sts:AssumeRole
+                Policies:
+                    - PolicyName: VisitorAPIPolicy
+                      PolicyDocument:
+                          Version: "2012-10-17"
+                          Statement:
+                              - Effect: Allow
+                                Action:
+                                    - execute-api:Invoke
+                                Resource:
+                                    - arn:aws:execute-api:${self:provider.region}:${aws:accountId}:${env:API_GATEWAY_2_ID}/*/*
+
+plugins:
+    - serverless-plugin-dotenv
